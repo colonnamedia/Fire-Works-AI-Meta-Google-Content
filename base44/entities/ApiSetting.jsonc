@@ -1,0 +1,32 @@
+{
+  "name": "ApiSetting",
+  "type": "object",
+  "properties": {
+    "provider_name": {
+      "type": "string",
+      "enum": [
+        "openrouter",
+        "openai",
+        "anthropic"
+      ],
+      "default": "openrouter",
+      "description": "AI provider"
+    },
+    "api_key": {
+      "type": "string",
+      "description": "API key for the provider"
+    },
+    "model_name": {
+      "type": "string",
+      "description": "Model to use"
+    },
+    "use_free_router": {
+      "type": "boolean",
+      "default": true,
+      "description": "Use free OpenRouter models"
+    }
+  },
+  "required": [
+    "provider_name"
+  ]
+}

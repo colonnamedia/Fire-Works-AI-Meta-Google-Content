@@ -1,0 +1,59 @@
+{
+  "name": "BusinessProfile",
+  "type": "object",
+  "properties": {
+    "business_name": {
+      "type": "string",
+      "description": "Name of the business"
+    },
+    "industry": {
+      "type": "string",
+      "description": "Industry category"
+    },
+    "business_type": {
+      "type": "string",
+      "enum": [
+        "product",
+        "service",
+        "saas",
+        "ecommerce",
+        "agency",
+        "coaching",
+        "consulting",
+        "restaurant",
+        "healthcare",
+        "real_estate",
+        "other"
+      ],
+      "description": "Type of business"
+    },
+    "offer_type": {
+      "type": "string",
+      "description": "Main offer or product"
+    },
+    "average_price_point": {
+      "type": "string",
+      "description": "Average price point"
+    },
+    "website_url": {
+      "type": "string",
+      "description": "Website URL"
+    },
+    "local_or_online": {
+      "type": "string",
+      "enum": [
+        "local",
+        "online",
+        "both"
+      ],
+      "description": "Local or online business"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes"
+    }
+  },
+  "required": [
+    "business_name"
+  ]
+}
