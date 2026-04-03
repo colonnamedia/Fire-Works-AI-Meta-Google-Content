@@ -1,0 +1,43 @@
+{
+  "name": "UsageCounter",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "subscription_id": {
+      "type": "string"
+    },
+    "billing_period_start": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "billing_period_end": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "included_entries_used": {
+      "type": "number",
+      "default": 0
+    },
+    "overage_entries_used": {
+      "type": "number",
+      "default": 0
+    },
+    "included_entries_remaining": {
+      "type": "number",
+      "default": 5
+    },
+    "overage_amount_accrued": {
+      "type": "number",
+      "default": 0
+    },
+    "last_reset_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "user_id"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "name": "BillingEvent",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "subscription_id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "subscription_created",
+        "subscription_renewed",
+        "subscription_cancelled",
+        "overage_charge",
+        "manual_credit",
+        "refund",
+        "payment_failed"
+      ]
+    },
+    "amount": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "completed",
+        "failed",
+        "refunded"
+      ],
+      "default": "completed"
+    },
+    "billing_period_start": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "billing_period_end": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "external_payment_id": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id",
+    "type"
+  ]
+}

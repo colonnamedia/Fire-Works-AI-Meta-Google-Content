@@ -1,0 +1,36 @@
+{
+  "name": "AdminLog",
+  "type": "object",
+  "properties": {
+    "admin_user_id": {
+      "type": "string"
+    },
+    "action_type": {
+      "type": "string",
+      "enum": [
+        "role_change",
+        "credit_adjustment",
+        "user_deactivated",
+        "user_activated",
+        "subscription_override",
+        "manual_reset"
+      ]
+    },
+    "target_user_id": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "before_value": {
+      "type": "string"
+    },
+    "after_value": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "admin_user_id",
+    "action_type"
+  ]
+}

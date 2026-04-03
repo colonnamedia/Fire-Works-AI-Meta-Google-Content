@@ -1,0 +1,62 @@
+{
+  "name": "Subscription",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "Reference to user"
+    },
+    "plan_name": {
+      "type": "string",
+      "default": "Starter Plan"
+    },
+    "monthly_price": {
+      "type": "number",
+      "default": 4.99
+    },
+    "included_entries_per_month": {
+      "type": "number",
+      "default": 5
+    },
+    "overage_price_per_entry": {
+      "type": "number",
+      "default": 1.99
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "past_due",
+        "cancelled",
+        "trialing"
+      ],
+      "default": "inactive"
+    },
+    "billing_period_start": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "billing_period_end": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "auto_renew": {
+      "type": "boolean",
+      "default": true
+    },
+    "payment_provider": {
+      "type": "string",
+      "default": "stripe"
+    },
+    "external_subscription_id": {
+      "type": "string"
+    },
+    "external_customer_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "user_id"
+  ]
+}

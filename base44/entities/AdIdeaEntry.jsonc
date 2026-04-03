@@ -1,0 +1,141 @@
+{
+  "name": "AdIdeaEntry",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "business_profile_id": {
+      "type": "string"
+    },
+    "subscription_id": {
+      "type": "string"
+    },
+    "usage_counter_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "business_name": {
+      "type": "string"
+    },
+    "industry": {
+      "type": "string"
+    },
+    "business_type": {
+      "type": "string"
+    },
+    "local_or_online": {
+      "type": "string",
+      "enum": [
+        "local",
+        "online",
+        "both"
+      ]
+    },
+    "offer_type": {
+      "type": "string"
+    },
+    "goal": {
+      "type": "string",
+      "enum": [
+        "leads",
+        "sales",
+        "awareness",
+        "traffic",
+        "engagement",
+        "messaging",
+        "app_installs"
+      ]
+    },
+    "budget": {
+      "type": "string"
+    },
+    "landing_page_url": {
+      "type": "string"
+    },
+    "lead_form_or_website": {
+      "type": "string",
+      "enum": [
+        "lead_form",
+        "website",
+        "both",
+        "unsure"
+      ]
+    },
+    "geographic_targeting": {
+      "type": "string"
+    },
+    "audience_description": {
+      "type": "string"
+    },
+    "traffic_temperature": {
+      "type": "string",
+      "enum": [
+        "cold",
+        "warm",
+        "hot",
+        "mixed"
+      ]
+    },
+    "creative_preference": {
+      "type": "string",
+      "enum": [
+        "image",
+        "video",
+        "carousel",
+        "mixed",
+        "unsure"
+      ]
+    },
+    "tone_of_voice": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "cta_preference": {
+      "type": "string"
+    },
+    "ai_response_json": {
+      "type": "object"
+    },
+    "recommended_objective": {
+      "type": "string"
+    },
+    "recommended_optimization_goal": {
+      "type": "string"
+    },
+    "was_included_credit": {
+      "type": "boolean",
+      "default": true
+    },
+    "was_overage_charge": {
+      "type": "boolean",
+      "default": false
+    },
+    "overage_charge_amount": {
+      "type": "number",
+      "default": 0
+    },
+    "is_favorite": {
+      "type": "boolean",
+      "default": false
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "generated",
+        "archived"
+      ],
+      "default": "draft"
+    }
+  },
+  "required": [
+    "user_id",
+    "title",
+    "goal"
+  ]
+}

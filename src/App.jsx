@@ -6,13 +6,23 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 
+// Public pages
 import Landing from '@/pages/Landing';
-import Dashboard from '@/pages/Dashboard';
-import NewAdPlan from '@/pages/NewAdPlan';
-import PlanDetail from '@/pages/PlanDetail';
-import SavedPlans from '@/pages/SavedPlans';
-import SettingsPage from '@/pages/SettingsPage';
-import Admin from '@/pages/Admin';
+import Pricing from '@/pages/Pricing';
+import Terms from '@/pages/Terms';
+import Privacy from '@/pages/Privacy';
+import Support from '@/pages/Support';
+
+// App pages (inside layout)
+import UserDashboard from '@/pages/UserDashboard';
+import NewAdIdea from '@/pages/NewAdIdea';
+import SavedIdeas from '@/pages/SavedIdeas';
+import AdIdeaDetail from '@/pages/AdIdeaDetail';
+import BillingPage from '@/pages/BillingPage';
+import AccountSettings from '@/pages/AccountSettings';
+import AdminDashboard from '@/pages/AdminDashboard';
+import AdminUsers from '@/pages/AdminUsers';
+
 import AppLayout from '@/components/layout/AppLayout';
 
 const AuthenticatedApp = () => {
@@ -21,7 +31,7 @@ const AuthenticatedApp = () => {
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+        <div className="w-8 h-8 border-4 border-slate-200 border-t-primary rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -37,20 +47,29 @@ const AuthenticatedApp = () => {
 
   return (
     <Routes>
+      {/* Public routes */}
       <Route path="/" element={<Landing />} />
+      <Route path="/pricing" element={<Pricing />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/support" element={<Support />} />
+
+      {/* App routes (with layout) */}
       <Route element={<AppLayout />}>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/new-plan" element={<NewAdPlan />} />
-        <Route path="/plan/:id" element={<PlanDetail />} />
-        <Route path="/saved-plans" element={<SavedPlans />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/admin" element={<Admin />} />
+        <Route path="/dashboard" element={<UserDashboard />} />
+        <Route path="/new-idea" element={<NewAdIdea />} />
+        <Route path="/saved-ideas" element={<SavedIdeas />} />
+        <Route path="/idea/:id" element={<AdIdeaDetail />} />
+        <Route path="/billing" element={<BillingPage />} />
+        <Route path="/settings" element={<AccountSettings />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/users" element={<AdminUsers />} />
       </Route>
+
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
-
 
 function App() {
   return (
