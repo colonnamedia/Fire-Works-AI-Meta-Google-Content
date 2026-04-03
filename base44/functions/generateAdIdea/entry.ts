@@ -61,22 +61,42 @@ BUSINESS DETAILS:
 - CTA Preference: ${data.ctaPreference || 'N/A'}
 - Additional Notes: ${data.notes || 'None'}
 
-Return ONLY this JSON structure:
+OUTPUT REQUIREMENTS:
+- Extract deep insight from these inputs. Do not ask for more — generate more from what's provided.
+- Every field must be specific to this business. No generic filler.
+- Keep suggestions concise but immediately usable.
+
+Return ONLY this JSON structure (no markdown, no extra text):
 {
-  "recommendedObjective": "string",
+  "recommendedObjective": "string — the single best Meta campaign objective for this business",
+  "alternativeObjectives": [
+    { "objective": "string", "when": "string — one sentence on when to use this instead" },
+    { "objective": "string", "when": "string" }
+  ],
   "recommendedOptimizationGoal": "string",
-  "whyThisMakesSense": "string",
-  "campaignSetup": "string",
-  "adSetStrategy": "string",
+  "whyThisMakesSense": "string — 2-3 sentences explaining the logic clearly",
+  "campaignSetup": "string — campaign type, structure simplicity, and any key setup notes",
+  "budgetGuidance": "string — how to allocate this specific budget, what structure it supports",
+  "adSetStrategy": "string — audience type, targeting approach, location radius if local, age range, gender if relevant, platform/device notes",
+  "targetingIdeas": {
+    "interests": ["string", "string", "string", "string", "string"],
+    "behaviors": ["string", "string", "string"],
+    "demographics": ["string", "string", "string"]
+  },
+  "audienceAngles": ["string", "string", "string", "string"],
   "placements": "string",
-  "audienceDirection": "string",
-  "hooks": ["string", "string", "string"],
-  "headlines": ["string", "string", "string"],
-  "primaryTextOptions": ["string", "string"],
-  "ctaSuggestions": ["string", "string"],
-  "creativeAngleIdeas": ["string", "string", "string"],
+  "hooks": ["string", "string", "string", "string", "string"],
+  "headlines": ["string", "string", "string", "string", "string"],
+  "primaryTextOptions": {
+    "short": "string — 1-2 punchy sentences, ad-ready",
+    "medium": "string — 3-5 sentences, balanced hook + benefit + CTA",
+    "long": "string — 6-10 sentences, story or explanation style, full ad copy"
+  },
+  "ctaSuggestions": ["string", "string", "string", "string"],
+  "creativeIdeas": ["string", "string", "string", "string"],
+  "offerPositioningIdeas": ["string", "string", "string"],
   "risksWarnings": ["string", "string", "string"],
-  "finalRecommendation": "string"
+  "finalRecommendation": "string — 2-3 sentences, direct and actionable"
 }`;
 }
 
@@ -171,17 +191,44 @@ Deno.serve(async (req) => {
           type: 'object',
           properties: {
             recommendedObjective: { type: 'string' },
+            alternativeObjectives: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  objective: { type: 'string' },
+                  when: { type: 'string' }
+                }
+              }
+            },
             recommendedOptimizationGoal: { type: 'string' },
             whyThisMakesSense: { type: 'string' },
             campaignSetup: { type: 'string' },
+            budgetGuidance: { type: 'string' },
             adSetStrategy: { type: 'string' },
+            targetingIdeas: {
+              type: 'object',
+              properties: {
+                interests: { type: 'array', items: { type: 'string' } },
+                behaviors: { type: 'array', items: { type: 'string' } },
+                demographics: { type: 'array', items: { type: 'string' } }
+              }
+            },
+            audienceAngles: { type: 'array', items: { type: 'string' } },
             placements: { type: 'string' },
-            audienceDirection: { type: 'string' },
             hooks: { type: 'array', items: { type: 'string' } },
             headlines: { type: 'array', items: { type: 'string' } },
-            primaryTextOptions: { type: 'array', items: { type: 'string' } },
+            primaryTextOptions: {
+              type: 'object',
+              properties: {
+                short: { type: 'string' },
+                medium: { type: 'string' },
+                long: { type: 'string' }
+              }
+            },
             ctaSuggestions: { type: 'array', items: { type: 'string' } },
-            creativeAngleIdeas: { type: 'array', items: { type: 'string' } },
+            creativeIdeas: { type: 'array', items: { type: 'string' } },
+            offerPositioningIdeas: { type: 'array', items: { type: 'string' } },
             risksWarnings: { type: 'array', items: { type: 'string' } },
             finalRecommendation: { type: 'string' }
           }
