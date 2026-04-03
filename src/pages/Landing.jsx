@@ -1,138 +1,235 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Zap, Check, Target, FileText, Users, ArrowRight, Star } from "lucide-react";
+import { Zap, Check, Target, FileText, BarChart2, ArrowRight, Star, ChevronRight, Shield, Clock, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
+const fadeUp = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
+const stagger = { show: { transition: { staggerChildren: 0.1 } } };
+
 const features = [
-  { icon: Target, title: "Smart Objective Selection", desc: "AI recommends the exact Meta campaign objective based on your goal, audience, and budget." },
-  { icon: Zap, title: "Full Strategy Generation", desc: "Get campaign setup, ad set structure, placement recommendations, and audience targeting in one click." },
-  { icon: FileText, title: "Ready-to-Use Ad Copy", desc: "Receive hooks, headlines, primary text options, and CTAs you can use directly in Ads Manager." },
+  {
+    icon: Target,
+    title: "AI Picks the Right Objective",
+    desc: "Stop guessing between Traffic, Leads, and Conversions. The AI analyzes your business and tells you exactly which Meta objective to use and why.",
+  },
+  {
+    icon: FileText,
+    title: "Ready-to-Use Ad Copy",
+    desc: "Get scroll-stopping hooks, benefit-driven headlines, full primary text options, and CTAs — all tailored to your offer and tone.",
+  },
+  {
+    icon: BarChart2,
+    title: "Full Campaign Strategy",
+    desc: "Audience direction, ad set structure, placement recommendations, creative angles — a complete playbook you can execute immediately.",
+  },
 ];
 
 const steps = [
-  { n: "01", title: "Describe your business", desc: "Enter your business type, offer, goal, budget, and audience details." },
-  { n: "02", title: "AI builds your strategy", desc: "Our AI analyzes your inputs and generates a complete Meta Ads strategy." },
-  { n: "03", title: "Copy and launch", desc: "Use your strategy, hooks, and copy directly in Meta Ads Manager." },
+  { n: "01", title: "Describe your business and offer", desc: "Enter your business type, industry, goal, budget, and audience in a simple guided form." },
+  { n: "02", title: "AI builds your strategy", desc: "Our AI analyzes your inputs and recommends the best campaign objective, setup, and copy direction." },
+  { n: "03", title: "Get hooks, headlines, and copy", desc: "Receive 3 hooks, 3 headlines, 2 primary text options, CTAs, and creative angle ideas — ready to paste into Ads Manager." },
+  { n: "04", title: "Save and revisit anytime", desc: "Every strategy is saved to your dashboard so you can reference, export, or build on it later." },
+];
+
+const deliverables = [
+  "Recommended campaign objective + optimization goal",
+  "Why that objective fits your business and goal",
+  "Campaign setup and ad set structure",
+  "Audience direction and placement strategy",
+  "3 scroll-stopping hook ideas",
+  "3 headline variations",
+  "2 full primary text options",
+  "CTA suggestions matched to your destination",
+  "Creative angle ideas",
+  "Risk warnings and what to watch for",
+  "Final recommendation and next steps",
+];
+
+const audiences = [
+  { label: "Local Service Businesses", desc: "Plumbers, electricians, cleaners, landscapers — find out if leads or messages is the smarter play for your market." },
+  { label: "Gyms & Fitness Studios", desc: "Promote trials, memberships, and classes with the right creative angles and audience targeting direction." },
+  { label: "Coaches & Consultants", desc: "Lead generation strategy, webinar promotion, and copy that speaks directly to your ideal client's pain points." },
+  { label: "Ecommerce Brands", desc: "Product launch strategy, retargeting structures, and copy frameworks that drive purchases." },
+  { label: "Agencies & Freelancers", desc: "Use it as a client strategy tool. Generate ad ideas for any business type in seconds." },
+  { label: "Restaurants & Retail", desc: "Awareness, reach, and engagement strategies with local targeting logic built in." },
 ];
 
 const testimonials = [
-  { name: "Sarah K.", biz: "Local Med Spa", text: "Saved me hours of research. The hooks it generates are actually good." },
-  { name: "Marcus R.", biz: "E-commerce Brand", text: "Generated a full strategy in 30 seconds. Better than what my agency gave me." },
-  { name: "Diane L.", biz: "Business Coach", text: "Finally understand which objectives to use. This app is worth every penny." },
+  { name: "Sarah K.", biz: "Local Med Spa Owner", text: "I used to spend hours researching what objective to use and still felt unsure. This gave me a full strategy in under a minute. The hooks it generated were actually good." },
+  { name: "Marcus R.", biz: "Ecommerce Brand Founder", text: "Better strategy output than what my agency gave me last month. The objective recommendation alone saved me from wasting money on Traffic again." },
+  { name: "Diane L.", biz: "Business Coach", text: "Finally understand which objectives to use for lead gen vs awareness. The copy it writes is on-point for my audience. Absolutely worth paying for." },
 ];
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground">
+
       {/* Nav */}
-      <nav className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 font-bold text-lg text-foreground">
-            <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
+      <nav className="border-b border-border bg-card/90 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2 font-bold text-base text-foreground">
+            <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center shrink-0">
               <Zap className="w-4 h-4 text-white" />
             </div>
             Meta Ad Strategist AI
           </div>
-          <div className="flex items-center gap-2">
-            <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground hidden sm:block mr-2">Pricing</Link>
+          <div className="flex items-center gap-1 sm:gap-2">
+            <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground hidden sm:block px-3 py-1.5 rounded-md hover:bg-secondary transition-colors">Pricing</Link>
             <Button variant="ghost" size="sm" onClick={() => { document.location.href="/dashboard"; }}>Log In</Button>
-            <Button size="sm" onClick={() => { document.location.href="/dashboard"; }}>Get Started</Button>
+            <Button size="sm" className="hidden sm:inline-flex" onClick={() => { document.location.href="/dashboard"; }}>
+              Get Started <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+            </Button>
           </div>
         </div>
       </nav>
 
       {/* Hero */}
-      <section className="max-w-6xl mx-auto px-4 pt-20 pb-16 text-center">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-xs font-semibold px-3 py-1.5 rounded-full mb-6">
-            <Zap className="w-3 h-3" />
-            AI-Powered Meta Ads Strategy
-          </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-            Generate better Facebook &<br className="hidden sm:block" />
-            <span className="text-primary"> Instagram ad ideas</span> with AI
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-            Stop guessing which campaign objective to use. Get a complete Meta Ads strategy — objectives, copy, hooks, and targeting — in seconds.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link to="/dashboard">
-              <Button size="lg" className="w-full sm:w-auto">
-                Start for $4.99/month <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-            <Link to="/pricing">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto">See Pricing</Button>
-            </Link>
-          </div>
-          <p className="text-xs text-muted-foreground mt-4">5 included ad ideas per month · $1.99 per additional entry · Cancel anytime</p>
-        </motion.div>
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent pointer-events-none" />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-20 pb-20 text-center relative">
+          <motion.div variants={stagger} initial="hidden" animate="show" className="space-y-6">
+            <motion.div variants={fadeUp}>
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-xs font-semibold px-3 py-1.5 rounded-full mb-6 border border-primary/20">
+                <Zap className="w-3 h-3" />
+                AI-Powered Meta Ads Strategy
+              </div>
+            </motion.div>
+            <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight tracking-tight">
+              Stop guessing what<br className="hidden sm:block" />
+              <span className="text-primary"> Meta campaign to run.</span>
+            </motion.h1>
+            <motion.p variants={fadeUp} className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Get AI-powered campaign objective recommendations, hooks, headlines, copy ideas, and full ad setup direction — tailored to your business, offer, and goals.
+            </motion.p>
+            <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+              <Link to="/dashboard">
+                <Button size="lg" className="w-full sm:w-auto text-base px-8 h-12 shadow-lg shadow-primary/20">
+                  Start Generating Ad Ideas <ArrowRight className="w-4 h-4 ml-1" />
+                </Button>
+              </Link>
+              <Link to="/pricing">
+                <Button size="lg" variant="outline" className="w-full sm:w-auto text-base px-8 h-12">
+                  See Pricing
+                </Button>
+              </Link>
+            </motion.div>
+            <motion.p variants={fadeUp} className="text-xs text-muted-foreground">
+              $4.99/month · 5 included ad strategies per month · $1.99 per additional · Cancel anytime
+            </motion.p>
+          </motion.div>
+        </div>
       </section>
 
+      {/* Social proof bar */}
+      <div className="border-y border-border bg-secondary/20 py-4">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-wrap justify-center gap-6 sm:gap-10 text-sm text-muted-foreground">
+          {["Local Service Businesses", "Coaches & Consultants", "Ecommerce Brands", "Marketing Agencies", "Gyms & Studios"].map(t => (
+            <div key={t} className="flex items-center gap-1.5">
+              <Check className="w-3.5 h-3.5 text-primary shrink-0" />
+              <span>{t}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Features */}
-      <section className="bg-secondary/30 border-y border-border py-16">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-2xl font-bold text-foreground text-center mb-10">Everything you need to run better Meta ads</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {features.map(f => (
-              <div key={f.title} className="bg-card rounded-xl border border-border p-6">
-                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
-                  <f.icon className="w-5 h-5 text-primary" />
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">{f.title}</h3>
-                <p className="text-sm text-muted-foreground">{f.desc}</p>
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">Everything you need to run smarter Meta ads</h2>
+          <p className="text-muted-foreground max-w-xl mx-auto">Built for business owners and marketers who are tired of guessing and want a clear, actionable strategy in minutes.</p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          {features.map(f => (
+            <div key={f.title} className="bg-card rounded-2xl border border-border p-6 hover:border-primary/30 hover:shadow-md transition-all duration-200">
+              <div className="w-11 h-11 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
+                <f.icon className="w-5 h-5 text-primary" />
               </div>
-            ))}
-          </div>
+              <h3 className="font-semibold text-foreground mb-2 text-base">{f.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* What you get */}
-      <section className="max-w-6xl mx-auto px-4 py-16">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground mb-4">One submission. A complete ad strategy.</h2>
-            <p className="text-muted-foreground mb-6">Fill in your business details and get back a full, ready-to-use Meta Ads playbook — not generic tips.</p>
-            <ul className="space-y-2">
-              {["Recommended campaign objective & optimization", "Campaign setup and ad set structure", "Audience direction and placement strategy", "3 hook ideas to stop the scroll", "3 headline variations", "2 full primary text options", "CTA suggestions", "Creative angle ideas", "Risk warnings and final recommendation"].map(item => (
-                <li key={item} className="flex items-center gap-2.5 text-sm">
-                  <Check className="w-4 h-4 text-primary shrink-0" />
-                  <span className="text-foreground">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
-            <div className="text-xs text-muted-foreground uppercase tracking-wide font-semibold mb-4">Sample Output Preview</div>
-            <div className="space-y-3">
-              <div className="bg-primary/5 rounded-lg p-3">
-                <p className="text-xs text-primary font-semibold mb-1">Recommended Objective</p>
-                <p className="text-sm text-foreground">Lead Generation — Maximize Conversions</p>
+      <section className="bg-secondary/20 border-y border-border py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <p className="text-primary text-sm font-semibold uppercase tracking-wide mb-3">One submission. A complete strategy.</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-4 leading-tight">You don't get vague tips.<br />You get a full ad playbook.</h2>
+              <p className="text-muted-foreground mb-6 leading-relaxed">
+                Fill in your business details and receive a structured, expert-level Meta Ads strategy — the kind an experienced media buyer would put together, delivered in seconds.
+              </p>
+              <ul className="space-y-2.5">
+                {deliverables.map(item => (
+                  <li key={item} className="flex items-start gap-2.5 text-sm">
+                    <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                    <span className="text-foreground">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="bg-card rounded-2xl border border-border p-6 shadow-sm space-y-3">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide font-semibold mb-2">Sample Strategy Output</p>
+              <div className="bg-primary/5 border border-primary/15 rounded-xl p-4">
+                <p className="text-xs text-primary font-semibold mb-1">✓ Recommended Objective</p>
+                <p className="text-sm text-foreground font-medium">Lead Generation — Maximize Leads</p>
+                <p className="text-xs text-muted-foreground mt-1">Traffic would get clicks but not inquiries. Lead Gen with an instant form is the right call for a local service business at this budget.</p>
               </div>
-              <div className="bg-secondary/50 rounded-lg p-3">
-                <p className="text-xs text-muted-foreground font-semibold mb-1">Hook Ideas</p>
-                <p className="text-sm text-foreground italic">"Tired of running ads that get clicks but no leads?"</p>
+              <div className="bg-secondary/60 rounded-xl p-4">
+                <p className="text-xs text-muted-foreground font-semibold mb-2">Hook Ideas</p>
+                <p className="text-sm text-foreground italic mb-1">"Still waiting on that plumber? We show up same day."</p>
+                <p className="text-sm text-muted-foreground italic">"Your neighbors are getting it fixed. Are you?"</p>
               </div>
-              <div className="bg-secondary/50 rounded-lg p-3">
-                <p className="text-xs text-muted-foreground font-semibold mb-1">Audience Direction</p>
-                <p className="text-sm text-foreground">Target homeowners 35-65 in your service area, layer interests in home improvement...</p>
+              <div className="bg-secondary/60 rounded-xl p-4">
+                <p className="text-xs text-muted-foreground font-semibold mb-2">Audience Direction</p>
+                <p className="text-sm text-foreground">Homeowners 30–65 within 15 miles. Broad targeting + strong creative beats stacked interests at this budget. Skip interest layers.</p>
+              </div>
+              <div className="bg-secondary/60 rounded-xl p-4">
+                <p className="text-xs text-muted-foreground font-semibold mb-2">Risk Warning</p>
+                <p className="text-sm text-foreground">⚠️ Do not run Traffic if your site has no pixel or conversion event. You'll pay for clicks with no way to measure results.</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Steps */}
-      <section className="bg-secondary/30 border-y border-border py-16">
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className="text-2xl font-bold text-foreground text-center mb-10">Get your strategy in 3 steps</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            {steps.map(s => (
-              <div key={s.n} className="text-center">
-                <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center font-bold text-sm mx-auto mb-4">{s.n}</div>
-                <h3 className="font-semibold text-foreground mb-2">{s.title}</h3>
-                <p className="text-sm text-muted-foreground">{s.desc}</p>
+      {/* How it works */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">From blank page to full strategy in minutes</h2>
+          <p className="text-muted-foreground">No media buying expertise required.</p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {steps.map((s, i) => (
+            <div key={s.n} className="relative">
+              {i < steps.length - 1 && (
+                <div className="hidden lg:block absolute top-6 left-[calc(100%-1rem)] w-8 border-t-2 border-dashed border-border z-0" />
+              )}
+              <div className="bg-card rounded-2xl border border-border p-5 relative z-10">
+                <div className="w-10 h-10 bg-primary text-white rounded-xl flex items-center justify-center font-bold text-sm mb-4">{s.n}</div>
+                <h3 className="font-semibold text-foreground mb-2 text-sm">{s.title}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">{s.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Who it's for */}
+      <section className="bg-secondary/20 border-y border-border py-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">Built for real businesses running real ads</h2>
+            <p className="text-muted-foreground max-w-xl mx-auto">Whether you're a business owner managing your own ads or an agency handling client campaigns, this tool saves hours of strategy work.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {audiences.map(a => (
+              <div key={a.label} className="bg-card rounded-xl border border-border p-5 hover:border-primary/30 transition-colors">
+                <h3 className="font-semibold text-foreground mb-1.5 text-sm">{a.label}</h3>
+                <p className="text-xs text-muted-foreground leading-relaxed">{a.desc}</p>
               </div>
             ))}
           </div>
@@ -140,51 +237,131 @@ export default function Landing() {
       </section>
 
       {/* Testimonials */}
-      <section className="max-w-6xl mx-auto px-4 py-16">
-        <h2 className="text-2xl font-bold text-foreground text-center mb-10">What users are saying</h2>
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">What users are saying</h2>
+        </div>
         <div className="grid md:grid-cols-3 gap-6">
           {testimonials.map(t => (
-            <div key={t.name} className="bg-card rounded-xl border border-border p-6">
-              <div className="flex gap-0.5 mb-3">
+            <div key={t.name} className="bg-card rounded-2xl border border-border p-6">
+              <div className="flex gap-0.5 mb-4">
                 {Array(5).fill(0).map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />)}
               </div>
-              <p className="text-sm text-foreground mb-4 italic">"{t.text}"</p>
-              <div>
-                <p className="text-sm font-semibold text-foreground">{t.name}</p>
-                <p className="text-xs text-muted-foreground">{t.biz}</p>
+              <p className="text-sm text-foreground leading-relaxed mb-5 italic">"{t.text}"</p>
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <span className="text-xs font-bold text-primary">{t.name[0]}</span>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{t.name}</p>
+                  <p className="text-xs text-muted-foreground">{t.biz}</p>
+                </div>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Pricing CTA */}
-      <section className="max-w-2xl mx-auto px-4 pb-16 text-center">
-        <div className="bg-card rounded-2xl border-2 border-primary p-8">
-          <h2 className="text-2xl font-bold text-foreground mb-2">Starter Plan</h2>
-          <div className="flex items-baseline justify-center gap-1 mb-2">
-            <span className="text-4xl font-bold text-foreground">$4.99</span>
-            <span className="text-muted-foreground">/month</span>
+      {/* Trust signals */}
+      <section className="bg-secondary/20 border-y border-border py-12">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="grid sm:grid-cols-3 gap-6 text-center">
+            <div className="flex flex-col items-center gap-2">
+              <Shield className="w-6 h-6 text-primary" />
+              <p className="font-semibold text-foreground text-sm">Secure & Private</p>
+              <p className="text-xs text-muted-foreground">Your business data is never shared. Each user sees only their own strategies.</p>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Clock className="w-6 h-6 text-primary" />
+              <p className="font-semibold text-foreground text-sm">Strategy in Under 60 Seconds</p>
+              <p className="text-xs text-muted-foreground">Fill in the form, submit, and get a complete ad playbook in under a minute.</p>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <TrendingUp className="w-6 h-6 text-primary" />
+              <p className="font-semibold text-foreground text-sm">Built on Real Ad Experience</p>
+              <p className="text-xs text-muted-foreground">Strategy logic trained on real Meta advertising best practices for small business budgets.</p>
+            </div>
           </div>
-          <p className="text-muted-foreground text-sm mb-6">5 included ad idea entries · $1.99 per additional entry · Credits reset monthly</p>
-          <Link to="/dashboard"><Button size="lg" className="w-full sm:w-auto">Get Started Today</Button></Link>
-          <p className="text-xs text-muted-foreground mt-3">No long-term commitment. Cancel anytime.</p>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section className="max-w-3xl mx-auto px-4 sm:px-6 py-20 text-center">
+        <h2 className="text-2xl sm:text-3xl font-bold text-foreground mb-3">Simple, honest pricing</h2>
+        <p className="text-muted-foreground mb-10">No hidden fees. No complicated tiers. One plan that works for most businesses.</p>
+        <div className="bg-card rounded-2xl border-2 border-primary shadow-xl shadow-primary/10 p-8 sm:p-10">
+          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full mb-4">
+            Starter Plan
+          </div>
+          <div className="flex items-baseline justify-center gap-1 mb-2">
+            <span className="text-5xl font-bold text-foreground">$4.99</span>
+            <span className="text-muted-foreground text-lg">/month</span>
+          </div>
+          <p className="text-muted-foreground mb-6">Everything you need to start running smarter Meta ads.</p>
+          <ul className="space-y-2.5 text-sm text-left max-w-sm mx-auto mb-8">
+            {[
+              "5 included ad strategy entries per month",
+              "Full AI strategy for every entry",
+              "Hooks, headlines, copy, and CTAs included",
+              "Campaign objective + optimization recommendation",
+              "Save and manage all your strategies",
+              "$1.99 per additional entry after your 5 monthly credits",
+              "Credits reset every billing month",
+              "Cancel anytime",
+            ].map(f => (
+              <li key={f} className="flex items-center gap-2.5">
+                <Check className="w-4 h-4 text-primary shrink-0" />
+                <span className="text-foreground">{f}</span>
+              </li>
+            ))}
+          </ul>
+          <Link to="/dashboard">
+            <Button size="lg" className="w-full sm:w-auto px-10 h-12 text-base shadow-lg shadow-primary/20">
+              Start Generating Ad Ideas <ArrowRight className="w-4 h-4 ml-1" />
+            </Button>
+          </Link>
+          <p className="text-xs text-muted-foreground mt-4">No commitment. Cancel anytime from your account settings.</p>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="bg-primary py-20">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">Ready to run smarter Meta ads?</h2>
+          <p className="text-primary-foreground/80 text-lg mb-8">
+            Stop guessing which campaign to run. Get a full AI-generated strategy tailored to your business in under a minute.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link to="/dashboard">
+              <Button size="lg" variant="secondary" className="w-full sm:w-auto text-base px-8 h-12 font-semibold">
+                Create My First Ad Strategy <ArrowRight className="w-4 h-4 ml-1" />
+              </Button>
+            </Link>
+            <Link to="/pricing">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto text-base px-8 h-12 border-white/30 text-white hover:bg-white/10 hover:text-white">
+                See Pricing
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="border-t border-border bg-card/50">
-        <div className="max-w-6xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Zap className="w-4 h-4 text-primary" />
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-sm">
+            <div className="w-5 h-5 bg-primary rounded flex items-center justify-center">
+              <Zap className="w-3 h-3 text-white" />
+            </div>
             <span className="font-semibold text-foreground">Meta Ad Strategist AI</span>
           </div>
-          <div className="flex gap-6 text-sm text-muted-foreground">
-            <Link to="/pricing" className="hover:text-foreground">Pricing</Link>
-            <Link to="/terms" className="hover:text-foreground">Terms</Link>
-            <Link to="/privacy" className="hover:text-foreground">Privacy</Link>
-            <Link to="/support" className="hover:text-foreground">Support</Link>
+          <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
+            <Link to="/pricing" className="hover:text-foreground transition-colors">Pricing</Link>
+            <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
+            <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
+            <Link to="/support" className="hover:text-foreground transition-colors">Support</Link>
           </div>
+          <p className="text-xs text-muted-foreground">© 2026 Meta Ad Strategist AI</p>
         </div>
       </footer>
     </div>
