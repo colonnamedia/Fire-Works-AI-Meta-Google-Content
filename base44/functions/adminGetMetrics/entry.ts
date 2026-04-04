@@ -111,7 +111,8 @@ Deno.serve(async (req) => {
       },
       users: enriched.slice(0, limit),
       topUsers,
-      recentActivity: activityLogs.slice(0, 20)
+      recentActivity: activityLogs.slice(0, 20),
+      allEntries: entries.map(e => ({ id: e.id, platform_type: e.platform_type, goal: e.goal, business_name: e.business_name, created_date: e.created_date, user_id: e.user_id }))
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

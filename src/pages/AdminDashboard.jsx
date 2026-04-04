@@ -10,6 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { base44 } from "@/api/base44Client";
 import { format } from "date-fns";
+import {
+  GenerationsOverTimeChart, PlatformSplitChart, TopUsersChart, GoalBreakdownChart, buildGenerationsFromEntries
+} from "@/components/charts/AdminCharts";
 
 const statusColors = {
   active: "bg-green-100 text-green-700",
@@ -43,6 +46,8 @@ export default function AdminDashboard() {
   const metrics = adminData?.metrics || {};
   const users = adminData?.users || [];
   const recentActivity = adminData?.recentActivity || [];
+  const allEntries = adminData?.allEntries || [];
+  const chartData = buildGenerationsFromEntries(allEntries);
 
   const filteredUsers = users.filter(u =>
     !search || u.email?.toLowerCase().includes(search.toLowerCase()) || u.full_name?.toLowerCase().includes(search.toLowerCase())
@@ -95,6 +100,20 @@ export default function AdminDashboard() {
           </div>
         </div>
       </div>
+
+      {/* Charts Row 1 */}
+      <GenerationsOverTimeChart data={chartData} />
+
+      <div className="grid sm:grid-cols-2 gap-6">
+        <PlatformSplitChart
+          meta={allEntries.filter(e => e.platform_type === 'meta').length}
+          google={allEntries.filter(e => e.platform_type === 'google').length}
+          both={allEntries.filter(e => e.platform_type === 'both').length}
+        />
+        <GoalBreakdownChart entries={allEntries} />
+      </div>
+
+      <TopUsersChart users={users} />
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* User Table */}

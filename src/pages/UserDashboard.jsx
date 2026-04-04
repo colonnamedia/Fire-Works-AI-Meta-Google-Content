@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { base44 } from "@/api/base44Client";
 import { format } from "date-fns";
+import { UserActivityChart, UserPlatformSplitChart, UserTopBusinesses } from "@/components/charts/UserCharts";
 
 export default function UserDashboard() {
   const { data: user } = useQuery({ queryKey: ["me"], queryFn: () => base44.auth.me() });
@@ -17,7 +18,7 @@ export default function UserDashboard() {
 
   const { data: entries = [] } = useQuery({
     queryKey: ["adIdeaEntries"],
-    queryFn: () => base44.entities.AdIdeaEntry.list("-created_date", 10),
+    queryFn: () => base44.entities.AdIdeaEntry.list("-created_date", 50),
   });
 
   const isAdmin = status?.isAdmin;
@@ -153,6 +154,17 @@ export default function UserDashboard() {
           <p className="text-xs text-muted-foreground mt-1">Generated</p>
         </div>
       </div>
+
+      {/* Charts */}
+      {entries.length > 0 && (
+        <div className="space-y-4">
+          <UserActivityChart entries={entries} />
+          <div className="grid sm:grid-cols-2 gap-4">
+            <UserPlatformSplitChart entries={entries} />
+            <UserTopBusinesses entries={entries} />
+          </div>
+        </div>
+      )}
 
       {/* Recent Entries */}
       {entries.length > 0 && (
