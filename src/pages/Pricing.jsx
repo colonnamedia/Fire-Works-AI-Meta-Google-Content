@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Check, Zap, Facebook, Search, Layers } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { base44 } from "@/api/base44Client";
 
 const singleFeatures = [
   "Choose Meta Ads OR Google Ads",
@@ -19,117 +19,134 @@ const bothFeatures = [
   "Additional entries at $1.99 each",
 ];
 
+const handleGetStarted = () => base44.auth.redirectToLogin("/billing");
+const handleLogin = () => base44.auth.redirectToLogin("/dashboard");
+
 export default function Pricing() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-[#0D1117] text-white">
       {/* Nav */}
-      <nav className="border-b border-border bg-card/80 backdrop-blur-sm">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-bold text-lg text-foreground">
-            <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
+      <nav className="border-b border-white/10 bg-[#0D1117]/95 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2 font-bold text-base text-white hover:opacity-80 transition-opacity">
+            <div className="w-7 h-7 bg-[#E53E3E] rounded-lg flex items-center justify-center shrink-0">
               <Zap className="w-4 h-4 text-white" />
             </div>
-            Ad Strategist AI
+            Fire-Works AI
           </Link>
-          <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm" onClick={() => { document.location.href = "/dashboard"; }}>Log In</Button>
-            <Button size="sm" onClick={() => { document.location.href = "/dashboard"; }}>Get Started</Button>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button onClick={handleLogin} className="text-sm text-white/60 hover:text-white px-3 py-1.5 rounded-md hover:bg-white/5 transition-colors">Log In</button>
+            <button onClick={handleGetStarted} className="text-sm font-semibold bg-[#E53E3E] hover:bg-[#C53030] text-white px-4 py-2 rounded-lg transition-colors">Get Started</button>
           </div>
         </div>
       </nav>
 
-      <div className="max-w-5xl mx-auto px-4 py-20">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-20">
         <div className="text-center mb-14">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Simple, transparent pricing</h1>
-          <p className="text-lg text-muted-foreground">Choose the plan that fits your ad strategy needs.</p>
+          <h1 className="text-4xl sm:text-5xl font-black text-white mb-4">Simple, transparent pricing</h1>
+          <p className="text-lg text-white/40">Choose the plan that fits your ad strategy needs.</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 items-start mb-14">
+        <div className="grid md:grid-cols-2 gap-6 items-start mb-12">
           {/* Single Platform Plan */}
-          <div className="bg-card rounded-2xl border-2 border-border shadow-sm p-8 relative">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-8 relative hover:border-white/20 transition-colors">
             <div className="mb-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="flex gap-1.5">
-                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <Facebook className="w-4 h-4 text-blue-600" />
+                <div className="flex items-center gap-1.5">
+                  <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                    <Facebook className="w-4 h-4 text-blue-400" />
                   </div>
-                  <div className="text-muted-foreground flex items-center text-xs font-bold">OR</div>
-                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                    <Search className="w-4 h-4 text-green-600" />
+                  <span className="text-white/30 text-xs font-bold">OR</span>
+                  <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
+                    <Search className="w-4 h-4 text-green-400" />
                   </div>
                 </div>
               </div>
-              <h2 className="text-xl font-bold text-foreground mb-1">Single Platform Plan</h2>
-              <p className="text-sm text-muted-foreground mb-3">Meta Ads OR Google Ads — pick one at signup</p>
+              <h2 className="text-xl font-bold text-white mb-1">Single Platform Plan</h2>
+              <p className="text-sm text-white/40 mb-4">Meta Ads OR Google Ads — pick one at signup</p>
               <div className="flex items-baseline gap-1">
-                <span className="text-5xl font-bold text-foreground">$14.99</span>
-                <span className="text-muted-foreground">/month</span>
+                <span className="text-5xl font-black text-white">$14.99</span>
+                <span className="text-white/40">/month</span>
               </div>
             </div>
-
             <ul className="space-y-3 mb-8">
               {singleFeatures.map((item) => (
                 <li key={item} className="flex items-center gap-2.5 text-sm">
-                  <Check className="w-4 h-4 text-primary shrink-0" />
-                  <span className="text-foreground">{item}</span>
+                  <Check className="w-4 h-4 text-[#E53E3E] shrink-0" />
+                  <span className="text-white/70">{item}</span>
                 </li>
               ))}
             </ul>
-
-            <Button className="w-full" size="lg" variant="outline" onClick={() => { document.location.href = "/dashboard"; }}>
+            <button onClick={handleGetStarted} className="w-full border border-white/20 text-white font-semibold py-3 rounded-xl hover:border-white/40 hover:bg-white/5 transition-colors text-sm">
               Start for $14.99/month
-            </Button>
+            </button>
           </div>
 
           {/* Both Platforms Plan */}
-          <div className="bg-card rounded-2xl border-2 border-primary shadow-lg p-8 relative">
+          <div className="bg-white/5 border-2 border-[#E53E3E]/60 rounded-2xl p-8 relative shadow-2xl shadow-[#E53E3E]/10">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-              <span className="bg-primary text-white text-xs font-semibold px-3 py-1 rounded-full">Best Value</span>
+              <span className="bg-[#E53E3E] text-white text-xs font-bold px-3 py-1 rounded-full">Best Value</span>
             </div>
             <div className="mb-6">
-              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
-                <Layers className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 bg-[#E53E3E]/20 rounded-xl flex items-center justify-center mb-4">
+                <Layers className="w-5 h-5 text-[#E53E3E]" />
               </div>
-              <h2 className="text-xl font-bold text-foreground mb-1">Both Platforms Plan</h2>
-              <p className="text-sm text-muted-foreground mb-3">Meta Ads + Google Ads in every generation</p>
+              <h2 className="text-xl font-bold text-white mb-1">Both Platforms Plan</h2>
+              <p className="text-sm text-white/40 mb-4">Meta Ads + Google Ads in every generation</p>
               <div className="flex items-baseline gap-1">
-                <span className="text-5xl font-bold text-foreground">$19.99</span>
-                <span className="text-muted-foreground">/month</span>
+                <span className="text-5xl font-black text-white">$19.99</span>
+                <span className="text-white/40">/month</span>
               </div>
             </div>
-
             <ul className="space-y-3 mb-8">
               {bothFeatures.map((item) => (
                 <li key={item} className="flex items-center gap-2.5 text-sm">
-                  <Check className="w-4 h-4 text-primary shrink-0" />
-                  <span className="text-foreground">{item}</span>
+                  <Check className="w-4 h-4 text-[#E53E3E] shrink-0" />
+                  <span className="text-white/70">{item}</span>
                 </li>
               ))}
             </ul>
-
-            <Button className="w-full" size="lg" onClick={() => { document.location.href = "/dashboard"; }}>
+            <button onClick={handleGetStarted} className="w-full bg-[#E53E3E] hover:bg-[#C53030] text-white font-bold py-3 rounded-xl transition-colors text-sm">
               Start for $19.99/month
-            </Button>
+            </button>
           </div>
         </div>
 
         {/* Info row */}
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="bg-card rounded-xl border border-border p-6">
-            <h3 className="font-semibold text-foreground mb-3">How credits work</h3>
-            <p className="text-sm text-muted-foreground">Every billing month you get 5 included entries. They reset automatically. After 5, each additional entry is <strong className="text-foreground">$1.99</strong>.</p>
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+            <h3 className="font-semibold text-white mb-2">How credits work</h3>
+            <p className="text-sm text-white/40">Every billing month you get 5 included entries. They reset automatically. After 5, each additional entry is <strong className="text-white">$1.99</strong>.</p>
           </div>
-          <div className="bg-card rounded-xl border border-border p-6">
-            <h3 className="font-semibold text-foreground mb-3">What counts as one entry?</h3>
-            <p className="text-sm text-muted-foreground">One generation = one entry, regardless of platform. Selecting "Both" still counts as a single entry, not two.</p>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+            <h3 className="font-semibold text-white mb-2">What counts as one entry?</h3>
+            <p className="text-sm text-white/40">One generation = one entry, regardless of platform. Selecting "Both" still counts as a single entry, not two.</p>
           </div>
-          <div className="bg-card rounded-xl border border-border p-6">
-            <h3 className="font-semibold text-foreground mb-3">Questions?</h3>
-            <p className="text-sm text-muted-foreground mb-3">We're happy to help with any questions about the plan.</p>
-            <Link to="/support" className="text-sm text-primary hover:underline">Visit support →</Link>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+            <h3 className="font-semibold text-white mb-2">Questions?</h3>
+            <p className="text-sm text-white/40 mb-3">We're happy to help with any questions about the plan.</p>
+            <Link to="/support" className="text-sm text-[#E53E3E] hover:underline">Visit support →</Link>
           </div>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="border-t border-white/10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-sm">
+            <div className="w-5 h-5 bg-[#E53E3E] rounded flex items-center justify-center">
+              <Zap className="w-3 h-3 text-white" />
+            </div>
+            <span className="font-bold text-white">Fire-Works AI</span>
+          </div>
+          <div className="flex flex-wrap justify-center gap-6 text-sm text-white/40">
+            <Link to="/terms" className="hover:text-white transition-colors">Terms</Link>
+            <Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+            <Link to="/support" className="hover:text-white transition-colors">Support</Link>
+          </div>
+          <p className="text-xs text-white/30">© 2026 Fire-Works AI</p>
+        </div>
+      </footer>
     </div>
   );
 }

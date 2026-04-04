@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Zap, MessageCircle, Mail, Book, ChevronDown, ChevronUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Zap, Mail, Book, ChevronDown, ChevronUp } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 
 const faqs = [
   { q: "How do credits work?", a: "Each month you get 5 included ad idea entries with the Starter Plan. Once you use all 5, each additional entry is $1.99. Credits reset at the start of each new billing period." },
@@ -16,60 +16,83 @@ const faqs = [
 function FAQ({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border-b border-border py-4">
+    <div className="border-b border-white/10 py-4">
       <button className="flex items-center justify-between w-full text-left" onClick={() => setOpen(!open)}>
-        <span className="font-medium text-foreground text-sm">{q}</span>
-        {open ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+        <span className="font-medium text-white text-sm">{q}</span>
+        {open ? <ChevronUp className="w-4 h-4 text-white/40" /> : <ChevronDown className="w-4 h-4 text-white/40" />}
       </button>
-      {open && <p className="text-sm text-muted-foreground mt-3 leading-relaxed">{a}</p>}
+      {open && <p className="text-sm text-white/40 mt-3 leading-relaxed">{a}</p>}
     </div>
   );
 }
 
 export default function Support() {
   return (
-    <div className="min-h-screen bg-background">
-      <nav className="border-b border-border bg-card/80 backdrop-blur-sm">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 font-bold text-lg text-foreground">
-            <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center"><Zap className="w-4 h-4 text-white" /></div>
-            Meta Ad Strategist AI
+    <div className="min-h-screen bg-[#0D1117] text-white">
+      <nav className="border-b border-white/10 bg-[#0D1117]/95 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2 font-bold text-base text-white hover:opacity-80 transition-opacity">
+            <div className="w-7 h-7 bg-[#E53E3E] rounded-lg flex items-center justify-center shrink-0">
+              <Zap className="w-4 h-4 text-white" />
+            </div>
+            Fire-Works AI
           </Link>
-          <div className="flex gap-3">
-            <Link to="/login"><Button variant="ghost" size="sm">Log In</Button></Link>
-            <Link to="/signup"><Button size="sm">Sign Up</Button></Link>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <button onClick={() => base44.auth.redirectToLogin("/dashboard")} className="text-sm text-white/60 hover:text-white px-3 py-1.5 rounded-md hover:bg-white/5 transition-colors">Log In</button>
+            <button onClick={() => base44.auth.redirectToLogin("/billing")} className="text-sm font-semibold bg-[#E53E3E] hover:bg-[#C53030] text-white px-4 py-2 rounded-lg transition-colors">Get Started</button>
           </div>
         </div>
       </nav>
 
-      <div className="max-w-3xl mx-auto px-4 py-16">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
         <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold text-foreground mb-3">How can we help?</h1>
-          <p className="text-muted-foreground">Find answers to common questions or reach out to our team.</p>
+          <h1 className="text-3xl font-black text-white mb-3">How can we help?</h1>
+          <p className="text-white/40">Find answers to common questions or reach out to our team.</p>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-4 mb-12">
-          <div className="bg-card rounded-xl border border-border p-5 text-center">
-            <Mail className="w-8 h-8 text-primary mx-auto mb-3" />
-            <h3 className="font-semibold text-foreground mb-1">Email Support</h3>
-            <p className="text-sm text-muted-foreground mb-3">We typically respond within 24 hours.</p>
-            <a href="mailto:support@metaadstrategist.com" className="text-sm text-primary hover:underline">support@metaadstrategist.com</a>
+        <div className="grid sm:grid-cols-2 gap-4 mb-10">
+          <div className="bg-white/5 border border-white/10 rounded-xl p-5 text-center hover:border-white/20 transition-colors">
+            <div className="w-10 h-10 bg-[#E53E3E]/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <Mail className="w-5 h-5 text-[#E53E3E]" />
+            </div>
+            <h3 className="font-semibold text-white mb-1">Email Support</h3>
+            <p className="text-sm text-white/40 mb-3">We typically respond within 24 hours.</p>
+            <a href="mailto:support@fireworks.ai" className="text-sm text-[#E53E3E] hover:underline">support@fireworks.ai</a>
           </div>
-          <div className="bg-card rounded-xl border border-border p-5 text-center">
-            <Book className="w-8 h-8 text-primary mx-auto mb-3" />
-            <h3 className="font-semibold text-foreground mb-1">Documentation</h3>
-            <p className="text-sm text-muted-foreground mb-3">Browse FAQs and guides below.</p>
-            <span className="text-sm text-muted-foreground">Scroll down ↓</span>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-5 text-center hover:border-white/20 transition-colors">
+            <div className="w-10 h-10 bg-[#E53E3E]/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <Book className="w-5 h-5 text-[#E53E3E]" />
+            </div>
+            <h3 className="font-semibold text-white mb-1">Documentation</h3>
+            <p className="text-sm text-white/40 mb-3">Browse FAQs and guides below.</p>
+            <span className="text-sm text-white/30">Scroll down ↓</span>
           </div>
         </div>
 
-        <div className="bg-card rounded-xl border border-border p-6">
-          <h2 className="font-semibold text-foreground mb-2">Frequently Asked Questions</h2>
-          <div className="divide-y divide-border">
+        <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+          <h2 className="font-bold text-white mb-4">Frequently Asked Questions</h2>
+          <div>
             {faqs.map(f => <FAQ key={f.q} {...f} />)}
           </div>
         </div>
       </div>
+
+      <footer className="border-t border-white/10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-sm">
+            <div className="w-5 h-5 bg-[#E53E3E] rounded flex items-center justify-center">
+              <Zap className="w-3 h-3 text-white" />
+            </div>
+            <span className="font-bold text-white">Fire-Works AI</span>
+          </div>
+          <div className="flex flex-wrap justify-center gap-6 text-sm text-white/40">
+            <Link to="/pricing" className="hover:text-white transition-colors">Pricing</Link>
+            <Link to="/terms" className="hover:text-white transition-colors">Terms</Link>
+            <Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+          </div>
+          <p className="text-xs text-white/30">© 2026 Fire-Works AI</p>
+        </div>
+      </footer>
     </div>
   );
 }
