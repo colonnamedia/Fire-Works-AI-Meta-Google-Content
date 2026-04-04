@@ -1,5 +1,8 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
+// Re-uses the same AI logic but creates a new entry linked to the parent via GenerationVersion.
+// Body: same as generateAdIdea but with parentEntryId + optional regenerationReason + changedFields
+
 const META_SYSTEM_PROMPT = `You are an expert Meta (Facebook & Instagram) advertising strategist with 10+ years of performance marketing experience. You specialize in helping small and local businesses run practical, cost-effective ad campaigns that actually get results.
 
 YOUR CORE ROLE:
@@ -61,37 +64,31 @@ BUSINESS DETAILS:
 - Tone of Voice: ${data.toneOfVoice || 'N/A'}
 - CTA Preference: ${data.ctaPreference || 'N/A'}
 - Additional Notes: ${data.notes || 'None'}
+${data.regenerationReason ? `- Regeneration Focus: ${data.regenerationReason}` : ''}
 
 Return ONLY this JSON structure (no markdown, no extra text):
 {
   "recommendedObjective": "string",
-  "alternativeObjectives": [
-    { "objective": "string", "when": "string" },
-    { "objective": "string", "when": "string" }
-  ],
+  "alternativeObjectives": [{ "objective": "string", "when": "string" }],
   "recommendedOptimizationGoal": "string",
   "whyThisMakesSense": "string",
   "campaignSetup": "string",
   "budgetGuidance": "string",
   "adSetStrategy": "string",
   "targetingIdeas": {
-    "interests": ["string", "string", "string", "string", "string"],
-    "behaviors": ["string", "string", "string"],
-    "demographics": ["string", "string", "string"]
+    "interests": ["string"],
+    "behaviors": ["string"],
+    "demographics": ["string"]
   },
-  "audienceAngles": ["string", "string", "string", "string"],
+  "audienceAngles": ["string"],
   "placements": "string",
-  "hooks": ["string", "string", "string", "string", "string"],
-  "headlines": ["string", "string", "string", "string", "string"],
-  "primaryTextOptions": {
-    "short": "string",
-    "medium": "string",
-    "long": "string"
-  },
-  "ctaSuggestions": ["string", "string", "string", "string"],
-  "creativeIdeas": ["string", "string", "string", "string"],
-  "offerPositioningIdeas": ["string", "string", "string"],
-  "risksWarnings": ["string", "string", "string"],
+  "hooks": ["string"],
+  "headlines": ["string"],
+  "primaryTextOptions": { "short": "string", "medium": "string", "long": "string" },
+  "ctaSuggestions": ["string"],
+  "creativeIdeas": ["string"],
+  "offerPositioningIdeas": ["string"],
+  "risksWarnings": ["string"],
   "finalRecommendation": "string"
 }`;
 }
@@ -112,6 +109,7 @@ BUSINESS DETAILS:
 - Audience Description: ${data.audienceDescription || 'N/A'}
 - Tone of Voice: ${data.toneOfVoice || 'N/A'}
 - Additional Notes: ${data.notes || 'None'}
+${data.regenerationReason ? `- Regeneration Focus: ${data.regenerationReason}` : ''}
 
 Return ONLY this JSON structure (no markdown, no extra text):
 {
@@ -119,16 +117,16 @@ Return ONLY this JSON structure (no markdown, no extra text):
   "campaignGoal": "string",
   "whyThisMakesSense": "string",
   "suggestedCampaignStructure": "string",
-  "keywordIdeas": ["string", "string", "string", "string", "string", "string", "string", "string", "string", "string"],
+  "keywordIdeas": ["string"],
   "matchTypeSuggestions": "string",
   "audienceSignals": "string",
-  "searchHeadlines": ["string", "string", "string", "string", "string", "string", "string"],
-  "descriptions": ["string", "string", "string", "string"],
-  "ctaSuggestions": ["string", "string", "string", "string"],
-  "extensionsIdeas": ["string", "string", "string", "string"],
+  "searchHeadlines": ["string"],
+  "descriptions": ["string"],
+  "ctaSuggestions": ["string"],
+  "extensionsIdeas": ["string"],
   "biddingStrategy": "string",
   "budgetGuidance": "string",
-  "risksWarnings": ["string", "string", "string"],
+  "risksWarnings": ["string"],
   "finalRecommendation": "string"
 }`;
 }
@@ -140,8 +138,8 @@ async function invokeAI(base44, systemPrompt, userPrompt, apiConfig, responseSch
       headers: {
         'Authorization': `Bearer ${apiConfig.api_key}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://meta-ad-strategist.app',
-        'X-Title': 'Meta Ad Strategist AI'
+        'HTTP-Referer': 'https://fireworks-ai.app',
+        'X-Title': 'Fire-Works AI'
       },
       body: JSON.stringify({
         model: apiConfig.model_name || 'meta-llama/llama-3.1-8b-instruct:free',
@@ -156,7 +154,6 @@ async function invokeAI(base44, systemPrompt, userPrompt, apiConfig, responseSch
     const content = json.choices?.[0]?.message?.content || '';
     return JSON.parse(content);
   }
-  // Fallback to built-in LLM
   return await base44.asServiceRole.integrations.Core.InvokeLLM({
     prompt: `${systemPrompt}\n\n${userPrompt}`,
     response_json_schema: responseSchema
@@ -215,10 +212,27 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const data = await req.json();
-    const platformType = data.platformType || 'meta';
+    const { parentEntryId, regenerationReason, changedFields, ...formData } = data;
+    const platformType = formData.platformType || 'meta';
     const isAdmin = user.role === 'admin';
 
-    // --- Usage & plan check for non-admins ---
+    if (!parentEntryId) {
+      return Response.json({ error: 'parentEntryId is required' }, { status: 400 });
+    }
+
+    // Verify the parent entry belongs to this user (or admin)
+    const parentEntries = await base44.asServiceRole.entities.AdIdeaEntry.filter({ id: parentEntryId });
+    const parentEntry = parentEntries[0];
+    if (!parentEntry) return Response.json({ error: 'Parent entry not found' }, { status: 404 });
+    if (!isAdmin && parentEntry.user_id !== user.id) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    // Count existing versions to determine version number
+    const existingVersions = await base44.asServiceRole.entities.GenerationVersion.filter({ parent_entry_id: parentEntryId });
+    const nextVersion = existingVersions.length + 2; // original is v1
+
+    // --- Usage & plan check for non-admins (same as generateAdIdea) ---
     let subscription = null;
     let usageCounter = null;
     let wasOverage = false;
@@ -226,31 +240,22 @@ Deno.serve(async (req) => {
     if (!isAdmin) {
       const subs = await base44.asServiceRole.entities.Subscription.filter({ user_id: user.id });
       subscription = subs.find(s => s.status === 'active') || null;
-
       if (!subscription) {
-        return Response.json({ error: 'No active subscription. Please subscribe to generate ad ideas.' }, { status: 403 });
+        return Response.json({ error: 'No active subscription.' }, { status: 403 });
       }
 
-      // Plan type enforcement
       const planType = subscription.plan_type || 'meta';
       if (platformType === 'both' && planType !== 'both') {
-        return Response.json({ error: 'UPGRADE_REQUIRED', message: 'Your current plan only supports one platform. Upgrade to the Both Platforms plan ($8.99/month) to generate strategies for both Meta and Google.' }, { status: 403 });
-      }
-      if (platformType === 'google' && planType === 'meta') {
-        return Response.json({ error: 'PLATFORM_NOT_INCLUDED', message: 'Your current plan does not include Google Ads. Please upgrade or switch plans.' }, { status: 403 });
-      }
-      if (platformType === 'meta' && planType === 'google') {
-        return Response.json({ error: 'PLATFORM_NOT_INCLUDED', message: 'Your current plan does not include Meta Ads. Please upgrade or switch plans.' }, { status: 403 });
+        return Response.json({ error: 'UPGRADE_REQUIRED' }, { status: 403 });
       }
 
-      // Get current usage counter
       const now = new Date();
       const usages = await base44.asServiceRole.entities.UsageCounter.filter({ user_id: user.id, subscription_id: subscription.id });
       usageCounter = usages.find(u => {
         const start = new Date(u.billing_period_start);
         const end = new Date(u.billing_period_end);
         return now >= start && now <= end;
-      }) || null;
+      }) || usages[usages.length - 1] || null;
 
       if (!usageCounter) {
         usageCounter = await base44.asServiceRole.entities.UsageCounter.create({
@@ -269,50 +274,48 @@ Deno.serve(async (req) => {
       wasOverage = (usageCounter.included_entries_remaining || 0) <= 0;
     }
 
-    // --- Get API config ---
+    // --- Generate AI ---
     const apiKeyData = await base44.asServiceRole.entities.ApiSetting.filter({});
     const apiConfig = apiKeyData[0] || null;
-
-    // --- Generate AI strategy based on platform ---
     let aiResult = {};
 
     if (platformType === 'meta') {
-      const metaResult = await invokeAI(base44, META_SYSTEM_PROMPT, buildMetaPrompt(data), apiConfig, META_SCHEMA);
+      const metaResult = await invokeAI(base44, META_SYSTEM_PROMPT, buildMetaPrompt({ ...formData, regenerationReason }), apiConfig, META_SCHEMA);
       aiResult = { meta: metaResult };
     } else if (platformType === 'google') {
-      const googleResult = await invokeAI(base44, GOOGLE_SYSTEM_PROMPT, buildGooglePrompt(data), apiConfig, GOOGLE_SCHEMA);
+      const googleResult = await invokeAI(base44, GOOGLE_SYSTEM_PROMPT, buildGooglePrompt({ ...formData, regenerationReason }), apiConfig, GOOGLE_SCHEMA);
       aiResult = { google: googleResult };
-    } else if (platformType === 'both') {
-      // Generate both in parallel
+    } else {
       const [metaResult, googleResult] = await Promise.all([
-        invokeAI(base44, META_SYSTEM_PROMPT, buildMetaPrompt(data), apiConfig, META_SCHEMA),
-        invokeAI(base44, GOOGLE_SYSTEM_PROMPT, buildGooglePrompt(data), apiConfig, GOOGLE_SCHEMA)
+        invokeAI(base44, META_SYSTEM_PROMPT, buildMetaPrompt({ ...formData, regenerationReason }), apiConfig, META_SCHEMA),
+        invokeAI(base44, GOOGLE_SYSTEM_PROMPT, buildGooglePrompt({ ...formData, regenerationReason }), apiConfig, GOOGLE_SCHEMA)
       ]);
       aiResult = { meta: metaResult, google: googleResult };
     }
 
-    // --- Save entry ---
+    // --- Save new entry ---
     const entryData = {
       user_id: user.id,
       subscription_id: subscription?.id || null,
       usage_counter_id: usageCounter?.id || null,
-      title: data.title || `${data.businessName || 'Business'} - ${data.goal || 'Campaign'}`,
-      business_name: data.businessName,
-      industry: data.industry,
-      business_type: data.businessType,
-      local_or_online: data.localOrOnline,
-      offer_type: data.offerType,
-      goal: data.goal,
-      budget: data.budget,
-      landing_page_url: data.landingPageUrl,
-      lead_form_or_website: data.leadFormOrWebsite,
-      geographic_targeting: data.geographicTargeting,
-      audience_description: data.audienceDescription,
-      traffic_temperature: data.trafficTemperature,
-      creative_preference: data.creativePreference,
-      tone_of_voice: data.toneOfVoice,
-      notes: data.notes,
-      cta_preference: data.ctaPreference,
+      title: formData.title || `${formData.businessName || 'Business'} - ${formData.goal || 'Campaign'} (v${nextVersion})`,
+      business_name: formData.businessName,
+      industry: formData.industry,
+      business_type: formData.businessType,
+      local_or_online: formData.localOrOnline,
+      offer_type: formData.offerType,
+      goal: formData.goal,
+      budget: formData.budget,
+      landing_page_url: formData.landingPageUrl,
+      lead_form_or_website: formData.leadFormOrWebsite,
+      geographic_targeting: formData.geographicTargeting,
+      audience_description: formData.audienceDescription,
+      traffic_temperature: formData.trafficTemperature,
+      creative_preference: formData.creativePreference,
+      tone_of_voice: formData.toneOfVoice,
+      notes: formData.notes,
+      cta_preference: formData.ctaPreference,
+      business_profile_id: formData.businessProfileId || null,
       platform_type: platformType,
       ai_response_json: aiResult,
       recommended_objective: aiResult.meta?.recommendedObjective || aiResult.google?.recommendedCampaignType || null,
@@ -323,9 +326,21 @@ Deno.serve(async (req) => {
       status: 'generated'
     };
 
-    const entry = await base44.asServiceRole.entities.AdIdeaEntry.create(entryData);
+    const newEntry = await base44.asServiceRole.entities.AdIdeaEntry.create(entryData);
 
-    // --- Update usage counters ---
+    // --- Create version record ---
+    await base44.asServiceRole.entities.GenerationVersion.create({
+      user_id: user.id,
+      parent_entry_id: parentEntryId,
+      new_entry_id: newEntry.id,
+      version_number: nextVersion,
+      generation_type: 'regenerated',
+      regeneration_reason: regenerationReason || null,
+      changed_fields: changedFields || [],
+      platform_type: platformType
+    });
+
+    // --- Update usage ---
     if (!isAdmin && usageCounter) {
       if (wasOverage) {
         await base44.asServiceRole.entities.UsageCounter.update(usageCounter.id, {
@@ -340,7 +355,7 @@ Deno.serve(async (req) => {
           status: 'pending',
           billing_period_start: subscription.billing_period_start,
           billing_period_end: subscription.billing_period_end,
-          notes: `Overage charge for ad idea entry: ${entry.id}`
+          notes: `Overage charge for regeneration v${nextVersion}: ${newEntry.id}`
         });
       } else {
         const newUsed = (usageCounter.included_entries_used || 0) + 1;
@@ -352,26 +367,16 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Log activity
+    // --- Log activity ---
     await base44.asServiceRole.entities.ActivityLog.create({
       actor_user_id: user.id,
-      action_type: 'generation_created',
-      details: `Generated ${platformType} strategy: ${entryData.title}`,
-      metadata: { entry_id: entry.id, platform_type: platformType, was_overage: wasOverage },
+      action_type: 'regeneration_created',
+      details: `Regenerated entry v${nextVersion} from parent ${parentEntryId}`,
+      metadata: { parent_entry_id: parentEntryId, new_entry_id: newEntry.id, version_number: nextVersion, was_overage: wasOverage },
       status: 'success'
     });
 
-    if (wasOverage) {
-      await base44.asServiceRole.entities.ActivityLog.create({
-        actor_user_id: user.id,
-        action_type: 'overage_triggered',
-        details: `Overage charge $1.99 for entry ${entry.id}`,
-        metadata: { entry_id: entry.id, amount: 1.99 },
-        status: 'warning'
-      });
-    }
-
-    return Response.json({ entry, aiResult });
+    return Response.json({ entry: newEntry, version: nextVersion, aiResult });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
   }

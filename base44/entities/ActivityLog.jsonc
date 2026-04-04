@@ -1,0 +1,69 @@
+{
+  "name": "ActivityLog",
+  "type": "object",
+  "properties": {
+    "actor_user_id": {
+      "type": "string",
+      "description": "User who performed the action"
+    },
+    "target_user_id": {
+      "type": "string",
+      "description": "User the action was performed on (if different)"
+    },
+    "action_type": {
+      "type": "string",
+      "enum": [
+        "signup",
+        "login",
+        "failed_login",
+        "email_verified",
+        "password_reset_request",
+        "password_reset_complete",
+        "subscription_created",
+        "subscription_upgraded",
+        "subscription_downgraded",
+        "subscription_cancelled",
+        "generation_created",
+        "regeneration_created",
+        "overage_triggered",
+        "admin_role_changed",
+        "admin_credits_adjusted",
+        "admin_subscription_override",
+        "user_deactivated",
+        "user_activated",
+        "admin_viewed_users",
+        "favorite_added",
+        "favorite_removed",
+        "collection_created",
+        "tag_created",
+        "asset_uploaded",
+        "asset_deleted",
+        "export_pdf"
+      ]
+    },
+    "details": {
+      "type": "string",
+      "description": "Human-readable description of the event"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Structured extra data (plan type, entry id, etc.)"
+    },
+    "ip_address": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "success",
+        "failure",
+        "warning"
+      ],
+      "default": "success"
+    }
+  },
+  "required": [
+    "actor_user_id",
+    "action_type"
+  ]
+}

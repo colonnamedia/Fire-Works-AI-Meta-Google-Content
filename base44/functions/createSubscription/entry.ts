@@ -8,8 +8,9 @@ Deno.serve(async (req) => {
 
     const body = await req.json().catch(() => ({}));
     const planType = body.planType || 'meta'; // 'meta', 'google', or 'both'
-    const monthlyPrice = planType === 'both' ? 8.99 : 4.99;
-    const planName = planType === 'both' ? 'Both Platforms Plan' : 'Single Platform Plan';
+    const monthlyPrice = planType === 'both' ? 19.99 : 14.99;
+    const planNames = { meta: 'Single Platform — Meta', google: 'Single Platform — Google', both: 'Both Platforms — Unlimited' };
+    const planName = planNames[planType] || 'Single Platform Plan';
 
     // Check for existing active subscription
     const existing = await base44.asServiceRole.entities.Subscription.filter({ user_id: user.id });
@@ -66,6 +67,15 @@ Deno.serve(async (req) => {
       billing_period_start: now.toISOString(),
       billing_period_end: periodEnd.toISOString(),
       notes: `${planName} subscription created`
+    });
+
+    // Log activity
+    await base44.asServiceRole.entities.ActivityLog.create({
+      actor_user_id: user.id,
+      action_type: 'subscription_created',
+      details: `Created ${planName} at $${monthlyPrice}/month`,
+      metadata: { subscription_id: subscription.id, plan_type: planType, price: monthlyPrice },
+      status: 'success'
     });
 
     return Response.json({ subscription, message: 'Subscription created successfully' });

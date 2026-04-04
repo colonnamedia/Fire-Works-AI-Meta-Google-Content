@@ -1,0 +1,34 @@
+{
+  "name": "Collection",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "color": {
+      "type": "string",
+      "description": "Optional color hex for UI display"
+    },
+    "entry_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of AdIdeaEntry IDs in this collection"
+    },
+    "is_archived": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "user_id",
+    "name"
+  ]
+}

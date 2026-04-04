@@ -1,0 +1,27 @@
+{
+  "name": "Tag",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "color": {
+      "type": "string",
+      "default": "#6366f1"
+    },
+    "entry_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of AdIdeaEntry IDs tagged with this tag"
+    }
+  },
+  "required": [
+    "user_id",
+    "name"
+  ]
+}

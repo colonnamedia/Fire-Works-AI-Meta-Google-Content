@@ -1,0 +1,54 @@
+{
+  "name": "GenerationVersion",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "parent_entry_id": {
+      "type": "string",
+      "description": "ID of the original AdIdeaEntry this is a version of"
+    },
+    "new_entry_id": {
+      "type": "string",
+      "description": "ID of the newly generated AdIdeaEntry"
+    },
+    "version_number": {
+      "type": "number",
+      "default": 2
+    },
+    "generation_type": {
+      "type": "string",
+      "enum": [
+        "original",
+        "regenerated",
+        "refined"
+      ],
+      "default": "regenerated"
+    },
+    "regeneration_reason": {
+      "type": "string",
+      "description": "Why the user regenerated (optional)"
+    },
+    "changed_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Which input fields changed from the original"
+    },
+    "platform_type": {
+      "type": "string",
+      "enum": [
+        "meta",
+        "google",
+        "both"
+      ]
+    }
+  },
+  "required": [
+    "user_id",
+    "parent_entry_id",
+    "new_entry_id"
+  ]
+}
