@@ -41,8 +41,13 @@ const AuthenticatedApp = () => {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      navigateToLogin();
-      return null;
+      // Only block on auth-required if user is trying to access a protected route
+      const publicPaths = ['/', '/pricing', '/terms', '/privacy', '/support'];
+      const isPublicPath = publicPaths.some(p => window.location.pathname === p);
+      if (!isPublicPath) {
+        navigateToLogin();
+        return null;
+      }
     }
   }
 
