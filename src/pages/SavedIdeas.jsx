@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Search, Star, Target, Calendar, DollarSign, Filter } from "lucide-react";
+import { Search, Star, Target, Calendar, DollarSign, Filter, Trophy } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +19,7 @@ function IdeaCard({ entry }) {
           <h3 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">{entry.title}</h3>
           <p className="text-xs text-muted-foreground mt-0.5">{entry.business_name}</p>
         </div>
-        {entry.is_favorite && <Star className="w-4 h-4 text-amber-500 fill-amber-500 shrink-0 ml-2" />}
+        {entry.is_favorite && <Trophy className="w-4 h-4 text-amber-500 fill-amber-400 shrink-0 ml-2" />}
       </div>
       <div className="flex flex-wrap gap-1.5 mb-3">
         {entry.goal && <Badge variant="secondary" className="text-xs"><Target className="w-3 h-3 mr-1" />{GOAL_LABELS[entry.goal] || entry.goal}</Badge>}
@@ -57,8 +57,8 @@ export default function SavedIdeas() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Saved Ad Ideas</h1>
-          <p className="text-muted-foreground text-sm mt-1">{entries.length} total {entries.length === 1 ? 'entry' : 'entries'}</p>
+          <h1 className="text-2xl font-bold text-foreground">Ad Strategies</h1>
+          <p className="text-muted-foreground text-sm mt-1">{entries.length} total · {entries.filter(e => e.is_favorite).length} <Trophy className="w-3 h-3 text-amber-400 fill-amber-400 inline" /> Winning Ads</p>
         </div>
         <Link to="/new-idea"><Button><Target className="w-4 h-4 mr-2" />New Idea</Button></Link>
       </div>
@@ -80,7 +80,7 @@ export default function SavedIdeas() {
           </SelectContent>
         </Select>
         <Button variant={favOnly ? "default" : "outline"} size="sm" onClick={() => setFavOnly(!favOnly)}>
-          <Star className={`w-4 h-4 mr-1 ${favOnly ? "fill-white" : ""}`} />Favorites
+          <Trophy className={`w-4 h-4 mr-1 ${favOnly ? "fill-white" : ""}`} />Winning Ads
         </Button>
       </div>
 

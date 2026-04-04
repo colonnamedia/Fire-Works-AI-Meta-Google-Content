@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Star, Trash2, Download, Facebook, Search, Layers, FileText } from "lucide-react";
+import { ArrowLeft, Star, Trash2, Facebook, Search, Layers, FileText, Copy, RefreshCw, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { base44 } from "@/api/base44Client";
@@ -12,6 +12,10 @@ import ResultsStrategy from "@/components/results/ResultsStrategy";
 import ResultsCopy from "@/components/results/ResultsCopy";
 import ResultsWarnings from "@/components/results/ResultsWarnings";
 import ResultsGoogle from "@/components/results/ResultsGoogle";
+import AdScoreCard from "@/components/results/AdScoreCard";
+import CompetitorInsight from "@/components/results/CompetitorInsight";
+import OfferOptimization from "@/components/results/OfferOptimization";
+import AdConversionCheck from "@/components/results/AdConversionCheck";
 
 const platformLabels = {
   meta: { label: "Meta Ads", icon: Facebook, color: "text-blue-600 bg-blue-50 border-blue-200" },
@@ -44,6 +48,22 @@ export default function AdIdeaDetail() {
   const handleExport = () => {
     if (!entry) return;
     exportStrategyPdf(entry);
+  };
+
+  const handleCopyAll = () => {
+    if (!entry) return;
+    const ai = entry.ai_response_json || {};
+    const m = ai.meta || ai;
+    const g = ai.google;
+    const parts = [];
+    if (m?.recommendedObjective) parts.push(`OBJECTIVE: ${m.recommendedObjective}`);
+    if (m?.hooks?.length) parts.push(`HOOKS:\n${m.hooks.map((h, i) => `${i + 1}. ${h}`).join("\n")}`);
+    if (m?.headlines?.length) parts.push(`HEADLINES:\n${m.headlines.map((h, i) => `${i + 1}. ${h}`).join("\n")}`);
+    if (m?.primaryTextOptions?.short) parts.push(`PRIMARY TEXT (Short):\n${m.primaryTextOptions.short}`);
+    if (g?.searchHeadlines?.length) parts.push(`GOOGLE HEADLINES:\n${g.searchHeadlines.map((h, i) => `${i + 1}. ${h}`).join("\n")}`);
+    if (g?.descriptions?.length) parts.push(`GOOGLE DESCRIPTIONS:\n${g.descriptions.map((d, i) => `${i + 1}. ${d}`).join("\n")}`);
+    navigator.clipboard.writeText(parts.join("\n\n"));
+    toast({ title: "Copied!", description: "All copy elements copied to clipboard." });
   };
 
   if (isLoading) {
@@ -93,8 +113,11 @@ export default function AdIdeaDetail() {
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <Button variant="ghost" size="icon" onClick={() => favMutation.mutate()}>
+          <Button variant="ghost" size="icon" onClick={() => favMutation.mutate()} title={entry.is_favorite ? "Remove from Winning Ads" : "Add to Winning Ads"}>
             <Star className={`w-4 h-4 ${entry.is_favorite ? "fill-amber-400 text-amber-400" : "text-muted-foreground"}`} />
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleCopyAll} className="gap-1.5">
+            <Copy className="w-4 h-4" /> Copy All
           </Button>
           <Button variant="outline" size="sm" onClick={handleExport} className="gap-1.5">
             <FileText className="w-4 h-4" /> Export PDF
@@ -123,14 +146,24 @@ export default function AdIdeaDetail() {
         </div>
       )}
 
+      {/* Score Card */}
+      <AdScoreCard ai={ai} platformType={platformType} />
+
       {/* Results */}
       {!isBoth && platformType === 'google' ? (
-        <ResultsGoogle ai={googleData} />
+        <>
+          <ResultsGoogle ai={googleData} />
+          <CompetitorInsight ai={googleData} />
+          <OfferOptimization ai={googleData} />
+        </>
       ) : !isBoth ? (
         <>
           <ResultsObjective ai={metaData} />
           <ResultsStrategy ai={metaData} />
           <ResultsCopy ai={metaData} />
+          <CompetitorInsight ai={metaData} />
+          <OfferOptimization ai={metaData} />
+          {entry.landing_page_url && <AdConversionCheck ai={metaData} />}
           <ResultsWarnings ai={metaData} />
         </>
       ) : activeTab === "meta" ? (
@@ -138,10 +171,17 @@ export default function AdIdeaDetail() {
           <ResultsObjective ai={metaData} />
           <ResultsStrategy ai={metaData} />
           <ResultsCopy ai={metaData} />
+          <CompetitorInsight ai={metaData} />
+          <OfferOptimization ai={metaData} />
+          {entry.landing_page_url && <AdConversionCheck ai={metaData} />}
           <ResultsWarnings ai={metaData} />
         </>
       ) : (
-        <ResultsGoogle ai={googleData} />
+        <>
+          <ResultsGoogle ai={googleData} />
+          <CompetitorInsight ai={googleData} />
+          <OfferOptimization ai={googleData} />
+        </>
       )}
     </div>
   );

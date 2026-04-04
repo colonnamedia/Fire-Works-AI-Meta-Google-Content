@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Zap, ChevronRight, ChevronLeft, AlertCircle, Lock } from "lucide-react";
+import { Zap, ChevronRight, ChevronLeft, AlertCircle, Lock, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { base44 } from "@/api/base44Client";
 import { useToast } from "@/components/ui/use-toast";
+import UpgradeModal from "@/components/results/UpgradeModal";
 import FormStepBusiness from "@/components/adplan/FormStepBusiness";
 import FormStepStrategy from "@/components/adplan/FormStepStrategy";
 import FormStepAudience from "@/components/adplan/FormStepAudience";
@@ -27,8 +28,14 @@ export default function NewAdIdea() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState(INITIAL_FORM);
+  const [form, setForm] = useState(() => {
+    try {
+      const saved = localStorage.getItem("lastAdIdeaForm");
+      return saved ? { ...INITIAL_FORM, ...JSON.parse(saved) } : INITIAL_FORM;
+    } catch { return INITIAL_FORM; }
+  });
   const [loading, setLoading] = useState(false);
+  const [upgradeModal, setUpgradeModal] = useState(null);
 
   const { data: status } = useQuery({
     queryKey: ["userStatus"],
@@ -54,7 +61,14 @@ export default function NewAdIdea() {
     setLoading(true);
     try {
       const entryTitle = form.title || `${form.businessName} - ${form.goal}`;
+      // Save last inputs for quick generate
+      localStorage.setItem("lastAdIdeaForm", JSON.stringify(form));
       const res = await base44.functions.invoke("generateAdIdea", { ...form, title: entryTitle });
+      if (res.data?.error === 'UPGRADE_REQUIRED') {
+        setUpgradeModal('both_platforms');
+        setLoading(false);
+        return;
+      }
       if (res.data?.error) throw new Error(res.data.error || res.data.message);
       
       queryClient.invalidateQueries({ queryKey: ["userStatus"] });
@@ -76,6 +90,8 @@ export default function NewAdIdea() {
     <FormStepCreative form={form} update={update} />,
   ];
 
+  const hasLastInputs = !!localStorage.getItem("lastAdIdeaForm");
+
   if (!canGenerate && status !== undefined) {
     return (
       <div className="max-w-lg mx-auto text-center py-20">
@@ -91,10 +107,25 @@ export default function NewAdIdea() {
 
   return (
     <div className="max-w-2xl mx-auto">
+      {upgradeModal && <UpgradeModal reason={upgradeModal} onClose={() => setUpgradeModal(null)} />}
+
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground">New Ad Idea</h1>
-        <p className="text-muted-foreground text-sm mt-1">Fill in your details to generate an AI-powered ad strategy.</p>
+      <div className="flex items-start justify-between mb-6 gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">New Ad Idea</h1>
+          <p className="text-muted-foreground text-sm mt-1">Fill in your details to generate an AI-powered ad strategy.</p>
+        </div>
+        {hasLastInputs && (
+          <Button variant="outline" size="sm" className="shrink-0 gap-2" onClick={() => {
+            try {
+              const saved = localStorage.getItem("lastAdIdeaForm");
+              if (saved) setForm({ ...INITIAL_FORM, ...JSON.parse(saved) });
+              setStep(4); // jump to final step
+            } catch {}
+          }}>
+            <RefreshCw className="w-3.5 h-3.5" /> Quick Generate
+          </Button>
+        )}
       </div>
 
       {/* Overage Warning */}

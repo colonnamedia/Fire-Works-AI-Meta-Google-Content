@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
   LayoutDashboard, PlusCircle, FolderOpen, CreditCard, Settings,
-  Shield, Menu, X, Zap, LogOut, User, TrendingUp, Image
+  Shield, Menu, X, Zap, LogOut, User, TrendingUp, Image, Wrench
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +12,8 @@ import { base44 } from "@/api/base44Client";
 const userNavItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { label: "New Ad Idea", path: "/new-idea", icon: PlusCircle },
-  { label: "Saved Ideas", path: "/saved-ideas", icon: FolderOpen },
+  { label: "Ad Strategies", path: "/saved-ideas", icon: FolderOpen },
+  { label: "Fix My Ad", path: "/fix-my-ad", icon: Wrench },
   { label: "Ad Assets", path: "/assets", icon: Image },
   { label: "Billing", path: "/billing", icon: CreditCard },
   { label: "Settings", path: "/settings", icon: Settings },
@@ -21,7 +22,8 @@ const userNavItems = [
 const adminNavItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { label: "New Ad Idea", path: "/new-idea", icon: PlusCircle },
-  { label: "Saved Ideas", path: "/saved-ideas", icon: FolderOpen },
+  { label: "Ad Strategies", path: "/saved-ideas", icon: FolderOpen },
+  { label: "Fix My Ad", path: "/fix-my-ad", icon: Wrench },
   { label: "Ad Assets", path: "/assets", icon: Image },
   { label: "Admin", path: "/admin", icon: Shield },
   { label: "Admin Users", path: "/admin/users", icon: TrendingUp },

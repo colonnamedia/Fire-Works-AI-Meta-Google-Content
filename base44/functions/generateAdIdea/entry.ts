@@ -91,6 +91,22 @@ Return ONLY this JSON structure (no markdown, no extra text):
   "ctaSuggestions": ["string", "string", "string", "string"],
   "creativeIdeas": ["string", "string", "string", "string"],
   "offerPositioningIdeas": ["string", "string", "string"],
+  "competitorInsight": {
+    "whatCompetitorsDo": "string",
+    "commonMessaging": "string",
+    "howToStandOut": "string"
+  },
+  "offerOptimization": {
+    "offerStrength": "Strong or Weak",
+    "whyItWorksOrDoesnt": "string",
+    "improvedOffers": ["string", "string", "string"]
+  },
+  "adConversionCheck": {
+    "messageMatch": { "verdict": "yes/no/partial", "suggestion": "string" },
+    "offerClarity": { "verdict": "yes/no/partial", "suggestion": "string" },
+    "strongCTA": { "verdict": "yes/no/partial", "suggestion": "string" },
+    "wouldConvert": { "verdict": "yes/no/partial", "suggestion": "string" }
+  },
   "risksWarnings": ["string", "string", "string"],
   "finalRecommendation": "string"
 }`;
@@ -131,6 +147,25 @@ Return ONLY this JSON structure (no markdown, no extra text):
   "risksWarnings": ["string", "string", "string"],
   "finalRecommendation": "string"
 }`;
+}
+
+function buildGooglePromptExtended(data) {
+  return buildGooglePrompt(data).replace(
+    '"finalRecommendation": "string"\n}',
+    `"competitorInsight": {
+    "whatCompetitorsDo": "string describing what competitors typically do in this industry on Google Ads",
+    "commonMessaging": "string describing common ad messaging patterns",
+    "howToStandOut": "string with specific advice on how to differentiate on Google Ads"
+  },
+  "offerOptimization": {
+    "offerStrength": "Strong or Weak",
+    "whyItWorksOrDoesnt": "string",
+    "improvedOffers": ["string", "string", "string"]
+  },
+  "risksWarnings": ["string", "string", "string"],
+  "finalRecommendation": "string"
+}`
+  );
 }
 
 async function invokeAI(base44, systemPrompt, userPrompt, apiConfig, responseSchema) {
@@ -182,6 +217,9 @@ const META_SCHEMA = {
     ctaSuggestions: { type: 'array', items: { type: 'string' } },
     creativeIdeas: { type: 'array', items: { type: 'string' } },
     offerPositioningIdeas: { type: 'array', items: { type: 'string' } },
+    competitorInsight: { type: 'object', properties: { whatCompetitorsDo: { type: 'string' }, commonMessaging: { type: 'string' }, howToStandOut: { type: 'string' } } },
+    offerOptimization: { type: 'object', properties: { offerStrength: { type: 'string' }, whyItWorksOrDoesnt: { type: 'string' }, improvedOffers: { type: 'array', items: { type: 'string' } } } },
+    adConversionCheck: { type: 'object' },
     risksWarnings: { type: 'array', items: { type: 'string' } },
     finalRecommendation: { type: 'string' }
   }
@@ -286,7 +324,7 @@ Deno.serve(async (req) => {
       // Generate both in parallel
       const [metaResult, googleResult] = await Promise.all([
         invokeAI(base44, META_SYSTEM_PROMPT, buildMetaPrompt(data), apiConfig, META_SCHEMA),
-        invokeAI(base44, GOOGLE_SYSTEM_PROMPT, buildGooglePrompt(data), apiConfig, GOOGLE_SCHEMA)
+        invokeAI(base44, GOOGLE_SYSTEM_PROMPT, buildGooglePromptExtended(data), apiConfig, GOOGLE_SCHEMA)
       ]);
       aiResult = { meta: metaResult, google: googleResult };
     }
