@@ -64,7 +64,7 @@ export default function AppLayout() {
           <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
             <Zap className="w-4 h-4 text-white" />
           </div>
-          <span className="text-sm">Meta Ad Strategist</span>
+          <span className="text-sm">Fire-Works AI</span>
         </Link>
       </div>
 
@@ -120,7 +120,7 @@ export default function AppLayout() {
           </button>
           <div className="flex items-center gap-2 font-bold text-sm">
             <Zap className="w-4 h-4 text-primary" />
-            Meta Ad Strategist
+            Fire-Works AI
           </div>
           <div className="w-5" />
         </header>
