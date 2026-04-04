@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Zap, ChevronRight, ChevronLeft, Loader2, Facebook, Search, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,21 @@ export default function GetStarted() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Load saved form data on mount
+  useEffect(() => {
+    const loadSavedForm = async () => {
+      try {
+        const user = await base44.auth.me();
+        if (user?.saved_form_data) {
+          setForm(prev => ({ ...prev, ...user.saved_form_data }));
+        }
+      } catch (err) {
+        // User not logged in or no saved data—just use initial form
+      }
+    };
+    loadSavedForm();
+  }, []);
+
   const update = (k, v) => setForm(p => ({ ...p, [k]: v }));
 
   const canAdvance = () => {
@@ -48,6 +63,12 @@ export default function GetStarted() {
     setLoading(true);
     setError("");
     try {
+      // Save form to user profile
+      await base44.auth.updateMe({ 
+        saved_form_data: form,
+        saved_form_timestamp: new Date().toISOString()
+      });
+      
       const res = await base44.functions.invoke("generateFreeSample", form);
       if (res.data?.error) throw new Error(res.data.error);
       navigate(`/free-sample/${res.data.leadId}`, { state: { freeSample: res.data.freeSample, form } });
