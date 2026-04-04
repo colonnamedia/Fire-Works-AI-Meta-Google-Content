@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import GoogleAdsSettings from "@/components/admin/GoogleAdsSettings";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -114,6 +115,11 @@ export default function AdminDashboard() {
       </div>
 
       <TopUsersChart users={users} />
+
+      {/* Google Ads API Settings */}
+      <div className="bg-card rounded-xl border border-border p-6">
+        <GoogleAdsSettings />
+      </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* User Table */}
