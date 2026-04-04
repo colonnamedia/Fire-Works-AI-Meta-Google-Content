@@ -60,23 +60,41 @@ export default function NewAdIdea() {
     }
     setLoading(true);
     try {
-      const entryTitle = form.title || `${form.businessName} - ${form.goal}`;
-      // Save last inputs for quick generate
-      localStorage.setItem("lastAdIdeaForm", JSON.stringify(form));
-      const res = await base44.functions.invoke("generateAdIdea", { ...form, title: entryTitle });
-      if (res.data?.error === 'UPGRADE_REQUIRED') {
-        setUpgradeModal('both_platforms');
-        setLoading(false);
-        return;
-      }
-      if (res.data?.error) throw new Error(res.data.error || res.data.message);
+      // 1. Save as AdRequest first
+      const adRequest = await base44.entities.AdRequest.create({
+        user_id: (await base44.auth.me()).id,
+        business_name: form.businessName,
+        website_url: form.landingPageUrl,
+        business_type: form.businessType,
+        industry: form.industry,
+        offer_type: form.offerType,
+        goal: form.goal,
+        budget: form.budget,
+        local_or_online: form.localOrOnline,
+        landing_page_url: form.landingPageUrl,
+        lead_form_or_website: form.leadFormOrWebsite,
+        geographic_targeting: form.geographicTargeting,
+        audience_description: form.audienceDescription,
+        traffic_temperature: form.trafficTemperature,
+        creative_preference: form.creativePreference,
+        tone_of_voice: form.toneOfVoice,
+        cta_preference: form.ctaPreference,
+        notes: form.notes,
+        platform_type: form.platformType,
+        generated_status: 'pending'
+      });
+
+      // 2. Check entitlement
+      const access = await base44.functions.invoke("checkAdGenerationAccess", {}).then(r => r.data);
       
-      queryClient.invalidateQueries({ queryKey: ["userStatus"] });
-      queryClient.invalidateQueries({ queryKey: ["adIdeaEntries"] });
-      toast({ title: "Strategy generated!", description: "Your ad idea has been saved." });
-      navigate(`/idea/${res.data.entry.id}`);
+      // 3. Route based on entitlement
+      if (access.hasAccess) {
+        navigate(`/results/${adRequest.id}`);
+      } else {
+        navigate(`/results-preview/${adRequest.id}`);
+      }
     } catch (err) {
-      toast({ title: "Generation failed", description: err.message, variant: "destructive" });
+      toast({ title: "Error", description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }

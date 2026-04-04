@@ -27,6 +27,8 @@ import FixMyAd from '@/pages/FixMyAd';
 import GetStarted from '@/pages/GetStarted';
 import FreeSample from '@/pages/FreeSample';
 import AdCreator from '@/pages/AdCreator';
+import AdResults from '@/pages/AdResults';
+import AdResultsPreview from '@/pages/AdResultsPreview';
 
 import AppLayout from '@/components/layout/AppLayout';
 
@@ -72,6 +74,8 @@ const AuthenticatedApp = () => {
         <Route path="/new-idea" element={<NewAdIdea />} />
         <Route path="/saved-ideas" element={<SavedIdeas />} />
         <Route path="/idea/:id" element={<AdIdeaDetail />} />
+        <Route path="/results/:id" element={<AdResults />} />
+        <Route path="/results-preview/:id" element={<AdResultsPreview />} />
         <Route path="/assets" element={<AdAssets />} />
         <Route path="/fix-my-ad" element={<FixMyAd />} />
         <Route path="/ad-creator" element={<AdCreator />} />

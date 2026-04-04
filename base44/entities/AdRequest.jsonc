@@ -1,0 +1,89 @@
+{
+  "name": "AdRequest",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string",
+      "description": "User who submitted the form"
+    },
+    "business_name": {
+      "type": "string"
+    },
+    "website_url": {
+      "type": "string"
+    },
+    "business_type": {
+      "type": "string"
+    },
+    "industry": {
+      "type": "string"
+    },
+    "offer_type": {
+      "type": "string"
+    },
+    "goal": {
+      "type": "string"
+    },
+    "budget": {
+      "type": "string"
+    },
+    "local_or_online": {
+      "type": "string",
+      "enum": [
+        "local",
+        "online",
+        "both"
+      ]
+    },
+    "landing_page_url": {
+      "type": "string"
+    },
+    "lead_form_or_website": {
+      "type": "string"
+    },
+    "geographic_targeting": {
+      "type": "string"
+    },
+    "audience_description": {
+      "type": "string"
+    },
+    "traffic_temperature": {
+      "type": "string"
+    },
+    "creative_preference": {
+      "type": "string"
+    },
+    "tone_of_voice": {
+      "type": "string"
+    },
+    "cta_preference": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "platform_type": {
+      "type": "string",
+      "enum": [
+        "meta",
+        "google",
+        "both"
+      ]
+    },
+    "generated_status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "preview_ready",
+        "full_ready",
+        "failed"
+      ],
+      "default": "pending"
+    }
+  },
+  "required": [
+    "user_id",
+    "business_name",
+    "goal"
+  ]
+}

@@ -93,7 +93,7 @@ export default function Landing() {
               onClick={handleGetStarted}
               className="text-sm font-semibold bg-[#E53E3E] hover:bg-[#C53030] text-white px-4 py-2 rounded-lg transition-colors"
             >
-              Build My Ads
+              Start Generating
             </button>
           </div>
         </div>
@@ -122,11 +122,11 @@ export default function Landing() {
                 onClick={handleGetStarted}
                 className="inline-flex items-center justify-center gap-2 bg-[#E53E3E] hover:bg-[#C53030] text-white font-bold px-6 py-3 rounded-xl transition-colors text-sm"
               >
-                Start Generating Ad Ideas <ArrowRight className="w-4 h-4" />
+                Generate My Ads <ArrowRight className="w-4 h-4" />
               </button>
               <Link to="/pricing">
                 <button className="inline-flex items-center justify-center gap-2 text-white/60 hover:text-white font-semibold px-6 py-3 rounded-xl border border-white/10 hover:border-white/20 transition-colors text-sm w-full sm:w-auto">
-                  Unlimited $19.99/month — See Pricing
+                  See Example Results
                 </button>
               </Link>
             </motion.div>
