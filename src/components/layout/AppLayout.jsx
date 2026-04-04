@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
   LayoutDashboard, PlusCircle, FolderOpen, CreditCard, Settings,
-  Shield, Menu, X, Zap, LogOut, User, TrendingUp
+  Shield, Menu, X, Zap, LogOut, User, TrendingUp, Image
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,7 @@ const userNavItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { label: "New Ad Idea", path: "/new-idea", icon: PlusCircle },
   { label: "Saved Ideas", path: "/saved-ideas", icon: FolderOpen },
+  { label: "Ad Assets", path: "/assets", icon: Image },
   { label: "Billing", path: "/billing", icon: CreditCard },
   { label: "Settings", path: "/settings", icon: Settings },
 ];
@@ -21,6 +22,7 @@ const adminNavItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { label: "New Ad Idea", path: "/new-idea", icon: PlusCircle },
   { label: "Saved Ideas", path: "/saved-ideas", icon: FolderOpen },
+  { label: "Ad Assets", path: "/assets", icon: Image },
   { label: "Admin", path: "/admin", icon: Shield },
   { label: "Admin Users", path: "/admin/users", icon: TrendingUp },
   { label: "Settings", path: "/settings", icon: Settings },

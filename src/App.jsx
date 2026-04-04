@@ -22,6 +22,7 @@ import BillingPage from '@/pages/BillingPage';
 import AccountSettings from '@/pages/AccountSettings';
 import AdminDashboard from '@/pages/AdminDashboard';
 import AdminUsers from '@/pages/AdminUsers';
+import AdAssets from '@/pages/AdAssets';
 
 import AppLayout from '@/components/layout/AppLayout';
 
@@ -60,6 +61,7 @@ const AuthenticatedApp = () => {
         <Route path="/new-idea" element={<NewAdIdea />} />
         <Route path="/saved-ideas" element={<SavedIdeas />} />
         <Route path="/idea/:id" element={<AdIdeaDetail />} />
+        <Route path="/assets" element={<AdAssets />} />
         <Route path="/billing" element={<BillingPage />} />
         <Route path="/settings" element={<AccountSettings />} />
         <Route path="/admin" element={<AdminDashboard />} />

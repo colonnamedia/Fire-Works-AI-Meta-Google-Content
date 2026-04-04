@@ -1,0 +1,49 @@
+{
+  "name": "AdAsset",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "Public URL of the uploaded file"
+    },
+    "file_name": {
+      "type": "string"
+    },
+    "file_type": {
+      "type": "string",
+      "enum": [
+        "image",
+        "video",
+        "other"
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "User-defined tags"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "platform": {
+      "type": "string",
+      "enum": [
+        "meta",
+        "google",
+        "both",
+        "general"
+      ],
+      "default": "general"
+    }
+  },
+  "required": [
+    "user_id",
+    "file_url",
+    "file_name"
+  ]
+}

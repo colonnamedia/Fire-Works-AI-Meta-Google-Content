@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Star, Trash2, Download, Facebook, Search, Layers } from "lucide-react";
+import { ArrowLeft, Star, Trash2, Download, Facebook, Search, Layers, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { base44 } from "@/api/base44Client";
 import { useToast } from "@/components/ui/use-toast";
+import { exportStrategyPdf } from "@/utils/exportPdf";
 import ResultsObjective from "@/components/results/ResultsObjective";
 import ResultsStrategy from "@/components/results/ResultsStrategy";
 import ResultsCopy from "@/components/results/ResultsCopy";
@@ -41,27 +42,8 @@ export default function AdIdeaDetail() {
   });
 
   const handleExport = () => {
-    const ai = entry?.ai_response_json;
-    if (!ai) return;
-    const lines = [`AD STRATEGY: ${entry.title}`, `Business: ${entry.business_name} | Goal: ${entry.goal}`, ``];
-    if (ai.meta) {
-      const m = ai.meta;
-      lines.push(`=== META ADS ===`, `OBJECTIVE: ${m.recommendedObjective}`, `WHY: ${m.whyThisMakesSense}`, `HOOKS:\n${(m.hooks || []).join('\n')}`, `HEADLINES:\n${(m.headlines || []).join('\n')}`, ``);
-    }
-    if (ai.google) {
-      const g = ai.google;
-      lines.push(`=== GOOGLE ADS ===`, `CAMPAIGN TYPE: ${g.recommendedCampaignType}`, `KEYWORDS:\n${(g.keywordIdeas || []).join(', ')}`, `HEADLINES:\n${(g.searchHeadlines || []).join('\n')}`, ``);
-    }
-    // Legacy single-platform format
-    if (!ai.meta && !ai.google) {
-      lines.push(`OBJECTIVE: ${ai.recommendedObjective}`, `WHY: ${ai.whyThisMakesSense}`, `HOOKS:\n${(ai.hooks || []).join('\n')}`, `FINAL: ${ai.finalRecommendation}`);
-    }
-    const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${entry.title?.replace(/\s+/g, '-')}-strategy.txt`;
-    a.click();
+    if (!entry) return;
+    exportStrategyPdf(entry);
   };
 
   if (isLoading) {
@@ -114,8 +96,8 @@ export default function AdIdeaDetail() {
           <Button variant="ghost" size="icon" onClick={() => favMutation.mutate()}>
             <Star className={`w-4 h-4 ${entry.is_favorite ? "fill-amber-400 text-amber-400" : "text-muted-foreground"}`} />
           </Button>
-          <Button variant="ghost" size="icon" onClick={handleExport}>
-            <Download className="w-4 h-4" />
+          <Button variant="outline" size="sm" onClick={handleExport} className="gap-1.5">
+            <FileText className="w-4 h-4" /> Export PDF
           </Button>
           <Button variant="ghost" size="icon" className="text-destructive" onClick={() => deleteMutation.mutate()}>
             <Trash2 className="w-4 h-4" />
