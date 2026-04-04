@@ -3,6 +3,15 @@ import { Link } from "react-router-dom";
 import { Zap, Check, Target, FileText, BarChart2, ArrowRight, Star, ChevronRight, Shield, Clock, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { base44 } from "@/api/base44Client";
+
+const handleGetStarted = () => {
+  base44.auth.redirectToLogin("/billing");
+};
+
+const handleLogin = () => {
+  base44.auth.redirectToLogin("/dashboard");
+};
 
 const fadeUp = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
 const stagger = { show: { transition: { staggerChildren: 0.1 } } };
@@ -76,8 +85,8 @@ export default function Landing() {
           </Link>
           <div className="flex items-center gap-1 sm:gap-2">
             <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground hidden sm:block px-3 py-1.5 rounded-md hover:bg-secondary transition-colors">Pricing</Link>
-            <Button variant="ghost" size="sm" onClick={() => { document.location.href="/dashboard"; }}>Log In</Button>
-            <Button size="sm" className="hidden sm:inline-flex" onClick={() => { document.location.href="/dashboard"; }}>
+            <Button variant="ghost" size="sm" onClick={handleLogin}>Log In</Button>
+            <Button size="sm" className="hidden sm:inline-flex" onClick={handleGetStarted}>
               Get Started <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
             </Button>
           </div>
@@ -103,11 +112,9 @@ export default function Landing() {
               Get AI-powered campaign objective recommendations, hooks, headlines, copy ideas, and full ad setup direction — tailored to your business, offer, and goals.
             </motion.p>
             <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
-              <Link to="/dashboard">
-                <Button size="lg" className="w-full sm:w-auto text-base px-8 h-12 shadow-lg shadow-primary/20">
-                  Start Generating Ad Ideas <ArrowRight className="w-4 h-4 ml-1" />
-                </Button>
-              </Link>
+              <Button size="lg" className="w-full sm:w-auto text-base px-8 h-12 shadow-lg shadow-primary/20" onClick={handleGetStarted}>
+                Start Generating Ad Ideas <ArrowRight className="w-4 h-4 ml-1" />
+              </Button>
               <Link to="/pricing">
                 <Button size="lg" variant="outline" className="w-full sm:w-auto text-base px-8 h-12">
                   See Pricing
@@ -315,11 +322,9 @@ export default function Landing() {
               </li>
             ))}
           </ul>
-          <Link to="/dashboard">
-            <Button size="lg" className="w-full sm:w-auto px-10 h-12 text-base shadow-lg shadow-primary/20">
-              Start Generating Ad Ideas <ArrowRight className="w-4 h-4 ml-1" />
-            </Button>
-          </Link>
+          <Button size="lg" className="w-full sm:w-auto px-10 h-12 text-base shadow-lg shadow-primary/20" onClick={handleGetStarted}>
+            Start Generating Ad Ideas <ArrowRight className="w-4 h-4 ml-1" />
+          </Button>
           <p className="text-xs text-muted-foreground mt-4">No commitment. Cancel anytime from your account settings.</p>
         </div>
       </section>
@@ -332,11 +337,9 @@ export default function Landing() {
             Stop guessing which campaign to run. Get a full AI-generated strategy tailored to your business in under a minute.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link to="/dashboard">
-              <Button size="lg" variant="secondary" className="w-full sm:w-auto text-base px-8 h-12 font-semibold">
-                Create My First Ad Strategy <ArrowRight className="w-4 h-4 ml-1" />
-              </Button>
-            </Link>
+            <Button size="lg" variant="secondary" className="w-full sm:w-auto text-base px-8 h-12 font-semibold" onClick={handleGetStarted}>
+              Create My First Ad Strategy <ArrowRight className="w-4 h-4 ml-1" />
+            </Button>
             <Link to="/pricing">
               <Button size="lg" variant="outline" className="w-full sm:w-auto text-base px-8 h-12 border-white/30 text-white hover:bg-white/10 hover:text-white">
                 See Pricing
