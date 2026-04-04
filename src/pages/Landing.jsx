@@ -68,12 +68,12 @@ export default function Landing() {
       {/* Nav */}
       <nav className="border-b border-border bg-card/90 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 font-bold text-base text-foreground">
+          <Link to="/" className="flex items-center gap-2 font-bold text-base text-foreground hover:opacity-80 transition-opacity">
             <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center shrink-0">
               <Zap className="w-4 h-4 text-white" />
             </div>
             Meta Ad Strategist AI
-          </div>
+          </Link>
           <div className="flex items-center gap-1 sm:gap-2">
             <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground hidden sm:block px-3 py-1.5 rounded-md hover:bg-secondary transition-colors">Pricing</Link>
             <Button variant="ghost" size="sm" onClick={() => { document.location.href="/dashboard"; }}>Log In</Button>
