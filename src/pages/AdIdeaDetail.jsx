@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Star, Trash2, Download } from "lucide-react";
+import { ArrowLeft, Star, Trash2, Download, Facebook, Search, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { base44 } from "@/api/base44Client";
@@ -10,12 +10,20 @@ import ResultsObjective from "@/components/results/ResultsObjective";
 import ResultsStrategy from "@/components/results/ResultsStrategy";
 import ResultsCopy from "@/components/results/ResultsCopy";
 import ResultsWarnings from "@/components/results/ResultsWarnings";
+import ResultsGoogle from "@/components/results/ResultsGoogle";
+
+const platformLabels = {
+  meta: { label: "Meta Ads", icon: Facebook, color: "text-blue-600 bg-blue-50 border-blue-200" },
+  google: { label: "Google Ads", icon: Search, color: "text-green-600 bg-green-50 border-green-200" },
+  both: { label: "Meta + Google", icon: Layers, color: "text-primary bg-primary/5 border-primary/20" },
+};
 
 export default function AdIdeaDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState("meta");
 
   const { data: entry, isLoading } = useQuery({
     queryKey: ["adIdeaEntry", id],
@@ -35,26 +43,20 @@ export default function AdIdeaDetail() {
   const handleExport = () => {
     const ai = entry?.ai_response_json;
     if (!ai) return;
-    const text = [
-      `AD STRATEGY: ${entry.title}`,
-      `Business: ${entry.business_name} | Goal: ${entry.goal} | Budget: ${entry.budget}`,
-      ``,
-      `OBJECTIVE: ${ai.recommendedObjective}`,
-      `OPTIMIZATION: ${ai.recommendedOptimizationGoal}`,
-      `WHY: ${ai.whyThisMakesSense}`,
-      ``,
-      `CAMPAIGN SETUP: ${ai.campaignSetup}`,
-      `AD SET STRATEGY: ${ai.adSetStrategy}`,
-      `PLACEMENTS: ${ai.placements}`,
-      `AUDIENCE: ${ai.audienceDirection}`,
-      ``,
-      `HOOKS:\n${(ai.hooks || []).map((h, i) => `${i + 1}. ${h}`).join('\n')}`,
-      `HEADLINES:\n${(ai.headlines || []).map((h, i) => `${i + 1}. ${h}`).join('\n')}`,
-      `PRIMARY TEXT:\n${(ai.primaryTextOptions || []).map((t, i) => `${i + 1}. ${t}`).join('\n\n')}`,
-      ``,
-      `FINAL RECOMMENDATION: ${ai.finalRecommendation}`,
-    ].join('\n');
-    const blob = new Blob([text], { type: 'text/plain' });
+    const lines = [`AD STRATEGY: ${entry.title}`, `Business: ${entry.business_name} | Goal: ${entry.goal}`, ``];
+    if (ai.meta) {
+      const m = ai.meta;
+      lines.push(`=== META ADS ===`, `OBJECTIVE: ${m.recommendedObjective}`, `WHY: ${m.whyThisMakesSense}`, `HOOKS:\n${(m.hooks || []).join('\n')}`, `HEADLINES:\n${(m.headlines || []).join('\n')}`, ``);
+    }
+    if (ai.google) {
+      const g = ai.google;
+      lines.push(`=== GOOGLE ADS ===`, `CAMPAIGN TYPE: ${g.recommendedCampaignType}`, `KEYWORDS:\n${(g.keywordIdeas || []).join(', ')}`, `HEADLINES:\n${(g.searchHeadlines || []).join('\n')}`, ``);
+    }
+    // Legacy single-platform format
+    if (!ai.meta && !ai.google) {
+      lines.push(`OBJECTIVE: ${ai.recommendedObjective}`, `WHY: ${ai.whyThisMakesSense}`, `HOOKS:\n${(ai.hooks || []).join('\n')}`, `FINAL: ${ai.finalRecommendation}`);
+    }
+    const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -75,7 +77,17 @@ export default function AdIdeaDetail() {
     );
   }
 
-  const ai = entry.ai_response_json;
+  const ai = entry.ai_response_json || {};
+  const platformType = entry.platform_type || 'meta';
+  const hasMeta = !!(ai.meta || (!ai.google && ai.recommendedObjective));
+  const hasGoogle = !!(ai.google || (!ai.meta && ai.recommendedCampaignType));
+  const isBoth = platformType === 'both' || (hasMeta && hasGoogle);
+  const platformInfo = platformLabels[platformType] || platformLabels.meta;
+  const PlatformIcon = platformInfo.icon;
+
+  // Normalize legacy single-platform entries
+  const metaData = ai.meta || (hasMeta && !ai.google ? ai : null);
+  const googleData = ai.google || (hasGoogle && !ai.meta ? ai : null);
 
   return (
     <div className="max-w-4xl mx-auto space-y-5">
@@ -87,8 +99,12 @@ export default function AdIdeaDetail() {
           </Button>
           <div className="min-w-0">
             <h1 className="text-xl font-bold text-foreground truncate">{entry.title}</h1>
-            <div className="flex items-center gap-2 mt-0.5">
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
               <span className="text-sm text-muted-foreground">{entry.business_name}</span>
+              <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border ${platformInfo.color}`}>
+                <PlatformIcon className="w-3 h-3" />
+                {platformInfo.label}
+              </span>
               {entry.was_overage_charge && <Badge variant="secondary" className="text-xs text-amber-600">Overage $1.99</Badge>}
               {entry.was_included_credit && <Badge variant="secondary" className="text-xs text-green-600">Included Credit</Badge>}
             </div>
@@ -107,17 +123,43 @@ export default function AdIdeaDetail() {
         </div>
       </div>
 
-      {ai ? (
+      {/* Platform Tabs (only for 'both') */}
+      {isBoth && (
+        <div className="flex gap-2 border-b border-border pb-0">
+          <button
+            onClick={() => setActiveTab("meta")}
+            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px ${activeTab === "meta" ? "border-blue-500 text-blue-600" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+          >
+            <Facebook className="w-4 h-4" /> Meta Ads
+          </button>
+          <button
+            onClick={() => setActiveTab("google")}
+            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors -mb-px ${activeTab === "google" ? "border-green-500 text-green-600" : "border-transparent text-muted-foreground hover:text-foreground"}`}
+          >
+            <Search className="w-4 h-4" /> Google Ads
+          </button>
+        </div>
+      )}
+
+      {/* Results */}
+      {!isBoth && platformType === 'google' ? (
+        <ResultsGoogle ai={googleData} />
+      ) : !isBoth ? (
         <>
-          <ResultsObjective ai={ai} />
-          <ResultsStrategy ai={ai} />
-          <ResultsCopy ai={ai} />
-          <ResultsWarnings ai={ai} />
+          <ResultsObjective ai={metaData} />
+          <ResultsStrategy ai={metaData} />
+          <ResultsCopy ai={metaData} />
+          <ResultsWarnings ai={metaData} />
+        </>
+      ) : activeTab === "meta" ? (
+        <>
+          <ResultsObjective ai={metaData} />
+          <ResultsStrategy ai={metaData} />
+          <ResultsCopy ai={metaData} />
+          <ResultsWarnings ai={metaData} />
         </>
       ) : (
-        <div className="text-center py-12 bg-card rounded-xl border border-border">
-          <p className="text-muted-foreground">No AI strategy found for this entry.</p>
-        </div>
+        <ResultsGoogle ai={googleData} />
       )}
     </div>
   );

@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { CreditCard, CheckCircle, AlertCircle, RefreshCw, Zap, Calendar, TrendingUp } from "lucide-react";
+import { CreditCard, AlertCircle, RefreshCw, Zap, Calendar, TrendingUp, Facebook, Search, Layers, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { base44 } from "@/api/base44Client";
 import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
+
+const PLANS = [
+  { type: "meta", name: "Single Platform — Meta", price: 4.99, icon: Facebook, iconColor: "text-blue-600", desc: "Facebook & Instagram Ads only" },
+  { type: "google", name: "Single Platform — Google", price: 4.99, icon: Search, iconColor: "text-green-600", desc: "Google Search, Display & YouTube only" },
+  { type: "both", name: "Both Platforms", price: 8.99, icon: Layers, iconColor: "text-primary", desc: "Meta + Google Ads in every generation" },
+];
 
 export default function BillingPage() {
   const { toast } = useToast();
@@ -22,13 +28,18 @@ export default function BillingPage() {
     queryFn: () => base44.entities.BillingEvent.list("-created_date", 20),
   });
 
-  const handleSubscribe = async () => {
+  const [selectedPlanType, setSelectedPlanType] = useState("meta");
+
+  const handleSubscribe = async (planType) => {
     setSubscribing(true);
     try {
-      const res = await base44.functions.invoke("createSubscription", {});
+      const pt = planType || selectedPlanType;
+      const res = await base44.functions.invoke("createSubscription", { planType: pt });
       if (res.data?.subscription) {
-        toast({ title: "Subscribed!", description: "Welcome to Starter Plan. You have 5 credits to use this month." });
+        const plan = PLANS.find(p => p.type === pt);
+        toast({ title: "Subscribed!", description: `Welcome to the ${plan?.name}. You have 5 credits to use this month.` });
         queryClient.invalidateQueries({ queryKey: ["userStatus"] });
+        queryClient.invalidateQueries({ queryKey: ["billingEvents"] });
       }
     } catch (err) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
@@ -81,9 +92,11 @@ export default function BillingPage() {
               <div>
                 <h2 className="font-semibold text-foreground flex items-center gap-2">
                   <CreditCard className="w-4 h-4 text-primary" />
-                  {sub ? "Starter Plan" : "No Active Plan"}
+                  {sub ? (sub.plan_name || "Active Plan") : "No Active Plan"}
                 </h2>
-                <p className="text-sm text-muted-foreground mt-0.5">$4.99/month · 5 included entries</p>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  {sub ? `$${sub.monthly_price?.toFixed(2) || "4.99"}/month · 5 included entries` : "Choose a plan to get started"}
+                </p>
               </div>
               {sub && (
                 <Badge className={statusColors[sub.status] || "bg-gray-100 text-gray-600"}>
@@ -93,25 +106,51 @@ export default function BillingPage() {
             </div>
 
             {sub ? (
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="text-muted-foreground">Billing Period</p>
-                  <p className="font-medium text-foreground">
-                    {sub.billing_period_start ? format(new Date(sub.billing_period_start), "MMM d") : "—"} – {sub.billing_period_end ? format(new Date(sub.billing_period_end), "MMM d, yyyy") : "—"}
-                  </p>
+              <>
+                <div className="grid grid-cols-2 gap-4 text-sm mb-4">
+                  <div>
+                    <p className="text-muted-foreground">Billing Period</p>
+                    <p className="font-medium text-foreground">
+                      {sub.billing_period_start ? format(new Date(sub.billing_period_start), "MMM d") : "—"} – {sub.billing_period_end ? format(new Date(sub.billing_period_end), "MMM d, yyyy") : "—"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Platform Access</p>
+                    <p className="font-medium text-foreground capitalize">{sub.plan_type === 'both' ? 'Meta + Google' : sub.plan_type === 'google' ? 'Google Ads' : 'Meta Ads'}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-muted-foreground">Next Reset</p>
-                  <p className="font-medium text-foreground">
-                    {sub.billing_period_end ? format(new Date(sub.billing_period_end), "MMM d, yyyy") : "—"}
-                  </p>
-                </div>
-              </div>
+                {sub.plan_type !== 'both' && (
+                  <Button size="sm" variant="outline" className="gap-2" onClick={() => handleSubscribe('both')} disabled={subscribing}>
+                    <ArrowUp className="w-3.5 h-3.5" /> Upgrade to Both Platforms — $8.99/month
+                  </Button>
+                )}
+              </>
             ) : (
-              <div>
-                <p className="text-sm text-muted-foreground mb-4">Subscribe to start generating AI ad strategies.</p>
-                <Button onClick={handleSubscribe} disabled={subscribing}>
-                  {subscribing ? <><RefreshCw className="w-4 h-4 mr-2 animate-spin" />Processing...</> : "Subscribe — $4.99/month"}
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground">Select a plan to start generating AI ad strategies.</p>
+                <div className="grid gap-3">
+                  {PLANS.map(plan => {
+                    const Icon = plan.icon;
+                    return (
+                      <button
+                        key={plan.type}
+                        onClick={() => setSelectedPlanType(plan.type)}
+                        className={`text-left p-4 rounded-xl border-2 transition-all ${selectedPlanType === plan.type ? "border-primary bg-primary/5" : "border-border hover:border-primary/40"}`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Icon className={`w-4 h-4 ${plan.iconColor}`} />
+                            <span className="font-medium text-sm text-foreground">{plan.name}</span>
+                          </div>
+                          <span className="font-bold text-foreground">${plan.price}/mo</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5 ml-6">{plan.desc}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+                <Button onClick={() => handleSubscribe()} disabled={subscribing} className="w-full sm:w-auto">
+                  {subscribing ? <><RefreshCw className="w-4 h-4 mr-2 animate-spin" />Processing...</> : `Subscribe — $${PLANS.find(p => p.type === selectedPlanType)?.price}/month`}
                 </Button>
               </div>
             )}
@@ -166,8 +205,12 @@ export default function BillingPage() {
             <h2 className="font-semibold text-foreground mb-3">Plan Details</h2>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Monthly base price</span>
-                <span className="font-medium">$4.99</span>
+                <span className="text-muted-foreground">Single Platform (Meta or Google)</span>
+                <span className="font-medium">$4.99/month</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Both Platforms (Meta + Google)</span>
+                <span className="font-medium">$8.99/month</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Included entries per month</span>

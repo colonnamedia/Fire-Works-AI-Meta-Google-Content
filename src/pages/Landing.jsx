@@ -115,7 +115,7 @@ export default function Landing() {
               </Link>
             </motion.div>
             <motion.p variants={fadeUp} className="text-xs text-muted-foreground">
-              $4.99/month · 5 included ad strategies per month · $1.99 per additional · Cancel anytime
+              From $4.99/month · Meta or Google Ads · Both Platforms $8.99/month · 5 entries included · Cancel anytime
             </motion.p>
           </motion.div>
         </div>

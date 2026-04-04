@@ -9,10 +9,12 @@ import FormStepBusiness from "@/components/adplan/FormStepBusiness";
 import FormStepStrategy from "@/components/adplan/FormStepStrategy";
 import FormStepAudience from "@/components/adplan/FormStepAudience";
 import FormStepCreative from "@/components/adplan/FormStepCreative";
+import PlatformSelector from "@/components/adplan/PlatformSelector";
 
-const STEPS = ["Business", "Strategy", "Audience", "Creative"];
+const STEPS = ["Platform", "Business", "Strategy", "Audience", "Creative"];
 
 const INITIAL_FORM = {
+  platformType: "meta",
   title: "", businessName: "", industry: "", businessType: "",
   localOrOnline: "local", offerType: "", goal: "leads", budget: "",
   landingPageUrl: "", leadFormOrWebsite: "lead_form",
@@ -37,17 +39,23 @@ export default function NewAdIdea() {
 
   const canGenerate = status?.isAdmin || status?.canGenerate;
   const isOverage = !status?.isAdmin && (status?.includedRemaining || 0) <= 0;
+  const planType = status?.planType || 'meta';
+  const needsUpgrade = !status?.isAdmin && form.platformType === 'both' && planType !== 'both';
 
   const handleGenerate = async () => {
     if (!form.businessName || !form.goal) {
       toast({ title: "Missing fields", description: "Please fill in business name and goal.", variant: "destructive" });
       return;
     }
+    if (needsUpgrade) {
+      navigate("/billing");
+      return;
+    }
     setLoading(true);
     try {
       const entryTitle = form.title || `${form.businessName} - ${form.goal}`;
       const res = await base44.functions.invoke("generateAdIdea", { ...form, title: entryTitle });
-      if (res.data?.error) throw new Error(res.data.error);
+      if (res.data?.error) throw new Error(res.data.error || res.data.message);
       
       queryClient.invalidateQueries({ queryKey: ["userStatus"] });
       queryClient.invalidateQueries({ queryKey: ["adIdeaEntries"] });
@@ -61,6 +69,7 @@ export default function NewAdIdea() {
   };
 
   const stepComponents = [
+    <div className="space-y-4"><PlatformSelector value={form.platformType} onChange={(v) => update("platformType", v)} /></div>,
     <FormStepBusiness form={form} update={update} />,
     <FormStepStrategy form={form} update={update} />,
     <FormStepAudience form={form} update={update} />,
@@ -85,7 +94,7 @@ export default function NewAdIdea() {
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-foreground">New Ad Idea</h1>
-        <p className="text-muted-foreground text-sm mt-1">Fill in your business details to generate a Meta Ads strategy.</p>
+        <p className="text-muted-foreground text-sm mt-1">Fill in your details to generate an AI-powered ad strategy.</p>
       </div>
 
       {/* Overage Warning */}
@@ -96,6 +105,18 @@ export default function NewAdIdea() {
             <p className="text-sm font-semibold text-amber-800">No included credits remaining</p>
             <p className="text-sm text-amber-700">This entry will be charged at $1.99 (overage rate).</p>
           </div>
+        </div>
+      )}
+
+      {/* Upgrade Warning */}
+      {needsUpgrade && (
+        <div className="flex items-center gap-3 p-4 bg-primary/5 border border-primary/20 rounded-xl mb-5">
+          <AlertCircle className="w-5 h-5 text-primary shrink-0" />
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-foreground">Upgrade required for Both Platforms</p>
+            <p className="text-sm text-muted-foreground">The Both Platforms plan is $8.99/month and generates Meta + Google strategies in one go.</p>
+          </div>
+          <Button size="sm" onClick={() => navigate("/billing")}>Upgrade</Button>
         </div>
       )}
 
@@ -137,6 +158,8 @@ export default function NewAdIdea() {
           <Button onClick={handleGenerate} disabled={loading}>
             {loading ? (
               <><Zap className="w-4 h-4 mr-2 animate-pulse" />Generating...</>
+            ) : needsUpgrade ? (
+              <>Upgrade to Generate Both</>
             ) : (
               <><Zap className="w-4 h-4 mr-2" />Generate Strategy{isOverage ? " ($1.99)" : ""}</>
             )}

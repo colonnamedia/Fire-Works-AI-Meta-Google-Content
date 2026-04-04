@@ -98,6 +98,16 @@
     "cta_preference": {
       "type": "string"
     },
+    "platform_type": {
+      "type": "string",
+      "enum": [
+        "meta",
+        "google",
+        "both"
+      ],
+      "default": "meta",
+      "description": "Which ad platform(s) this strategy targets"
+    },
     "ai_response_json": {
       "type": "object"
     },

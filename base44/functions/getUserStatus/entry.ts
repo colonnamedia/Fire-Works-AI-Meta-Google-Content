@@ -12,6 +12,7 @@ Deno.serve(async (req) => {
         subscription: null,
         usage: null,
         canGenerate: true,
+        planType: 'both',
         includedRemaining: 999,
         includedUsed: 0,
         overageUsed: 0,
@@ -19,15 +20,12 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Get subscription
     const subs = await base44.asServiceRole.entities.Subscription.filter({ user_id: user.id });
     const sub = subs.find(s => s.status === 'active') || subs[0] || null;
 
-    // Get usage counter for current period
     let usage = null;
     if (sub) {
       const usages = await base44.asServiceRole.entities.UsageCounter.filter({ user_id: user.id, subscription_id: sub.id });
-      // Find counter for current billing period
       const now = new Date();
       usage = usages.find(u => {
         const start = new Date(u.billing_period_start);
@@ -37,6 +35,7 @@ Deno.serve(async (req) => {
     }
 
     const canGenerate = sub?.status === 'active';
+    const planType = sub?.plan_type || 'meta';
     const includedRemaining = usage?.included_entries_remaining ?? 5;
     const includedUsed = usage?.included_entries_used ?? 0;
     const overageUsed = usage?.overage_entries_used ?? 0;
@@ -47,6 +46,7 @@ Deno.serve(async (req) => {
       subscription: sub,
       usage,
       canGenerate,
+      planType,
       includedRemaining,
       includedUsed,
       overageUsed,

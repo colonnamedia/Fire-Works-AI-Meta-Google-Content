@@ -1,7 +1,7 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Zap, Target, Star, TrendingUp, ArrowRight, AlertCircle, Lock } from "lucide-react";
+import { Zap, Target, Star, TrendingUp, ArrowRight, AlertCircle, Lock, Facebook, Search, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { base44 } from "@/api/base44Client";
@@ -55,9 +55,24 @@ export default function UserDashboard() {
             <h2 className="font-semibold text-foreground">Subscribe to Get Started</h2>
           </div>
           <p className="text-sm text-muted-foreground mb-4">
-            The Starter Plan is $4.99/month and includes 5 ad idea entries. Additional entries are $1.99 each.
+            Single Platform (Meta or Google) is $4.99/month. Both Platforms is $8.99/month. Each plan includes 5 entries/month.
           </p>
-          <Link to="/billing"><Button>Subscribe — $4.99/month</Button></Link>
+          <Link to="/billing"><Button>View Plans</Button></Link>
+        </div>
+      )}
+
+      {/* Plan Info Banner */}
+      {!isAdmin && status?.subscription && (
+        <div className="bg-secondary/50 border border-border rounded-xl p-4 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            {status.planType === 'both' ? <Layers className="w-4 h-4 text-primary" /> : status.planType === 'google' ? <Search className="w-4 h-4 text-green-600" /> : <Facebook className="w-4 h-4 text-blue-600" />}
+            <span className="text-sm font-medium text-foreground">
+              {status.planType === 'both' ? 'Both Platforms Plan — Meta + Google' : status.planType === 'google' ? 'Google Ads Plan' : 'Meta Ads Plan'}
+            </span>
+          </div>
+          {status.planType !== 'both' && (
+            <Link to="/billing" className="text-xs text-primary hover:underline">Upgrade to Both →</Link>
+          )}
         </div>
       )}
 

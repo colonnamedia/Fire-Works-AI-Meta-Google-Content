@@ -1,47 +1,48 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.23';
 
-const SYSTEM_PROMPT = `You are an expert Meta (Facebook & Instagram) advertising strategist with 10+ years of performance marketing experience. You specialize in helping small and local businesses run practical, cost-effective ad campaigns that actually get results.
+const META_SYSTEM_PROMPT = `You are an expert Meta (Facebook & Instagram) advertising strategist with 10+ years of performance marketing experience. You specialize in helping small and local businesses run practical, cost-effective ad campaigns that actually get results.
 
 YOUR CORE ROLE:
-Analyze the business details and recommend the BEST campaign objective — not just echo back what the user guessed. Think critically. If they chose "traffic" but they're a local service business wanting phone calls, tell them leads or messaging is smarter and explain why.
+Analyze the business details and recommend the BEST campaign objective — not just echo back what the user guessed. Think critically.
 
 OBJECTIVE SELECTION RULES (apply these strictly):
 - Local service businesses wanting inquiries/calls/bookings → LEADS or MESSAGES (not traffic)
-- Businesses with a strong website AND proper conversion tracking (pixel + conversions API) → SALES/CONVERSIONS
-- Brand new businesses or those needing visibility without a clear conversion action → AWARENESS or REACH
-- Ecommerce with a product catalog and purchase tracking → SALES (catalog or conversion)
-- Webinar, event, or free trial signups → LEADS (lead form usually beats cold website traffic)
+- Businesses with a strong website AND proper conversion tracking → SALES/CONVERSIONS
+- Brand new businesses needing visibility → AWARENESS or REACH
+- Ecommerce with a product catalog and purchase tracking → SALES
+- Webinar, event, or free trial signups → LEADS
 - App downloads → APP INSTALLS
-- Engagement-focused content (existing audience, community) → ENGAGEMENT
 
 BUDGET RULES:
-- Under $500/month: recommend ONE campaign, ONE ad set, 2–3 ads max. Simplicity wins.
-- $500–$1500/month: can support 2 ad sets (e.g., cold audience + retargeting), still keep it lean
-- Over $1500/month: can suggest A/B testing, broader audience layering, funnel stages
-- NEVER recommend complex structures for small budgets — it splits budget and hurts performance
+- Under $500/month: recommend ONE campaign, ONE ad set, 2–3 ads max
+- $500–$1500/month: can support 2 ad sets
+- Over $1500/month: can suggest A/B testing, broader audience layering
 
-WHEN THE USER'S GOAL SEEMS WRONG:
-- If they say "awareness" but they're a local plumber wanting leads → call it out. Recommend LEADS and explain why awareness won't get them calls.
-- If they say "traffic" but have no way to track what happens after the click → warn them. Suggest LEADS or MESSAGES instead.
-- If they say "sales" but have no pixel or website conversion tracking → flag this as a risk, suggest LEADS as a safer alternative.
-
-LOCAL BUSINESS RULES:
-- Avoid over-segmenting audiences (no stacked layered interests unless budget supports it)
-- Favor broad targeting + strong creative over narrow interest targeting
-- Geographic targeting should be tight — city radius or specific zip codes
-- Lead forms usually outperform websites for local businesses unless the site is very strong
-
-COPY RULES:
-- Hooks must be scroll-stopping and specific — not generic. Use the business name, location, or specific offer when possible.
-- Headlines should be benefit-driven and concise (under 40 chars ideally)
-- Primary text should open with the pain point or desired result, not with "We are..."
-- CTAs should match the destination (Lead form → "Get a Free Quote", Message → "Send Us a Message", Website → "Learn More" or "Shop Now")
-
-Always be specific, direct, and actionable. Avoid generic advice. Think like a practitioner, not a textbook.
+Always be specific, direct, and actionable. Avoid generic advice.
 Always output valid JSON only, no markdown, no extra text.`;
 
-function buildPrompt(data) {
-  return `Analyze this business and generate a complete, expert Meta Ads strategy. Apply your objective selection rules critically — do not just echo the user's stated goal. If a different objective would perform better, recommend it and explain why.
+const GOOGLE_SYSTEM_PROMPT = `You are an expert Google Ads strategist with 10+ years of experience running Search, Display, YouTube, and Performance Max campaigns for small and local businesses.
+
+YOUR CORE ROLE:
+Analyze the business details and recommend the BEST Google Ads campaign type and structure. Be specific, practical, and immediately actionable.
+
+CAMPAIGN TYPE RULES:
+- Local service businesses → Search campaigns with location targeting
+- Ecommerce with products → Shopping or Performance Max
+- Brand awareness for a wider audience → Display or YouTube
+- High-intent lead gen → Search with lead form extensions
+- App downloads → App campaigns
+
+KEYWORD RULES:
+- Always recommend a mix of match types
+- Include branded, generic, and long-tail keywords
+- Be specific to the business/industry
+- 10-20 keyword ideas minimum
+
+Always output valid JSON only, no markdown, no extra text.`;
+
+function buildMetaPrompt(data) {
+  return `Analyze this business and generate a complete, expert Meta Ads strategy.
 
 BUSINESS DETAILS:
 - Business Name: ${data.businessName || 'N/A'}
@@ -49,8 +50,8 @@ BUSINESS DETAILS:
 - Business Type: ${data.businessType || 'N/A'}
 - Local or Online: ${data.localOrOnline || 'N/A'}
 - Offer/Product: ${data.offerType || 'N/A'}
-- User's Stated Goal: ${data.goal || 'N/A'} (evaluate if this is actually the best objective)
-- Monthly Budget: ${data.budget || 'N/A'} (tailor campaign complexity to this budget)
+- User's Stated Goal: ${data.goal || 'N/A'}
+- Monthly Budget: ${data.budget || 'N/A'}
 - Landing Page: ${data.landingPageUrl || 'N/A'}
 - Conversion Destination: ${data.leadFormOrWebsite || 'N/A'}
 - Geographic Targeting: ${data.geographicTargeting || 'N/A'}
@@ -61,23 +62,18 @@ BUSINESS DETAILS:
 - CTA Preference: ${data.ctaPreference || 'N/A'}
 - Additional Notes: ${data.notes || 'None'}
 
-OUTPUT REQUIREMENTS:
-- Extract deep insight from these inputs. Do not ask for more — generate more from what's provided.
-- Every field must be specific to this business. No generic filler.
-- Keep suggestions concise but immediately usable.
-
 Return ONLY this JSON structure (no markdown, no extra text):
 {
-  "recommendedObjective": "string — the single best Meta campaign objective for this business",
+  "recommendedObjective": "string",
   "alternativeObjectives": [
-    { "objective": "string", "when": "string — one sentence on when to use this instead" },
+    { "objective": "string", "when": "string" },
     { "objective": "string", "when": "string" }
   ],
   "recommendedOptimizationGoal": "string",
-  "whyThisMakesSense": "string — 2-3 sentences explaining the logic clearly",
-  "campaignSetup": "string — campaign type, structure simplicity, and any key setup notes",
-  "budgetGuidance": "string — how to allocate this specific budget, what structure it supports",
-  "adSetStrategy": "string — audience type, targeting approach, location radius if local, age range, gender if relevant, platform/device notes",
+  "whyThisMakesSense": "string",
+  "campaignSetup": "string",
+  "budgetGuidance": "string",
+  "adSetStrategy": "string",
   "targetingIdeas": {
     "interests": ["string", "string", "string", "string", "string"],
     "behaviors": ["string", "string", "string"],
@@ -88,17 +84,129 @@ Return ONLY this JSON structure (no markdown, no extra text):
   "hooks": ["string", "string", "string", "string", "string"],
   "headlines": ["string", "string", "string", "string", "string"],
   "primaryTextOptions": {
-    "short": "string — 1-2 punchy sentences, ad-ready",
-    "medium": "string — 3-5 sentences, balanced hook + benefit + CTA",
-    "long": "string — 6-10 sentences, story or explanation style, full ad copy"
+    "short": "string",
+    "medium": "string",
+    "long": "string"
   },
   "ctaSuggestions": ["string", "string", "string", "string"],
   "creativeIdeas": ["string", "string", "string", "string"],
   "offerPositioningIdeas": ["string", "string", "string"],
   "risksWarnings": ["string", "string", "string"],
-  "finalRecommendation": "string — 2-3 sentences, direct and actionable"
+  "finalRecommendation": "string"
 }`;
 }
+
+function buildGooglePrompt(data) {
+  return `Analyze this business and generate a complete, expert Google Ads strategy.
+
+BUSINESS DETAILS:
+- Business Name: ${data.businessName || 'N/A'}
+- Industry: ${data.industry || 'N/A'}
+- Business Type: ${data.businessType || 'N/A'}
+- Local or Online: ${data.localOrOnline || 'N/A'}
+- Offer/Product: ${data.offerType || 'N/A'}
+- Goal: ${data.goal || 'N/A'}
+- Monthly Budget: ${data.budget || 'N/A'}
+- Landing Page: ${data.landingPageUrl || 'N/A'}
+- Geographic Targeting: ${data.geographicTargeting || 'N/A'}
+- Audience Description: ${data.audienceDescription || 'N/A'}
+- Tone of Voice: ${data.toneOfVoice || 'N/A'}
+- Additional Notes: ${data.notes || 'None'}
+
+Return ONLY this JSON structure (no markdown, no extra text):
+{
+  "recommendedCampaignType": "string",
+  "campaignGoal": "string",
+  "whyThisMakesSense": "string",
+  "suggestedCampaignStructure": "string",
+  "keywordIdeas": ["string", "string", "string", "string", "string", "string", "string", "string", "string", "string"],
+  "matchTypeSuggestions": "string",
+  "audienceSignals": "string",
+  "searchHeadlines": ["string", "string", "string", "string", "string", "string", "string"],
+  "descriptions": ["string", "string", "string", "string"],
+  "ctaSuggestions": ["string", "string", "string", "string"],
+  "extensionsIdeas": ["string", "string", "string", "string"],
+  "biddingStrategy": "string",
+  "budgetGuidance": "string",
+  "risksWarnings": ["string", "string", "string"],
+  "finalRecommendation": "string"
+}`;
+}
+
+async function invokeAI(base44, systemPrompt, userPrompt, apiConfig, responseSchema) {
+  if (apiConfig?.api_key && apiConfig?.provider_name === 'openrouter') {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiConfig.api_key}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://meta-ad-strategist.app',
+        'X-Title': 'Meta Ad Strategist AI'
+      },
+      body: JSON.stringify({
+        model: apiConfig.model_name || 'meta-llama/llama-3.1-8b-instruct:free',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt }
+        ],
+        temperature: 0.7
+      })
+    });
+    const json = await response.json();
+    const content = json.choices?.[0]?.message?.content || '';
+    return JSON.parse(content);
+  }
+  // Fallback to built-in LLM
+  return await base44.asServiceRole.integrations.Core.InvokeLLM({
+    prompt: `${systemPrompt}\n\n${userPrompt}`,
+    response_json_schema: responseSchema
+  });
+}
+
+const META_SCHEMA = {
+  type: 'object',
+  properties: {
+    recommendedObjective: { type: 'string' },
+    alternativeObjectives: { type: 'array', items: { type: 'object', properties: { objective: { type: 'string' }, when: { type: 'string' } } } },
+    recommendedOptimizationGoal: { type: 'string' },
+    whyThisMakesSense: { type: 'string' },
+    campaignSetup: { type: 'string' },
+    budgetGuidance: { type: 'string' },
+    adSetStrategy: { type: 'string' },
+    targetingIdeas: { type: 'object', properties: { interests: { type: 'array', items: { type: 'string' } }, behaviors: { type: 'array', items: { type: 'string' } }, demographics: { type: 'array', items: { type: 'string' } } } },
+    audienceAngles: { type: 'array', items: { type: 'string' } },
+    placements: { type: 'string' },
+    hooks: { type: 'array', items: { type: 'string' } },
+    headlines: { type: 'array', items: { type: 'string' } },
+    primaryTextOptions: { type: 'object', properties: { short: { type: 'string' }, medium: { type: 'string' }, long: { type: 'string' } } },
+    ctaSuggestions: { type: 'array', items: { type: 'string' } },
+    creativeIdeas: { type: 'array', items: { type: 'string' } },
+    offerPositioningIdeas: { type: 'array', items: { type: 'string' } },
+    risksWarnings: { type: 'array', items: { type: 'string' } },
+    finalRecommendation: { type: 'string' }
+  }
+};
+
+const GOOGLE_SCHEMA = {
+  type: 'object',
+  properties: {
+    recommendedCampaignType: { type: 'string' },
+    campaignGoal: { type: 'string' },
+    whyThisMakesSense: { type: 'string' },
+    suggestedCampaignStructure: { type: 'string' },
+    keywordIdeas: { type: 'array', items: { type: 'string' } },
+    matchTypeSuggestions: { type: 'string' },
+    audienceSignals: { type: 'string' },
+    searchHeadlines: { type: 'array', items: { type: 'string' } },
+    descriptions: { type: 'array', items: { type: 'string' } },
+    ctaSuggestions: { type: 'array', items: { type: 'string' } },
+    extensionsIdeas: { type: 'array', items: { type: 'string' } },
+    biddingStrategy: { type: 'string' },
+    budgetGuidance: { type: 'string' },
+    risksWarnings: { type: 'array', items: { type: 'string' } },
+    finalRecommendation: { type: 'string' }
+  }
+};
 
 Deno.serve(async (req) => {
   try {
@@ -107,9 +215,10 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const data = await req.json();
+    const platformType = data.platformType || 'meta';
     const isAdmin = user.role === 'admin';
 
-    // --- Usage check for non-admins ---
+    // --- Usage & plan check for non-admins ---
     let subscription = null;
     let usageCounter = null;
     let wasOverage = false;
@@ -122,6 +231,18 @@ Deno.serve(async (req) => {
         return Response.json({ error: 'No active subscription. Please subscribe to generate ad ideas.' }, { status: 403 });
       }
 
+      // Plan type enforcement
+      const planType = subscription.plan_type || 'meta';
+      if (platformType === 'both' && planType !== 'both') {
+        return Response.json({ error: 'UPGRADE_REQUIRED', message: 'Your current plan only supports one platform. Upgrade to the Both Platforms plan ($8.99/month) to generate strategies for both Meta and Google.' }, { status: 403 });
+      }
+      if (platformType === 'google' && planType === 'meta') {
+        return Response.json({ error: 'PLATFORM_NOT_INCLUDED', message: 'Your current plan does not include Google Ads. Please upgrade or switch plans.' }, { status: 403 });
+      }
+      if (platformType === 'meta' && planType === 'google') {
+        return Response.json({ error: 'PLATFORM_NOT_INCLUDED', message: 'Your current plan does not include Meta Ads. Please upgrade or switch plans.' }, { status: 403 });
+      }
+
       // Get current usage counter
       const now = new Date();
       const usages = await base44.asServiceRole.entities.UsageCounter.filter({ user_id: user.id, subscription_id: subscription.id });
@@ -132,7 +253,6 @@ Deno.serve(async (req) => {
       }) || null;
 
       if (!usageCounter) {
-        // Create a usage counter for this period
         usageCounter = await base44.asServiceRole.entities.UsageCounter.create({
           user_id: user.id,
           subscription_id: subscription.id,
@@ -149,91 +269,26 @@ Deno.serve(async (req) => {
       wasOverage = (usageCounter.included_entries_remaining || 0) <= 0;
     }
 
-    // --- Generate AI strategy ---
-    const prompt = buildPrompt(data);
-    let aiResult;
+    // --- Get API config ---
+    const apiKeyData = await base44.asServiceRole.entities.ApiSetting.filter({});
+    const apiConfig = apiKeyData[0] || null;
 
-    try {
-      // Try OpenRouter free model first
-      const apiKeyData = await base44.asServiceRole.entities.ApiSetting.filter({});
-      const apiConfig = apiKeyData[0];
+    // --- Generate AI strategy based on platform ---
+    let aiResult = {};
 
-      if (apiConfig?.api_key && apiConfig?.provider_name === 'openrouter') {
-        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${apiConfig.api_key}`,
-            'Content-Type': 'application/json',
-            'HTTP-Referer': 'https://meta-ad-strategist.app',
-            'X-Title': 'Meta Ad Strategist AI'
-          },
-          body: JSON.stringify({
-            model: apiConfig.model_name || 'meta-llama/llama-3.1-8b-instruct:free',
-            messages: [
-              { role: 'system', content: SYSTEM_PROMPT },
-              { role: 'user', content: prompt }
-            ],
-            temperature: 0.7
-          })
-        });
-        const json = await response.json();
-        const content = json.choices?.[0]?.message?.content || '';
-        aiResult = JSON.parse(content);
-      } else {
-        throw new Error('No external API key, using built-in');
-      }
-    } catch {
-      // Fallback to built-in LLM
-      console.log('[INFO] Using built-in LLM');
-      aiResult = await base44.asServiceRole.integrations.Core.InvokeLLM({
-        prompt: `${SYSTEM_PROMPT}\n\n${prompt}`,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            recommendedObjective: { type: 'string' },
-            alternativeObjectives: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  objective: { type: 'string' },
-                  when: { type: 'string' }
-                }
-              }
-            },
-            recommendedOptimizationGoal: { type: 'string' },
-            whyThisMakesSense: { type: 'string' },
-            campaignSetup: { type: 'string' },
-            budgetGuidance: { type: 'string' },
-            adSetStrategy: { type: 'string' },
-            targetingIdeas: {
-              type: 'object',
-              properties: {
-                interests: { type: 'array', items: { type: 'string' } },
-                behaviors: { type: 'array', items: { type: 'string' } },
-                demographics: { type: 'array', items: { type: 'string' } }
-              }
-            },
-            audienceAngles: { type: 'array', items: { type: 'string' } },
-            placements: { type: 'string' },
-            hooks: { type: 'array', items: { type: 'string' } },
-            headlines: { type: 'array', items: { type: 'string' } },
-            primaryTextOptions: {
-              type: 'object',
-              properties: {
-                short: { type: 'string' },
-                medium: { type: 'string' },
-                long: { type: 'string' }
-              }
-            },
-            ctaSuggestions: { type: 'array', items: { type: 'string' } },
-            creativeIdeas: { type: 'array', items: { type: 'string' } },
-            offerPositioningIdeas: { type: 'array', items: { type: 'string' } },
-            risksWarnings: { type: 'array', items: { type: 'string' } },
-            finalRecommendation: { type: 'string' }
-          }
-        }
-      });
+    if (platformType === 'meta') {
+      const metaResult = await invokeAI(base44, META_SYSTEM_PROMPT, buildMetaPrompt(data), apiConfig, META_SCHEMA);
+      aiResult = { meta: metaResult };
+    } else if (platformType === 'google') {
+      const googleResult = await invokeAI(base44, GOOGLE_SYSTEM_PROMPT, buildGooglePrompt(data), apiConfig, GOOGLE_SCHEMA);
+      aiResult = { google: googleResult };
+    } else if (platformType === 'both') {
+      // Generate both in parallel
+      const [metaResult, googleResult] = await Promise.all([
+        invokeAI(base44, META_SYSTEM_PROMPT, buildMetaPrompt(data), apiConfig, META_SCHEMA),
+        invokeAI(base44, GOOGLE_SYSTEM_PROMPT, buildGooglePrompt(data), apiConfig, GOOGLE_SCHEMA)
+      ]);
+      aiResult = { meta: metaResult, google: googleResult };
     }
 
     // --- Save entry ---
@@ -258,9 +313,10 @@ Deno.serve(async (req) => {
       tone_of_voice: data.toneOfVoice,
       notes: data.notes,
       cta_preference: data.ctaPreference,
+      platform_type: platformType,
       ai_response_json: aiResult,
-      recommended_objective: aiResult.recommendedObjective,
-      recommended_optimization_goal: aiResult.recommendedOptimizationGoal,
+      recommended_objective: aiResult.meta?.recommendedObjective || aiResult.google?.recommendedCampaignType || null,
+      recommended_optimization_goal: aiResult.meta?.recommendedOptimizationGoal || null,
       was_included_credit: !wasOverage,
       was_overage_charge: wasOverage,
       overage_charge_amount: wasOverage ? 1.99 : 0,
@@ -276,7 +332,6 @@ Deno.serve(async (req) => {
           overage_entries_used: (usageCounter.overage_entries_used || 0) + 1,
           overage_amount_accrued: (usageCounter.overage_amount_accrued || 0) + 1.99
         });
-        // Log overage billing event
         await base44.asServiceRole.entities.BillingEvent.create({
           user_id: user.id,
           subscription_id: subscription.id,
