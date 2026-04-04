@@ -168,34 +168,28 @@ function buildGooglePromptExtended(data) {
   );
 }
 
-async function invokeAI(base44, systemPrompt, userPrompt, apiConfig, responseSchema) {
-  if (apiConfig?.api_key && apiConfig?.provider_name === 'openrouter') {
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiConfig.api_key}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://meta-ad-strategist.app',
-        'X-Title': 'Meta Ad Strategist AI'
-      },
-      body: JSON.stringify({
-        model: apiConfig.model_name || 'meta-llama/llama-3.1-8b-instruct:free',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
-        ],
-        temperature: 0.7
-      })
-    });
-    const json = await response.json();
-    const content = json.choices?.[0]?.message?.content || '';
-    return JSON.parse(content);
-  }
-  // Fallback to built-in LLM
-  return await base44.asServiceRole.integrations.Core.InvokeLLM({
-    prompt: `${systemPrompt}\n\n${userPrompt}`,
-    response_json_schema: responseSchema
+async function invokeAI(systemPrompt, userPrompt) {
+  const apiKey = Deno.env.get('GOOGLE_AI_API_KEY');
+  const model = 'gemini-2.0-flash-lite';
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      system_instruction: { parts: [{ text: systemPrompt }] },
+      contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
+      generationConfig: {
+        temperature: 0.7,
+        responseMimeType: 'application/json'
+      }
+    })
   });
+
+  const json = await response.json();
+  if (json.error) throw new Error(json.error.message);
+  const text = json.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
+  return JSON.parse(text);
 }
 
 const META_SCHEMA = {
@@ -307,24 +301,19 @@ Deno.serve(async (req) => {
       wasOverage = (usageCounter.included_entries_remaining || 0) <= 0;
     }
 
-    // --- Get API config ---
-    const apiKeyData = await base44.asServiceRole.entities.ApiSetting.filter({});
-    const apiConfig = apiKeyData[0] || null;
-
     // --- Generate AI strategy based on platform ---
     let aiResult = {};
 
     if (platformType === 'meta') {
-      const metaResult = await invokeAI(base44, META_SYSTEM_PROMPT, buildMetaPrompt(data), apiConfig, META_SCHEMA);
+      const metaResult = await invokeAI(META_SYSTEM_PROMPT, buildMetaPrompt(data));
       aiResult = { meta: metaResult };
     } else if (platformType === 'google') {
-      const googleResult = await invokeAI(base44, GOOGLE_SYSTEM_PROMPT, buildGooglePrompt(data), apiConfig, GOOGLE_SCHEMA);
+      const googleResult = await invokeAI(GOOGLE_SYSTEM_PROMPT, buildGooglePrompt(data));
       aiResult = { google: googleResult };
     } else if (platformType === 'both') {
-      // Generate both in parallel
       const [metaResult, googleResult] = await Promise.all([
-        invokeAI(base44, META_SYSTEM_PROMPT, buildMetaPrompt(data), apiConfig, META_SCHEMA),
-        invokeAI(base44, GOOGLE_SYSTEM_PROMPT, buildGooglePromptExtended(data), apiConfig, GOOGLE_SCHEMA)
+        invokeAI(META_SYSTEM_PROMPT, buildMetaPrompt(data)),
+        invokeAI(GOOGLE_SYSTEM_PROMPT, buildGooglePromptExtended(data))
       ]);
       aiResult = { meta: metaResult, google: googleResult };
     }

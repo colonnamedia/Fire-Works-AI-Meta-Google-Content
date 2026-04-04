@@ -67,10 +67,22 @@ Deno.serve(async (req) => {
       }
     }
 
-    const aiResult = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt: `${SYSTEM_PROMPT}\n\n${buildPrompt(adCopy, platform, context)}`,
-      response_json_schema: SCHEMA
+    const apiKey = Deno.env.get('GOOGLE_AI_API_KEY');
+    const model = 'gemini-2.0-flash-lite';
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+    const geminiRes = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
+        contents: [{ role: 'user', parts: [{ text: buildPrompt(adCopy, platform, context) }] }],
+        generationConfig: { temperature: 0.7, responseMimeType: 'application/json' }
+      })
     });
+    const geminiJson = await geminiRes.json();
+    if (geminiJson.error) throw new Error(geminiJson.error.message);
+    const aiResult = JSON.parse(geminiJson.candidates?.[0]?.content?.parts?.[0]?.text || '{}');
 
     // Save as an AdIdeaEntry so it's tracked
     const entry = await base44.asServiceRole.entities.AdIdeaEntry.create({
