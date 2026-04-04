@@ -112,14 +112,7 @@ Return ONLY this JSON structure (no markdown, no extra text):
 }`;
 }
 
-function buildGooglePrompt(data, keywordData = null) {
-  const keywordSection = keywordData?.keywords?.length
-    ? `\nREAL KEYWORD DATA (from Google Ads Keyword Planner — source: ${keywordData.source}):\n${keywordData.keywords.map(k => `  - "${k.keyword}"${k.avgMonthlySearches ? ` (${k.avgMonthlySearches.toLocaleString()} avg monthly searches, ${k.competition || 'unknown'} competition)` : ''}`).join('\n')}\nUse these real keywords in your keywordIdeas output. Prioritize by search volume if available.\n`
-    : '';
-  return buildGooglePromptInner(data, keywordSection);
-}
-
-function buildGooglePromptInner(data, keywordSection = '') {
+function buildGooglePrompt(data) {
   return `Analyze this business and generate a complete, expert Google Ads strategy.
 
 BUSINESS DETAILS:
@@ -135,7 +128,7 @@ BUSINESS DETAILS:
 - Audience Description: ${data.audienceDescription || 'N/A'}
 - Tone of Voice: ${data.toneOfVoice || 'N/A'}
 - Additional Notes: ${data.notes || 'None'}
-${keywordSection}
+
 Return ONLY this JSON structure (no markdown, no extra text):
 {
   "recommendedCampaignType": "string",
@@ -156,8 +149,8 @@ Return ONLY this JSON structure (no markdown, no extra text):
 }`;
 }
 
-function buildGooglePromptExtended(data, keywordData = null) {
-  return buildGooglePrompt(data, keywordData).replace(
+function buildGooglePromptExtended(data) {
+  return buildGooglePrompt(data).replace(
     '"finalRecommendation": "string"\n}',
     `"competitorInsight": {
     "whatCompetitorsDo": "string describing what competitors typically do in this industry on Google Ads",
@@ -308,27 +301,6 @@ Deno.serve(async (req) => {
       wasOverage = (usageCounter.included_entries_remaining || 0) <= 0;
     }
 
-    // --- Fetch Google keyword ideas if relevant ---
-    let googleKeywordData = null;
-    if (platformType === 'google' || platformType === 'both') {
-      try {
-        const kwRes = await base44.asServiceRole.functions.invoke('generateGoogleKeywordIdeas', {
-          businessName: data.businessName,
-          industry: data.industry,
-          businessType: data.businessType,
-          offerType: data.offerType,
-          goal: data.goal,
-          websiteUrl: data.landingPageUrl,
-          landingPageUrl: data.landingPageUrl,
-          location: data.geographicTargeting,
-          platformType,
-        });
-        googleKeywordData = kwRes;
-      } catch (kwErr) {
-        console.error('Keyword ideas fetch failed (non-fatal):', kwErr.message);
-      }
-    }
-
     // --- Generate AI strategy based on platform ---
     let aiResult = {};
 
@@ -336,14 +308,14 @@ Deno.serve(async (req) => {
       const metaResult = await invokeAI(META_SYSTEM_PROMPT, buildMetaPrompt(data));
       aiResult = { meta: metaResult };
     } else if (platformType === 'google') {
-      const googleResult = await invokeAI(GOOGLE_SYSTEM_PROMPT, buildGooglePrompt(data, googleKeywordData));
-      aiResult = { google: googleResult, keywordData: googleKeywordData };
+      const googleResult = await invokeAI(GOOGLE_SYSTEM_PROMPT, buildGooglePrompt(data));
+      aiResult = { google: googleResult };
     } else if (platformType === 'both') {
       const [metaResult, googleResult] = await Promise.all([
         invokeAI(META_SYSTEM_PROMPT, buildMetaPrompt(data)),
-        invokeAI(GOOGLE_SYSTEM_PROMPT, buildGooglePromptExtended(data, googleKeywordData))
+        invokeAI(GOOGLE_SYSTEM_PROMPT, buildGooglePromptExtended(data))
       ]);
-      aiResult = { meta: metaResult, google: googleResult, keywordData: googleKeywordData };
+      aiResult = { meta: metaResult, google: googleResult };
     }
 
     // --- Save entry ---
