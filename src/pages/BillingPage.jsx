@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import React, { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { CreditCard, AlertCircle, RefreshCw, Zap, Calendar, TrendingUp, Facebook, Search, Layers, ArrowUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +17,7 @@ const PLANS = [
 export default function BillingPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [subscribing, setSubscribing] = useState(false);
 
   const { data: status, isLoading } = useQuery({
@@ -48,6 +50,14 @@ export default function BillingPage() {
     }
   };
 
+  const isAdmin = status?.isAdmin;
+
+  useEffect(() => {
+    if (isAdmin) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [isAdmin, navigate]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -58,8 +68,6 @@ export default function BillingPage() {
 
   const sub = status?.subscription;
   const usage = status?.usage;
-  const isAdmin = status?.isAdmin;
-
   const statusColors = {
     active: "bg-green-100 text-green-700",
     inactive: "bg-gray-100 text-gray-600",

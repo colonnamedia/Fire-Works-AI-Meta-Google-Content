@@ -13,6 +13,8 @@ const handleLogin = () => {
   base44.auth.redirectToLogin("/dashboard");
 };
 
+// Note: admins are redirected from /billing → /dashboard automatically in BillingPage
+
 const fadeUp = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
 const stagger = { show: { transition: { staggerChildren: 0.1 } } };
 
