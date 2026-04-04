@@ -170,7 +170,7 @@ function buildGooglePromptExtended(data) {
 
 async function invokeAI(systemPrompt, userPrompt) {
   const apiKey = Deno.env.get('GOOGLE_AI_API_KEY');
-  const model = 'gemini-2.0-flash-lite';
+  const model = 'gemini-1.5-flash';
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   const response = await fetch(url, {
