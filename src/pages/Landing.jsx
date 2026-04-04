@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { base44 } from "@/api/base44Client";
 
 const handleGetStarted = () => {
-  base44.auth.redirectToLogin("/billing");
+  window.location.href = "/get-started";
 };
 
 const handleLogin = () => {
@@ -93,7 +93,7 @@ export default function Landing() {
               onClick={handleGetStarted}
               className="text-sm font-semibold bg-[#E53E3E] hover:bg-[#C53030] text-white px-4 py-2 rounded-lg transition-colors"
             >
-              Get Started
+              Build My Ads
             </button>
           </div>
         </div>
@@ -122,7 +122,7 @@ export default function Landing() {
                 onClick={handleGetStarted}
                 className="inline-flex items-center justify-center gap-2 bg-[#E53E3E] hover:bg-[#C53030] text-white font-bold px-6 py-3 rounded-xl transition-colors text-sm"
               >
-                $14.99/month — Start Generating Ad Ideas <ArrowRight className="w-4 h-4" />
+                Start Generating Ad Ideas <ArrowRight className="w-4 h-4" />
               </button>
               <Link to="/pricing">
                 <button className="inline-flex items-center justify-center gap-2 text-white/60 hover:text-white font-semibold px-6 py-3 rounded-xl border border-white/10 hover:border-white/20 transition-colors text-sm w-full sm:w-auto">
@@ -293,7 +293,7 @@ export default function Landing() {
               onClick={handleGetStarted}
               className="w-full bg-[#E53E3E] hover:bg-[#C53030] text-white font-bold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
             >
-              Start Generating Ad Ideas <ArrowRight className="w-4 h-4" />
+              Get My Ad Strategy <ArrowRight className="w-4 h-4" />
             </button>
             <p className="text-xs text-white/30 text-center mt-3">No commitment. Cancel account settings.</p>
           </div>
@@ -328,7 +328,7 @@ export default function Landing() {
               onClick={handleGetStarted}
               className="border border-white/40 text-white font-bold px-6 py-3 rounded-xl hover:bg-white/10 transition-colors text-sm whitespace-nowrap"
             >
-              See Pricing
+              Build My Ads
             </button>
           </div>
         </div>

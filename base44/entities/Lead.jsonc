@@ -1,0 +1,74 @@
+{
+  "name": "Lead",
+  "type": "object",
+  "properties": {
+    "full_name": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "business_name": {
+      "type": "string"
+    },
+    "industry": {
+      "type": "string"
+    },
+    "platform_interest": {
+      "type": "string",
+      "enum": [
+        "meta",
+        "google",
+        "both"
+      ]
+    },
+    "offer_type": {
+      "type": "string"
+    },
+    "goal": {
+      "type": "string"
+    },
+    "business_type": {
+      "type": "string"
+    },
+    "ad_criteria_json": {
+      "type": "object"
+    },
+    "free_sample_json": {
+      "type": "object",
+      "description": "The generated free sample results"
+    },
+    "has_seen_free_sample": {
+      "type": "boolean",
+      "default": false
+    },
+    "has_viewed_pricing": {
+      "type": "boolean",
+      "default": false
+    },
+    "has_registered": {
+      "type": "boolean",
+      "default": false
+    },
+    "has_purchased": {
+      "type": "boolean",
+      "default": false
+    },
+    "funnel_stage": {
+      "type": "string",
+      "enum": [
+        "submitted_query",
+        "sample_viewed",
+        "pricing_viewed",
+        "registered",
+        "purchased",
+        "abandoned"
+      ],
+      "default": "submitted_query"
+    }
+  },
+  "required": [
+    "email",
+    "business_name"
+  ]
+}

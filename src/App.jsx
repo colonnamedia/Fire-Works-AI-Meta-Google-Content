@@ -24,6 +24,8 @@ import AdminDashboard from '@/pages/AdminDashboard';
 import AdminUsers from '@/pages/AdminUsers';
 import AdAssets from '@/pages/AdAssets';
 import FixMyAd from '@/pages/FixMyAd';
+import GetStarted from '@/pages/GetStarted';
+import FreeSample from '@/pages/FreeSample';
 
 import AppLayout from '@/components/layout/AppLayout';
 
@@ -56,6 +58,8 @@ const AuthenticatedApp = () => {
     <Routes>
       {/* Public routes */}
       <Route path="/" element={<Landing />} />
+      <Route path="/get-started" element={<GetStarted />} />
+      <Route path="/free-sample/:id" element={<FreeSample />} />
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/terms" element={<Terms />} />
       <Route path="/privacy" element={<Privacy />} />

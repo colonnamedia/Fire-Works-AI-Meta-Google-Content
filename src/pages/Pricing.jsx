@@ -19,7 +19,7 @@ const bothFeatures = [
   "Additional entries at $1.99 each",
 ];
 
-const handleGetStarted = () => base44.auth.redirectToLogin("/billing");
+const handleGetStarted = () => { window.location.href = "/get-started"; };
 const handleLogin = () => base44.auth.redirectToLogin("/dashboard");
 
 export default function Pricing() {
@@ -78,7 +78,7 @@ export default function Pricing() {
               ))}
             </ul>
             <button onClick={handleGetStarted} className="w-full border border-white/20 text-white font-semibold py-3 rounded-xl hover:border-white/40 hover:bg-white/5 transition-colors text-sm">
-              Start for $14.99/month
+              Build My Ads
             </button>
           </div>
 
@@ -107,7 +107,7 @@ export default function Pricing() {
               ))}
             </ul>
             <button onClick={handleGetStarted} className="w-full bg-[#E53E3E] hover:bg-[#C53030] text-white font-bold py-3 rounded-xl transition-colors text-sm">
-              Start for $19.99/month
+              Get My Ad Strategy
             </button>
           </div>
         </div>
