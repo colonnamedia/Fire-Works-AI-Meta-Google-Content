@@ -53,6 +53,8 @@ export default function FreeSample() {
   const [showPlans, setShowPlans] = useState(false);
   const [user, setUser] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
+  const [emailInput, setEmailInput] = useState("");
+  const [sendingEmail, setSendingEmail] = useState(false);
 
   const freeSample = location.state?.freeSample;
   const form = location.state?.form;
@@ -77,6 +79,24 @@ export default function FreeSample() {
 
   const handleGetStarted = () => {
     base44.auth.redirectToLogin("/billing");
+  };
+
+  const handleEmailResults = async () => {
+    if (!emailInput) return;
+    setSendingEmail(true);
+    try {
+      await base44.functions.invoke("emailFreeSampleResults", {
+        email: emailInput,
+        businessName: form?.businessName || "Your Business",
+        strategy: freeSample
+      });
+      setEmailInput("");
+      alert("✓ Strategy sent to " + emailInput);
+    } catch (err) {
+      alert("Error sending email: " + err.message);
+    } finally {
+      setSendingEmail(false);
+    }
   };
 
   if (loading) {
@@ -172,6 +192,27 @@ export default function FreeSample() {
               <span className="text-xs font-bold text-amber-400 uppercase tracking-widest">Audience Suggestion</span>
             </div>
             <p className="text-white/80 text-sm leading-relaxed">{freeSample.audienceSuggestion}</p>
+          </div>
+        </div>
+
+        {/* EMAIL OPTION */}
+        <div className="mb-8 bg-white/5 border border-white/10 rounded-xl p-5">
+          <p className="text-sm text-white/60 mb-3">Want to save these results for later?</p>
+          <div className="flex gap-2">
+            <input
+              type="email"
+              placeholder="your@email.com"
+              value={emailInput}
+              onChange={(e) => setEmailInput(e.target.value)}
+              className="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm placeholder-white/30 focus:outline-none focus:border-[#E53E3E]/50"
+            />
+            <Button
+              onClick={handleEmailResults}
+              disabled={!emailInput || sendingEmail}
+              className="bg-white/10 hover:bg-white/20 text-white font-semibold text-sm"
+            >
+              {sendingEmail ? "Sending..." : "Email Results"}
+            </Button>
           </div>
         </div>
 
