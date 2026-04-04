@@ -124,7 +124,7 @@ export default function Landing() {
               </Link>
             </motion.div>
             <motion.p variants={fadeUp} className="text-xs text-muted-foreground">
-              From $4.99/month · Meta or Google Ads · Both Platforms $8.99/month · 5 entries included · Cancel anytime
+              From $14.99/month · 1 Ad Suggestion · Unlimited $19.99/month · Cancel anytime
             </motion.p>
           </motion.div>
         </div>
@@ -303,7 +303,7 @@ export default function Landing() {
             Starter Plan
           </div>
           <div className="flex items-baseline justify-center gap-1 mb-2">
-            <span className="text-5xl font-bold text-foreground">$4.99</span>
+            <span className="text-5xl font-bold text-foreground">$14.99</span>
             <span className="text-muted-foreground text-lg">/month</span>
           </div>
           <p className="text-muted-foreground mb-6">Everything you need to start running smarter Meta ads.</p>

@@ -62,7 +62,7 @@ export default function Pricing() {
               <h2 className="text-xl font-bold text-foreground mb-1">Single Platform Plan</h2>
               <p className="text-sm text-muted-foreground mb-3">Meta Ads OR Google Ads — pick one at signup</p>
               <div className="flex items-baseline gap-1">
-                <span className="text-5xl font-bold text-foreground">$4.99</span>
+                <span className="text-5xl font-bold text-foreground">$14.99</span>
                 <span className="text-muted-foreground">/month</span>
               </div>
             </div>
@@ -77,7 +77,7 @@ export default function Pricing() {
             </ul>
 
             <Button className="w-full" size="lg" variant="outline" onClick={() => { document.location.href = "/dashboard"; }}>
-              Start for $4.99/month
+              Start for $14.99/month
             </Button>
           </div>
 
@@ -93,7 +93,7 @@ export default function Pricing() {
               <h2 className="text-xl font-bold text-foreground mb-1">Both Platforms Plan</h2>
               <p className="text-sm text-muted-foreground mb-3">Meta Ads + Google Ads in every generation</p>
               <div className="flex items-baseline gap-1">
-                <span className="text-5xl font-bold text-foreground">$8.99</span>
+                <span className="text-5xl font-bold text-foreground">$19.99</span>
                 <span className="text-muted-foreground">/month</span>
               </div>
             </div>
@@ -108,7 +108,7 @@ export default function Pricing() {
             </ul>
 
             <Button className="w-full" size="lg" onClick={() => { document.location.href = "/dashboard"; }}>
-              Start for $8.99/month
+              Start for $19.99/month
             </Button>
           </div>
         </div>

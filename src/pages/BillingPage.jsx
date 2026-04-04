@@ -9,9 +9,9 @@ import { format } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
 
 const PLANS = [
-  { type: "meta", name: "Single Platform — Meta", price: 4.99, icon: Facebook, iconColor: "text-blue-600", desc: "Facebook & Instagram Ads only" },
-  { type: "google", name: "Single Platform — Google", price: 4.99, icon: Search, iconColor: "text-green-600", desc: "Google Search, Display & YouTube only" },
-  { type: "both", name: "Both Platforms", price: 8.99, icon: Layers, iconColor: "text-primary", desc: "Meta + Google Ads in every generation" },
+  { type: "meta", name: "Single Platform — Meta", price: 14.99, icon: Facebook, iconColor: "text-blue-600", desc: "Facebook & Instagram Ads only" },
+  { type: "google", name: "Single Platform — Google", price: 14.99, icon: Search, iconColor: "text-green-600", desc: "Google Search, Display & YouTube only" },
+  { type: "both", name: "Both Platforms — Unlimited", price: 19.99, icon: Layers, iconColor: "text-primary", desc: "Meta + Google Ads — Unlimited generations" },
 ];
 
 export default function BillingPage() {
@@ -214,11 +214,11 @@ export default function BillingPage() {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Single Platform (Meta or Google)</span>
-                <span className="font-medium">$4.99/month</span>
+                <span className="font-medium">$14.99/month</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Both Platforms (Meta + Google)</span>
-                <span className="font-medium">$8.99/month</span>
+                <span className="text-muted-foreground">Both Platforms — Unlimited</span>
+                <span className="font-medium">$19.99/month</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Included entries per month</span>
