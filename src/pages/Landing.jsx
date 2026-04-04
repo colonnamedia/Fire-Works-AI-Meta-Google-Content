@@ -107,8 +107,8 @@ export default function Landing() {
               </div>
             </motion.div>
             <motion.h1 variants={fadeUp} className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight tracking-tight">
-              Stop guessing what<br className="hidden sm:block" />
-              <span className="text-primary"> Meta campaign to run.</span>
+              AI-powered ads for<br className="hidden sm:block" />
+              <span className="text-primary"> Meta &amp; Google.</span>
             </motion.h1>
             <motion.p variants={fadeUp} className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Get AI-powered campaign objective recommendations, hooks, headlines, copy ideas, and full ad setup direction — tailored to your business, offer, and goals.
