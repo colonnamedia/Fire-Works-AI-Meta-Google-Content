@@ -168,28 +168,11 @@ function buildGooglePromptExtended(data) {
   );
 }
 
-async function invokeAI(systemPrompt, userPrompt) {
-  const apiKey = Deno.env.get('GOOGLE_AI_API_KEY');
-  const model = 'gemini-2.0-flash';
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      system_instruction: { parts: [{ text: systemPrompt }] },
-      contents: [{ role: 'user', parts: [{ text: userPrompt }] }],
-      generationConfig: {
-        temperature: 0.7,
-        responseMimeType: 'application/json'
-      }
-    })
+async function invokeAI(base44, systemPrompt, userPrompt, schema) {
+  return await base44.integrations.Core.InvokeLLM({
+    prompt: `${systemPrompt}\n\n${userPrompt}`,
+    response_json_schema: schema
   });
-
-  const json = await response.json();
-  if (json.error) throw new Error(json.error.message);
-  const text = json.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-  return JSON.parse(text);
 }
 
 const META_SCHEMA = {
@@ -305,15 +288,15 @@ Deno.serve(async (req) => {
     let aiResult = {};
 
     if (platformType === 'meta') {
-      const metaResult = await invokeAI(META_SYSTEM_PROMPT, buildMetaPrompt(data));
+      const metaResult = await invokeAI(base44, META_SYSTEM_PROMPT, buildMetaPrompt(data), META_SCHEMA);
       aiResult = { meta: metaResult };
     } else if (platformType === 'google') {
-      const googleResult = await invokeAI(GOOGLE_SYSTEM_PROMPT, buildGooglePrompt(data));
+      const googleResult = await invokeAI(base44, GOOGLE_SYSTEM_PROMPT, buildGooglePrompt(data), GOOGLE_SCHEMA);
       aiResult = { google: googleResult };
     } else if (platformType === 'both') {
       const [metaResult, googleResult] = await Promise.all([
-        invokeAI(META_SYSTEM_PROMPT, buildMetaPrompt(data)),
-        invokeAI(GOOGLE_SYSTEM_PROMPT, buildGooglePromptExtended(data))
+        invokeAI(base44, META_SYSTEM_PROMPT, buildMetaPrompt(data), META_SCHEMA),
+        invokeAI(base44, GOOGLE_SYSTEM_PROMPT, buildGooglePromptExtended(data), GOOGLE_SCHEMA)
       ]);
       aiResult = { meta: metaResult, google: googleResult };
     }

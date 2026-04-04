@@ -16,6 +16,7 @@ import AdScoreCard from "@/components/results/AdScoreCard";
 import CompetitorInsight from "@/components/results/CompetitorInsight";
 import OfferOptimization from "@/components/results/OfferOptimization";
 import AdConversionCheck from "@/components/results/AdConversionCheck";
+import ResultsCreativeConcepts from "@/components/results/ResultsCreativeConcepts";
 
 const platformLabels = {
   meta: { label: "Meta Ads", icon: Facebook, color: "text-blue-600 bg-blue-50 border-blue-200" },
@@ -155,6 +156,7 @@ export default function AdIdeaDetail() {
           <ResultsGoogle ai={googleData} />
           <CompetitorInsight ai={googleData} />
           <OfferOptimization ai={googleData} />
+          <ResultsCreativeConcepts entry={entry} />
         </>
       ) : !isBoth ? (
         <>
@@ -165,6 +167,7 @@ export default function AdIdeaDetail() {
           <OfferOptimization ai={metaData} />
           {entry.landing_page_url && <AdConversionCheck ai={metaData} />}
           <ResultsWarnings ai={metaData} />
+          <ResultsCreativeConcepts entry={entry} />
         </>
       ) : activeTab === "meta" ? (
         <>
@@ -175,12 +178,14 @@ export default function AdIdeaDetail() {
           <OfferOptimization ai={metaData} />
           {entry.landing_page_url && <AdConversionCheck ai={metaData} />}
           <ResultsWarnings ai={metaData} />
+          <ResultsCreativeConcepts entry={entry} />
         </>
       ) : (
         <>
           <ResultsGoogle ai={googleData} />
           <CompetitorInsight ai={googleData} />
           <OfferOptimization ai={googleData} />
+          <ResultsCreativeConcepts entry={entry} />
         </>
       )}
     </div>

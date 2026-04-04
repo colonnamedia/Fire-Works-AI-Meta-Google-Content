@@ -63,26 +63,21 @@ Deno.serve(async (req) => {
 
     const lead = await base44.asServiceRole.entities.Lead.create(leadData);
 
-    // Generate free sample via Gemini
-    const apiKey = Deno.env.get('GOOGLE_AI_API_KEY');
-    const model = 'gemini-2.0-flash';
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        system_instruction: { parts: [{ text: SYSTEM_PROMPT }] },
-        contents: [{ role: 'user', parts: [{ text: buildSamplePrompt(data) }] }],
-        generationConfig: { temperature: 0.7, responseMimeType: 'application/json' }
-      })
+    // Generate free sample via Base44 built-in LLM
+    const freeSample = await base44.asServiceRole.integrations.Core.InvokeLLM({
+      prompt: `${SYSTEM_PROMPT}\n\n${buildSamplePrompt(data)}`,
+      response_json_schema: {
+        type: 'object',
+        properties: {
+          campaignDirection: { type: 'string' },
+          recommendedObjective: { type: 'string' },
+          sampleHeadline: { type: 'string' },
+          sampleDescription: { type: 'string' },
+          audienceSuggestion: { type: 'string' },
+          lockedPreview: { type: 'object' }
+        }
+      }
     });
-
-    const json = await response.json();
-    if (json.error) throw new Error(json.error.message);
-
-    const text = json.candidates?.[0]?.content?.parts?.[0]?.text || '{}';
-    const freeSample = JSON.parse(text);
 
     // Update lead with free sample
     await base44.asServiceRole.entities.Lead.update(lead.id, {
