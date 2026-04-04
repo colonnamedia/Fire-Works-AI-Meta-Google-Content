@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate, Link } from "react-router-dom";
 import { Zap, Lock, Check, ChevronRight, Star, Target, Users, FileText, TrendingUp, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -51,13 +51,41 @@ export default function FreeSample() {
   const location = useLocation();
   const navigate = useNavigate();
   const [showPlans, setShowPlans] = useState(false);
+  const [user, setUser] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
 
   const freeSample = location.state?.freeSample;
   const form = location.state?.form;
 
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const me = await base44.auth.me();
+        setUser(me);
+        // If logged in with saved form, redirect to dashboard to show full results
+        if (me && form) {
+          setTimeout(() => navigate("/dashboard"), 500);
+        }
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    checkAuth();
+  }, [navigate, form]);
+
   const handleGetStarted = () => {
     base44.auth.redirectToLogin("/billing");
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0D1117] flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-[#E53E3E]/20 border-t-[#E53E3E] rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!freeSample) {
     return (
