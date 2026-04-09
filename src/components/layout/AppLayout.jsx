@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
   LayoutDashboard, PlusCircle, FolderOpen, CreditCard, Settings,
-  Shield, Menu, X, Zap, LogOut, User, TrendingUp, Image, Wrench
+  Shield, Menu, X, Zap, LogOut, User, TrendingUp, Image, Wrench, Layers, Calendar
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,8 @@ const userNavItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { label: "New Ad Idea", path: "/new-idea", icon: PlusCircle },
   { label: "Ad Strategies", path: "/saved-ideas", icon: FolderOpen },
+  { label: "Bulk Generator", path: "/bulk-generator", icon: Layers },
+  { label: "Content Calendar", path: "/content-calendar", icon: Calendar },
   { label: "Fix My Ad", path: "/fix-my-ad", icon: Wrench },
   { label: "Ad Assets", path: "/assets", icon: Image },
   { label: "Billing", path: "/billing", icon: CreditCard },
@@ -23,6 +25,8 @@ const adminNavItems = [
   { label: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
   { label: "New Ad Idea", path: "/new-idea", icon: PlusCircle },
   { label: "Ad Strategies", path: "/saved-ideas", icon: FolderOpen },
+  { label: "Bulk Generator", path: "/bulk-generator", icon: Layers },
+  { label: "Content Calendar", path: "/content-calendar", icon: Calendar },
   { label: "Fix My Ad", path: "/fix-my-ad", icon: Wrench },
   { label: "Ad Assets", path: "/assets", icon: Image },
   { label: "Admin", path: "/admin", icon: Shield },

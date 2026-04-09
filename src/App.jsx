@@ -27,6 +27,8 @@ import FixMyAd from '@/pages/FixMyAd';
 import GetStarted from '@/pages/GetStarted';
 import FreeSample from '@/pages/FreeSample';
 import AdCreator from '@/pages/AdCreator';
+import BulkAdGenerator from '@/pages/BulkAdGenerator';
+import ContentCalendar from '@/pages/ContentCalendar';
 import AdResults from '@/pages/AdResults';
 import AdResultsPreview from '@/pages/AdResultsPreview';
 
@@ -79,6 +81,8 @@ const AuthenticatedApp = () => {
         <Route path="/assets" element={<AdAssets />} />
         <Route path="/fix-my-ad" element={<FixMyAd />} />
         <Route path="/ad-creator" element={<AdCreator />} />
+        <Route path="/bulk-generator" element={<BulkAdGenerator />} />
+        <Route path="/content-calendar" element={<ContentCalendar />} />
         <Route path="/billing" element={<BillingPage />} />
         <Route path="/settings" element={<AccountSettings />} />
         <Route path="/admin" element={<AdminDashboard />} />
