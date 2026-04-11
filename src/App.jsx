@@ -30,6 +30,7 @@ import AdCreator from '@/pages/AdCreator';
 import BulkAdGenerator from '@/pages/BulkAdGenerator';
 import ContentCalendar from '@/pages/ContentCalendar';
 import AdResults from '@/pages/AdResults';
+import CampaignTypeSelector from '@/pages/CampaignTypeSelector';
 import AdResultsPreview from '@/pages/AdResultsPreview';
 
 import AppLayout from '@/components/layout/AppLayout';
@@ -82,6 +83,7 @@ const AuthenticatedApp = () => {
         <Route path="/fix-my-ad" element={<FixMyAd />} />
         <Route path="/ad-creator" element={<AdCreator />} />
         <Route path="/bulk-generator" element={<BulkAdGenerator />} />
+        <Route path="/campaign-selector" element={<CampaignTypeSelector />} />
         <Route path="/content-calendar" element={<ContentCalendar />} />
         <Route path="/billing" element={<BillingPage />} />
         <Route path="/settings" element={<AccountSettings />} />
