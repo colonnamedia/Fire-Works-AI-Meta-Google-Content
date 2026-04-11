@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Upload, Trash2, Image, Video, File, Tag, X, Plus, Filter } from "lucide-react";
+import { Upload, Trash2, Image, Video, File, Tag, X, Plus, Filter, Sparkles } from "lucide-react";
+import AIImageGenerator from "@/components/assets/AIImageGenerator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -62,7 +63,10 @@ function AssetCard({ asset, onDelete }) {
   );
 }
 
+const TABS = ["My Assets", "AI Generate"];
+
 export default function AdAssets() {
+  const [activeTab, setActiveTab] = useState(0);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const fileInputRef = useRef(null);
@@ -133,15 +137,35 @@ export default function AdAssets() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Ad Assets</h1>
-          <p className="text-muted-foreground text-sm mt-1">Upload and organize your ad images and videos for easy reference.</p>
+          <p className="text-muted-foreground text-sm mt-1">Upload and organize your ad images and videos, or generate visuals with AI.</p>
         </div>
-        <Button onClick={() => fileInputRef.current?.click()} disabled={uploading}>
-          <Upload className="w-4 h-4 mr-2" />
-          Upload Asset
-        </Button>
+        {activeTab === 0 && (
+          <Button onClick={() => fileInputRef.current?.click()} disabled={uploading}>
+            <Upload className="w-4 h-4 mr-2" /> Upload Asset
+          </Button>
+        )}
         <input ref={fileInputRef} type="file" accept="image/*,video/*" className="hidden" onChange={handleFileChange} />
       </div>
 
+      {/* Tabs */}
+      <div className="flex gap-2 border-b border-border">
+        {TABS.map((t, i) => (
+          <button
+            key={t}
+            onClick={() => setActiveTab(i)}
+            className={`flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 -mb-px transition-colors ${
+              activeTab === i ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            {i === 1 && <Sparkles className="w-3.5 h-3.5" />}
+            {t}
+          </button>
+        ))}
+      </div>
+
+      {activeTab === 1 && <AIImageGenerator />}
+
+      {activeTab === 0 && (<>
       {/* Upload Form */}
       {showUploadForm && pendingFile && (
         <div className="bg-card border border-primary/30 rounded-xl p-5 space-y-4">
@@ -218,6 +242,7 @@ export default function AdAssets() {
           ))}
         </div>
       )}
+      </>)}
     </div>
   );
 }
