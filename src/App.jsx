@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react';
 import { Toaster } from "@/components/ui/toaster";
 import Landing from './pages/Landing';
@@ -28,6 +28,14 @@ function App() {
           <Route path="/dashboard" element={
             <ProtectedRoute><Dashboard /></ProtectedRoute>
           } />
+          {/* Redirect old/unused routes to home */}
+          <Route path="/pricing" element={<Navigate to="/" replace />} />
+          <Route path="/terms" element={<Navigate to="/" replace />} />
+          <Route path="/privacy" element={<Navigate to="/" replace />} />
+          <Route path="/support" element={<Navigate to="/" replace />} />
+          <Route path="/builder" element={<Navigate to="/get-started" replace />} />
+          <Route path="/new-idea" element={<Navigate to="/get-started" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <Toaster />
       </Router>
