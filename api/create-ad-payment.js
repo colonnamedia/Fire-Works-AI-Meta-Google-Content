@@ -37,8 +37,8 @@ export default async function handler(req, res) {
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.VITE_APP_URL}/results?generationId=${generationId}&success=true`,
-      cancel_url: `${process.env.VITE_APP_URL}/get-started?cancelled=true`,
+     success_url: `${process.env.APP_URL}/results?generationId=${generationId}&success=true`,
+     cancel_url: `${process.env.APP_URL}/get-started?cancelled=true`,
       metadata: { generationId, platform },
     });
 
