@@ -124,11 +124,6 @@ export default function Landing() {
               >
                 Generate My Ads <ArrowRight className="w-4 h-4" />
               </button>
-              <Link to="/get-started">
-                <button className="inline-flex items-center justify-center gap-2 text-white/60 hover:text-white font-semibold px-6 py-3 rounded-xl border border-white/10 hover:border-white/20 transition-colors text-sm w-full sm:w-auto">
-                  See Example Results
-                </button>
-              </Link>
             </motion.div>
           </motion.div>
         </div>
@@ -250,9 +245,6 @@ export default function Landing() {
         <div className="mb-10">
           <h2 className="text-3xl font-black text-white mb-2">Built for real businesses running real ads</h2>
           <p className="text-white/40 mb-1">No hidden fees. No complicated tiers. One plan that works for most businesses.</p>
-          <Link to="/get-started" className="text-sm text-[#E53E3E] hover:underline flex items-center gap-1 w-fit">
-            See plan pricing & features <ChevronRight className="w-3.5 h-3.5" />
-          </Link>
         </div>
 
         {/* Pricing + Trust signals row */}
