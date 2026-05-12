@@ -3,14 +3,14 @@ import { Link } from "react-router-dom";
 import { Zap, Check, Target, FileText, BarChart2, ArrowRight, Star, ChevronRight, Shield, Clock, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { base44 } from "@/api/base44Client";
+
 
 const handleGetStarted = () => {
   window.location.href = "/get-started";
 };
 
 const handleLogin = () => {
-  base44.auth.redirectToLogin("/dashboard");
+  window.location.href = "/dashboard";
 };
 
 const fadeUp = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: 0.5 } } };
@@ -271,24 +271,17 @@ export default function Landing() {
             <p className="text-xs font-bold text-[#E53E3E] uppercase tracking-widest mb-1">Starter Plan</p>
             <p className="text-xs text-white/40 mb-4">Everything you need to start running Meta ads</p>
             <div className="flex items-baseline gap-1 mb-5">
-              <span className="text-4xl font-black text-white">$14.99</span>
-              <span className="text-white/40 text-sm">/month</span>
+              <span className="text-4xl font-black text-white">$4.99</span>
+              <span className="text-white/40 text-sm">per generation</span>
             </div>
-            <ul className="space-y-2 text-sm mb-6 flex-1">
-              {[
-                "5 included strategy credits per month",
-                "Full AI strategy + CTAs included",
-                "Hooks, headlines, + objective/CTRs recommendation",
-                "$1.99 per additional entry after your monthly credits",
-                "Credits reset every billing month",
-                "Cancel anytime",
-              ].map(f => (
-                <li key={f} className="flex items-start gap-2 text-white/60 text-xs">
-                  <Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />
-                  {f}
-                </li>
-              ))}
-            </ul>
+        <ul className="space-y-2 text-sm mb-6 flex-1">
+  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Google Ads — $4.99 per generation</li>
+  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Meta Ads + Organic Social — $4.99 per generation</li>
+  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Google + Meta + Social — $8.99 per generation</li>
+  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />AI-generated headlines, copy, hooks, and keywords</li>
+  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Full results emailed instantly</li>
+  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Dashboard to view all past generations</li>
+</ul>
             <button
               onClick={handleGetStarted}
               className="w-full bg-[#E53E3E] hover:bg-[#C53030] text-white font-bold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2"
