@@ -25,7 +25,10 @@ function PlatformIcon({ platform }) {
 
 function GenerationCard({ generation }) {
   const [open, setOpen] = useState(false);
-  const { business_name, platform, created_at, results } = generation;
+  const { business_name, platform, created_at } = generation;
+  const results = typeof generation.results === 'string'
+    ? JSON.parse(generation.results)
+    : generation.results;
   const date = new Date(created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
   return (
@@ -134,19 +137,27 @@ export default function Dashboard() {
   const { user } = useUser();
   const [generations, setGenerations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-  if (user) {
-    const email = user.primaryEmailAddress?.emailAddress;
-    fetch(`/api/get-user-generations?clerk_user_id=${user.id}&email=${encodeURIComponent(email || '')}`)
-      .then(r => r.json())
-      .then(data => {
-        setGenerations(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }
-}, [user]);
+    if (user) {
+      const email = user.primaryEmailAddress?.emailAddress;
+      fetch(`/api/get-user-generations?clerk_user_id=${user.id}&email=${encodeURIComponent(email || '')}`)
+        .then(r => r.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            setGenerations(data);
+          } else {
+            setError('Unexpected response format');
+          }
+          setLoading(false);
+        })
+        .catch(err => {
+          setError(err.message);
+          setLoading(false);
+        });
+    }
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-[#0D1117] text-white">
@@ -172,6 +183,12 @@ export default function Dashboard() {
           <h1 className="text-2xl font-black text-white">My Dashboard</h1>
           <p className="text-white/40 text-sm mt-1">Welcome back, {user?.firstName || 'there'}. All your past ad generations are here.</p>
         </div>
+
+        {error && (
+          <div className="bg-red-950/50 border border-red-500/30 rounded-xl p-4 mb-6 text-sm text-red-300">
+            Error loading generations: {error}
+          </div>
+        )}
 
         {loading ? (
           <div className="flex justify-center py-20">
