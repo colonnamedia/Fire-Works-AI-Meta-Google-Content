@@ -87,7 +87,7 @@ export default function Landing() {
             Meta & Google AI Ad Creation
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
-            <Link to="/pricing" className="text-sm text-white/60 hover:text-white hidden sm:block px-3 py-1.5 rounded-md hover:bg-white/5 transition-colors">Pricing</Link>
+            <Link to="/get-started" className="text-sm text-white/60 hover:text-white hidden sm:block px-3 py-1.5 rounded-md hover:bg-white/5 transition-colors">Pricing</Link>
             <button onClick={handleLogin} className="text-sm text-white/60 hover:text-white px-3 py-1.5 rounded-md hover:bg-white/5 transition-colors">Log In</button>
             <button
               onClick={handleGetStarted}
@@ -124,7 +124,7 @@ export default function Landing() {
               >
                 Generate My Ads <ArrowRight className="w-4 h-4" />
               </button>
-              <Link to="/pricing">
+              <Link to="/get-started">
                 <button className="inline-flex items-center justify-center gap-2 text-white/60 hover:text-white font-semibold px-6 py-3 rounded-xl border border-white/10 hover:border-white/20 transition-colors text-sm w-full sm:w-auto">
                   See Example Results
                 </button>
@@ -250,7 +250,7 @@ export default function Landing() {
         <div className="mb-10">
           <h2 className="text-3xl font-black text-white mb-2">Built for real businesses running real ads</h2>
           <p className="text-white/40 mb-1">No hidden fees. No complicated tiers. One plan that works for most businesses.</p>
-          <Link to="/pricing" className="text-sm text-[#E53E3E] hover:underline flex items-center gap-1 w-fit">
+          <Link to="/get-started" className="text-sm text-[#E53E3E] hover:underline flex items-center gap-1 w-fit">
             See plan pricing & features <ChevronRight className="w-3.5 h-3.5" />
           </Link>
         </div>
@@ -306,13 +306,13 @@ export default function Landing() {
       <section className="bg-[#E53E3E] py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white mb-2">Ready to run businer running Meta ads?</h2>
+            <h2 className="text-2xl sm:text-3xl font-black text-white mb-2">Ready to run smarter Meta ads?</h2>
             <p className="text-white/70 text-sm max-w-lg">
               Stop guessing which campaign to run. Get full AI-full business strategy, your business hours of strategy work.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 shrink-0">
-            <Link to="/pricing">
+            <Link to="/get-started">
               <button className="bg-white text-[#E53E3E] font-bold px-6 py-3 rounded-xl hover:bg-white/90 transition-colors text-sm whitespace-nowrap">
                 See Pricing
               </button>
@@ -337,7 +337,7 @@ export default function Landing() {
             <span className="font-bold text-white">Fire-Works AI</span>
           </div>
           <div className="flex flex-wrap justify-center gap-6 text-sm text-white/40">
-            <Link to="/pricing" className="hover:text-white transition-colors">Pricing</Link>
+            <Link to="/get-started" className="hover:text-white transition-colors">Pricing</Link>
             <Link to="/terms" className="hover:text-white transition-colors">Terms</Link>
             <Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link>
             <Link to="/support" className="hover:text-white transition-colors">Support</Link>
