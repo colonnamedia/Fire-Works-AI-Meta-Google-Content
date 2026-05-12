@@ -145,6 +145,18 @@ export default function Results() {
             <p className="text-emerald-400/70 text-sm mt-1">Your ad copy has been emailed to <strong>{email}</strong>. Check your inbox.</p>
           </div>
         </div>
+        {!isSignedIn && (
+  <div className="bg-[#161B22] border border-[#E53E3E]/30 rounded-2xl p-5 flex items-start gap-4">
+    <Zap className="w-5 h-5 text-[#E53E3E] flex-shrink-0 mt-0.5" />
+    <div className="flex-1">
+      <p className="font-semibold text-white text-sm">Want to save this and buy more?</p>
+      <p className="text-white/50 text-xs mt-1">Create a free account to access your purchase history, re-download past results, and generate new copy without re-entering your business info.</p>
+    </div>
+    <a href="/dashboard" className="flex-shrink-0 bg-[#E53E3E] hover:bg-[#C53030] text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors whitespace-nowrap">
+      Create Account
+    </a>
+  </div>
+)}
 
         <div className="bg-[#161B22] border border-white/10 rounded-2xl p-6">
           <p className="text-xs text-[#E53E3E] uppercase tracking-widest font-bold mb-1">Your Ad Copy</p>
