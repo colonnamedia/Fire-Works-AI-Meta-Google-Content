@@ -51,7 +51,7 @@ export default async function handler(req, res) {
     const generation = result.rows[0];
 
     // Send email
-    await fetch(`${process.env.VITE_APP_URL}/api/send-ad-email`, {
+    await fetch(`${process.env.APP_URL}/api/send-ad-email`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ generation, email })
