@@ -5,6 +5,9 @@ import Landing from './pages/Landing';
 import GetStarted from './pages/GetStarted';
 import Results from './pages/Results';
 import Dashboard from './pages/Dashboard';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
+import Support from './pages/Support';
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -28,11 +31,10 @@ function App() {
           <Route path="/dashboard" element={
             <ProtectedRoute><Dashboard /></ProtectedRoute>
           } />
-          {/* Redirect old/unused routes to home */}
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/support" element={<Support />} />
           <Route path="/pricing" element={<Navigate to="/" replace />} />
-          <Route path="/terms" element={<Navigate to="/" replace />} />
-          <Route path="/privacy" element={<Navigate to="/" replace />} />
-          <Route path="/support" element={<Navigate to="/" replace />} />
           <Route path="/builder" element={<Navigate to="/get-started" replace />} />
           <Route path="/new-idea" element={<Navigate to="/get-started" replace />} />
           <Route path="*" element={<Navigate to="/" replace />} />
