@@ -50,4 +50,4 @@ export default function Privacy() {
           },
           {
             title: "8. Your Rights",
-            body: `You have the right to access the personal information we hold about you, request correction of inaccurate data, request deletion of your account and associated data,
+            body: `You have the right to access the personal information we hold about you, request correction of inaccurate data, request deletion of your account and associated data, and opt out of any non-essential communications. To exercise any of these rights, contact us at colonnamedia@gmail.com.`
