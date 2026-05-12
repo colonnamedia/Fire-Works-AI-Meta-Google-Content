@@ -1,67 +1,78 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { Zap } from "lucide-react";
 
 export default function Terms() {
   return (
     <div className="min-h-screen bg-[#0D1117] text-white">
-      <nav className="border-b border-white/10 bg-[#0D1117]/95 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center">
-          <Link to="/" className="flex items-center gap-2 font-bold text-base text-white hover:opacity-80 transition-opacity">
-            <div className="w-7 h-7 bg-[#E53E3E] rounded-lg flex items-center justify-center shrink-0">
-              <Zap className="w-4 h-4 text-white" />
-            </div>
-            Fire-Works AI
-          </Link>
-        </div>
+      <nav className="border-b border-white/10 h-14 flex items-center justify-between px-4 sm:px-8">
+        <Link to="/" className="flex items-center gap-2 font-bold text-sm">
+          <div className="w-6 h-6 bg-[#E53E3E] rounded-md flex items-center justify-center">
+            <Zap className="w-3.5 h-3.5 text-white" />
+          </div>
+          Fire-Works AI
+        </Link>
       </nav>
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16">
-        <h1 className="text-3xl font-black text-white mb-2">Terms of Service</h1>
-        <p className="text-white/30 text-sm mb-10">Last updated: {new Date().toLocaleDateString()}</p>
+      <div className="max-w-3xl mx-auto px-4 py-16 space-y-8">
+        <div>
+          <h1 className="text-3xl font-black text-white mb-2">Terms of Service</h1>
+          <p className="text-white/40 text-sm">Last updated: May 2026 · Fire-Works Eco by Colonna Media</p>
+        </div>
 
-        <div className="space-y-8">
-          {[
-            { title: "1. Acceptance of Terms", body: "By accessing or using Fire-Works AI, you agree to be bound by these Terms of Service. If you do not agree, do not use the service." },
-            { title: "2. Subscription and Billing", body: "The Starter Plan is billed at $14.99 per month and includes 5 ad idea entries per billing cycle. Both Platforms Plan is $19.99 per month. Additional entries are billed at $1.99 each. Credits reset at the start of each new billing period. Payments are non-refundable except where required by law." },
-            { title: "3. Use of AI-Generated Content", body: "AI-generated strategies are provided for informational and marketing guidance purposes only. We do not guarantee specific advertising results. You are responsible for reviewing and approving all content before publishing any ads." },
-            { title: "4. User Accounts", body: "You are responsible for maintaining the security of your account credentials. Accounts may not be shared or transferred. We reserve the right to suspend or terminate accounts that violate these terms." },
-            { title: "5. Prohibited Use", body: "You may not use this service for illegal activities, spam, or to generate content that violates Meta's or Google's advertising policies or any applicable laws." },
-            { title: "6. Limitation of Liability", body: "To the maximum extent permitted by law, Fire-Works AI shall not be liable for any indirect, incidental, or consequential damages arising from your use of the service." },
-            { title: "7. Changes to Terms", body: "We reserve the right to update these terms at any time. Continued use of the service after changes constitutes acceptance of the new terms." },
-            { title: "8. Contact", body: null, link: true },
-          ].map((section) => (
-            <section key={section.title} className="border-b border-white/10 pb-8 last:border-0">
-              <h2 className="text-base font-bold text-white mb-2">{section.title}</h2>
-              {section.link ? (
-                <p className="text-white/40 text-sm leading-relaxed">
-                  For questions about these terms, please{" "}
-                  <Link to="/support" className="text-[#E53E3E] hover:underline">contact support</Link>.
-                </p>
-              ) : (
-                <p className="text-white/40 text-sm leading-relaxed">{section.body}</p>
-              )}
-            </section>
-          ))}
+        {[
+          {
+            title: "1. Acceptance of Terms",
+            body: `By accessing or using Fire-Works AI ("the Service"), operated by Fire-Works Eco by Colonna Media, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the Service.`
+          },
+          {
+            title: "2. Description of Service",
+            body: `Fire-Works AI is an AI-powered ad copy generation tool that produces marketing content for Google Ads, Meta Ads, and organic social media posts. The Service is provided on a per-generation basis. Results are delivered digitally via on-screen display and email.`
+          },
+          {
+            title: "3. Payments and Refunds",
+            body: `All purchases are one-time payments processed securely through Stripe. Due to the digital and immediate nature of the Service — AI-generated content is produced and delivered upon payment — all sales are final and non-refundable. If you experience a technical issue that prevents delivery of your content, please contact us at colonnamedia@gmail.com and we will work to resolve it promptly.`
+          },
+          {
+            title: "4. Use of Generated Content",
+            body: `You retain full ownership of the ad copy and content generated for your business through the Service. You may use, modify, and publish the generated content for any lawful business purpose. Fire-Works Eco by Colonna Media does not claim ownership of content generated on your behalf.`
+          },
+          {
+            title: "5. Acceptable Use",
+            body: `You agree not to use the Service to generate content that is unlawful, deceptive, harassing, defamatory, or otherwise harmful. You are solely responsible for how you use the generated content in your advertising campaigns. Fire-Works Eco by Colonna Media is not responsible for the performance or outcome of any advertising campaigns you run using the generated content.`
+          },
+          {
+            title: "6. AI-Generated Content Disclaimer",
+            body: `Content generated by the Service is produced by artificial intelligence and is provided as a starting point for your marketing efforts. While we strive for quality and relevance, we make no guarantees regarding the performance, accuracy, or suitability of any generated content for your specific business needs. Always review and edit generated content before publishing.`
+          },
+          {
+            title: "7. Account and Data",
+            body: `If you create an account, you are responsible for maintaining the confidentiality of your login credentials. We store your business profile information to provide a better experience on return visits. You may request deletion of your data at any time by contacting us at colonnamedia@gmail.com.`
+          },
+          {
+            title: "8. Limitation of Liability",
+            body: `To the fullest extent permitted by law, Fire-Works Eco by Colonna Media shall not be liable for any indirect, incidental, special, or consequential damages arising from your use of the Service. Our total liability shall not exceed the amount you paid for the specific generation that gave rise to the claim.`
+          },
+          {
+            title: "9. Changes to Terms",
+            body: `We reserve the right to update these Terms at any time. Continued use of the Service after changes constitutes acceptance of the new Terms. We will update the "Last updated" date at the top of this page when changes are made.`
+          },
+          {
+            title: "10. Contact",
+            body: `For questions about these Terms, please contact us at colonnamedia@gmail.com or visit our Support page.`
+          },
+        ].map((section, i) => (
+          <div key={i} className="space-y-2">
+            <h2 className="text-base font-bold text-white">{section.title}</h2>
+            <p className="text-sm text-white/60 leading-relaxed">{section.body}</p>
+          </div>
+        ))}
+
+        <div className="pt-8 border-t border-white/10 flex gap-6 text-sm text-white/30">
+          <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+          <Link to="/support" className="hover:text-white transition-colors">Support</Link>
+          <Link to="/" className="hover:text-white transition-colors">Home</Link>
         </div>
       </div>
-
-      <footer className="border-t border-white/10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-sm">
-            <div className="w-5 h-5 bg-[#E53E3E] rounded flex items-center justify-center">
-              <Zap className="w-3 h-3 text-white" />
-            </div>
-            <span className="font-bold text-white">Fire-Works AI</span>
-          </div>
-          <div className="flex flex-wrap justify-center gap-6 text-sm text-white/40">
-            <Link to="/pricing" className="hover:text-white transition-colors">Pricing</Link>
-            <Link to="/privacy" className="hover:text-white transition-colors">Privacy</Link>
-            <Link to="/support" className="hover:text-white transition-colors">Support</Link>
-          </div>
-          <p className="text-xs text-white/30">© 2026 Fire-Works AI</p>
-        </div>
-      </footer>
     </div>
   );
 }
