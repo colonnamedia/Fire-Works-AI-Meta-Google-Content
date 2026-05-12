@@ -136,16 +136,17 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (user) {
-      fetch(`/api/get-user-generations?clerk_user_id=${user.id}`)
-        .then(r => r.json())
-        .then(data => {
-          setGenerations(Array.isArray(data) ? data : []);
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
-    }
-  }, [user]);
+  if (user) {
+    const email = user.primaryEmailAddress?.emailAddress;
+    fetch(`/api/get-user-generations?clerk_user_id=${user.id}&email=${encodeURIComponent(email || '')}`)
+      .then(r => r.json())
+      .then(data => {
+        setGenerations(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }
+}, [user]);
 
   return (
     <div className="min-h-screen bg-[#0D1117] text-white">
