@@ -3,21 +3,25 @@ import Stripe from 'stripe';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const PRICES = {
-  google: 499,
-  meta: 499,
-  both: 899,
+  google_ads: 999,
+  meta_ads: 999,
+  organic_social: 499,
+  google_meta: 1699,
+  everything: 1999,
 };
 
 const LABELS = {
-  google: 'Google Ads Copy',
-  meta: 'Meta Ads + Organic Social Copy',
-  both: 'Google + Meta + Organic Social Copy',
+  google_ads: 'Google Ads Campaign Setup',
+  meta_ads: 'Meta Ads Campaign Setup',
+  organic_social: 'Organic Social Content',
+  google_meta: 'Google + Meta Ad Campaigns',
+  everything: 'Google + Meta + Organic Social',
 };
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
-  const { generationId, email, platform } = req.body;
+  const { generationId, email, content_type } = req.body;
 
   try {
     const session = await stripe.checkout.sessions.create({
@@ -28,18 +32,18 @@ export default async function handler(req, res) {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: LABELS[platform] || 'Ad Copy Generation',
-              description: 'AI-generated ad copy — delivered instantly.',
+              name: LABELS[content_type] || 'Ad Content Generation',
+              description: 'AI-generated ad content — delivered instantly.',
             },
-            unit_amount: PRICES[platform] || 499,
+            unit_amount: PRICES[content_type] || 999,
           },
           quantity: 1,
         },
       ],
       mode: 'payment',
-     success_url: `${process.env.APP_URL}/results?generationId=${generationId}&success=true`,
-     cancel_url: `${process.env.APP_URL}/get-started?cancelled=true`,
-      metadata: { generationId, platform },
+      success_url: `${process.env.APP_URL}/results?generationId=${generationId}&success=true`,
+      cancel_url: `${process.env.APP_URL}/get-started?cancelled=true`,
+      metadata: { generationId, content_type },
     });
 
     return res.status(200).json({ url: session.url });
