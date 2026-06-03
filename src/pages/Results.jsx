@@ -34,13 +34,14 @@ function Label({ text }) {
   return <p className="text-xs text-white/40 uppercase tracking-widest font-semibold mb-2 mt-4">{text}</p>;
 }
 
-function Item({ num, text, maxChars, badge }) {
+function Item({ num, text, maxChars, badge, badge2 }) {
   return (
     <div className="flex items-start gap-3 py-2 border-b border-white/5 last:border-0">
       {num && <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-xs text-white/50 flex-shrink-0 mt-0.5">{num}</span>}
       <span className="text-sm text-white/80 flex-1">{text}</span>
       <div className="flex items-center gap-2 flex-shrink-0">
         {badge && <span className="text-xs bg-white/10 text-white/50 px-2 py-0.5 rounded">{badge}</span>}
+        {badge2 && <span className="text-xs bg-white/5 text-white/30 px-2 py-0.5 rounded">{badge2}</span>}
         {maxChars && <span className={`text-xs ${text.length > maxChars ? 'text-red-400' : 'text-white/30'}`}>{text.length}/{maxChars}</span>}
         <CopyButton text={text} />
       </div>
@@ -88,14 +89,10 @@ export default function Results() {
     const params = new URLSearchParams(window.location.search);
     const generationId = params.get("generationId");
     const success = params.get("success");
-
     if (generationId && success === "true") {
       fetch(`/api/get-ad-generation?id=${generationId}`)
         .then(r => r.json())
-        .then(data => {
-          setGeneration(data);
-          setLoading(false);
-        })
+        .then(data => { setGeneration(data); setLoading(false); })
         .catch(() => setLoading(false));
     } else {
       setLoading(false);
@@ -125,15 +122,16 @@ export default function Results() {
     );
   }
 
-  const { business_name, content_type, email } = generation;
+  const { business_name, content_type, email, website_url } = generation;
   const results = typeof generation.results === 'string' ? JSON.parse(generation.results) : generation.results;
 
   const contentLabel = {
     google_ads: 'Google Ads Campaign',
     meta_ads: 'Meta Ads Campaign',
     organic_social: 'Organic Social Content',
+    keyword_research: 'Keyword Research Report',
     google_meta: 'Google + Meta Campaigns',
-    everything: 'Google + Meta + Social',
+    everything: 'Google + Meta + Social + Keywords',
   }[content_type] || content_type;
 
   return (
@@ -177,6 +175,7 @@ export default function Results() {
           <p className="text-xs text-[#E53E3E] uppercase tracking-widest font-bold mb-1">Your Content</p>
           <h1 className="text-2xl font-black text-white">{business_name}</h1>
           <p className="text-white/40 text-sm mt-1">{contentLabel}</p>
+          {website_url && <p className="text-white/30 text-xs mt-1">{website_url}</p>}
         </div>
 
         {results?.google && (
@@ -198,12 +197,16 @@ export default function Results() {
 
             <Label text="Sitelink Extensions" />
             {results.google.sitelinks.map((s, i) => (
-              <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-3 mb-2">
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-sm font-medium text-white">{s.title}</p>
-                  <CopyButton text={`${s.title}: ${s.description}`} />
+              <div key={i} className="bg-white/5 border border-white/10 rounded-xl p-4 mb-2">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-bold text-white">{s.title}</p>
+                  <div className="flex items-center gap-2">
+                    {s.suggested_url && <span className="text-xs text-white/30">{website_url ? website_url + s.suggested_url : s.suggested_url}</span>}
+                    <CopyButton text={`${s.title}\n${s.description1}\n${s.description2}\n${website_url ? website_url + s.suggested_url : s.suggested_url}`} />
+                  </div>
                 </div>
-                <p className="text-xs text-white/50">{s.description}</p>
+                <p className="text-xs text-white/50 mb-1">{s.description1}</p>
+                <p className="text-xs text-white/50">{s.description2}</p>
               </div>
             ))}
 
@@ -219,7 +222,7 @@ export default function Results() {
 
             <Label text="Keywords with Match Types" />
             {results.google.keywords.map((k, i) => (
-              <Item key={i} num={i + 1} text={k.keyword} badge={k.match_type} />
+              <Item key={i} num={i + 1} text={k.keyword} badge={k.match_type} badge2={k.intent} />
             ))}
 
             <Label text="Negative Keywords" />
@@ -246,12 +249,12 @@ export default function Results() {
             <InfoRow label="Creative Format" value={results.meta.creative_format} />
 
             <Label text="Audience Targeting" />
-            <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-2">
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
               <InfoRow label="Age Range" value={results.meta.audience?.age_range} />
               <InfoRow label="Gender" value={results.meta.audience?.gender} />
               <InfoRow label="Exclusions" value={results.meta.audience?.exclusions} />
               {results.meta.audience?.interests?.length > 0 && (
-                <div className="py-2 border-b border-white/5">
+                <div className="py-2 border-t border-white/5">
                   <span className="text-xs text-white/40 block mb-2">Interests</span>
                   <div className="flex flex-wrap gap-2">
                     {results.meta.audience.interests.map((interest, i) => (
@@ -261,7 +264,7 @@ export default function Results() {
                 </div>
               )}
               {results.meta.audience?.behaviors?.length > 0 && (
-                <div className="py-2">
+                <div className="py-2 border-t border-white/5">
                   <span className="text-xs text-white/40 block mb-2">Behaviors</span>
                   <div className="flex flex-wrap gap-2">
                     {results.meta.audience.behaviors.map((b, i) => (
@@ -323,6 +326,40 @@ export default function Results() {
 
             <Label text="Reel / Video Concepts" />
             {results.social.reel_concepts.map((r, i) => <Item key={i} num={i + 1} text={r} />)}
+          </Section>
+        )}
+
+        {results?.keywords && (
+          <Section title="Keyword Research Report" color="#fbbf24">
+            <Label text="Primary Keywords" />
+            {results.keywords.primary_keywords.map((k, i) => (
+              <Item key={i} num={i + 1} text={k.keyword} badge={k.match_type} badge2={k.estimated_competition} />
+            ))}
+
+            <Label text="Long-Tail Keywords" />
+            {results.keywords.long_tail_keywords.map((k, i) => (
+              <Item key={i} num={i + 1} text={k.keyword} badge2={k.intent} />
+            ))}
+
+            <Label text="Negative Keywords" />
+            <div className="flex flex-wrap gap-2 mt-1">
+              {results.keywords.negative_keywords.map((k, i) => (
+                <span key={i} className="bg-red-950/40 border border-red-500/20 text-red-300 text-xs px-3 py-1 rounded-full">−{k}</span>
+              ))}
+            </div>
+
+            <Label text="Competitor Terms" />
+            <div className="flex flex-wrap gap-2 mt-1">
+              {results.keywords.competitor_terms.map((k, i) => (
+                <span key={i} className="bg-orange-950/40 border border-orange-500/20 text-orange-300 text-xs px-3 py-1 rounded-full">{k}</span>
+              ))}
+            </div>
+
+            <Label text="SEO Opportunities" />
+            {results.keywords.seo_opportunities.map((s, i) => <Item key={i} num={i + 1} text={s} />)}
+
+            <Label text="Keyword Strategy" />
+            <Tip text={results.keywords.keyword_strategy} />
           </Section>
         )}
 
