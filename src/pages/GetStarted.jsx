@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
-import { Zap, ChevronRight, ChevronLeft, Loader2, Facebook, Search, Layers } from "lucide-react";
+import { Zap, ChevronRight, ChevronLeft, Loader2, Search, Facebook, Layers, Image, LayoutGrid } from "lucide-react";
 
 const GOALS = [
   { value: "leads", label: "Generate Leads" },
@@ -12,10 +12,12 @@ const GOALS = [
   { value: "messaging", label: "Get Messages" },
 ];
 
-const PLATFORMS = [
-  { value: "meta", label: "Meta Ads", sub: "Facebook & Instagram + Social Posts", icon: Facebook, price: "$4.99" },
-  { value: "google", label: "Google Ads", sub: "Search Headlines & Keywords", icon: Search, price: "$4.99" },
-  { value: "both", label: "Both Platforms", sub: "Google + Meta + Social Posts", icon: Layers, price: "$8.99" },
+const CONTENT_TYPES = [
+  { value: "google_ads", label: "Google Ads", sub: "Full campaign setup + copy", icon: Search, price: "$9.99" },
+  { value: "meta_ads", label: "Meta Ads", sub: "Full campaign setup + copy", icon: Facebook, price: "$9.99" },
+  { value: "organic_social", label: "Organic Social", sub: "Captions, hashtags, ideas", icon: Image, price: "$4.99" },
+  { value: "google_meta", label: "Google + Meta", sub: "Both ad campaigns", icon: Layers, price: "$16.99" },
+  { value: "everything", label: "Everything", sub: "Google + Meta + Social", icon: LayoutGrid, price: "$19.99" },
 ];
 
 const LOCATION_TYPES = [
@@ -40,7 +42,12 @@ const INITIAL = {
   fullName: "", email: "",
   businessName: "", industry: "", offerType: "",
   targetAudience: "", locationType: "local", uniqueSellingPoint: "", biggestChallenge: "",
-  platform: "meta", goal: "leads", budget: "",
+  contentType: "google_ads", goal: "leads", budget: "",
+};
+
+const PRICES = {
+  google_ads: "$9.99", meta_ads: "$9.99", organic_social: "$4.99",
+  google_meta: "$16.99", everything: "$19.99"
 };
 
 export default function GetStarted() {
@@ -106,7 +113,7 @@ export default function GetStarted() {
           location_type: form.locationType,
           unique_selling_point: form.uniqueSellingPoint,
           biggest_challenge: form.biggestChallenge,
-          platform: form.platform,
+          content_type: form.contentType,
           goal: form.goal,
           budget: form.budget,
           clerk_user_id: isSignedIn ? user.id : null,
@@ -121,7 +128,7 @@ export default function GetStarted() {
         body: JSON.stringify({
           generationId: data.id,
           email: form.email,
-          platform: form.platform,
+          content_type: form.contentType,
         }),
       });
       const paymentData = await paymentRes.json();
@@ -155,8 +162,8 @@ export default function GetStarted() {
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-lg">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-black text-white mb-2">Build Your Ad Copy</h1>
-            <p className="text-white/40 text-sm">Answer a few questions and get AI-generated ad copy instantly.</p>
+            <h1 className="text-3xl font-black text-white mb-2">Build Your Ad Content</h1>
+            <p className="text-white/40 text-sm">Answer a few questions and get AI-generated ad content instantly.</p>
           </div>
 
           <div className="flex items-center mb-8">
@@ -244,16 +251,19 @@ export default function GetStarted() {
 
             {step === 3 && (
               <div className="space-y-5">
-                <h2 className="font-semibold text-white mb-4">Your campaign</h2>
+                <h2 className="font-semibold text-white mb-4">What do you need?</h2>
                 <div>
-                  <label className="text-xs text-white/50 mb-2 block">Which platform?</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {PLATFORMS.map(p => (
-                      <button key={p.value} onClick={() => update("platform", p.value)}
-                        className={`p-3 rounded-xl border text-center transition-all ${form.platform === p.value ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
-                        <p.icon className={`w-4 h-4 mx-auto mb-1 ${form.platform === p.value ? "text-[#E53E3E]" : "text-white/40"}`} />
-                        <p className={`text-xs font-semibold ${form.platform === p.value ? "text-white" : "text-white/50"}`}>{p.label}</p>
-                        <p className={`text-xs mt-0.5 ${form.platform === p.value ? "text-[#E53E3E]" : "text-white/30"}`}>{p.price}</p>
+                  <label className="text-xs text-white/50 mb-2 block">Select content type</label>
+                  <div className="grid grid-cols-1 gap-2">
+                    {CONTENT_TYPES.map(ct => (
+                      <button key={ct.value} onClick={() => update("contentType", ct.value)}
+                        className={`flex items-center gap-4 px-4 py-3 rounded-xl border text-left transition-all ${form.contentType === ct.value ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
+                        <ct.icon className={`w-4 h-4 flex-shrink-0 ${form.contentType === ct.value ? "text-[#E53E3E]" : "text-white/40"}`} />
+                        <div className="flex-1">
+                          <p className={`text-sm font-semibold ${form.contentType === ct.value ? "text-white" : "text-white/60"}`}>{ct.label}</p>
+                          <p className={`text-xs ${form.contentType === ct.value ? "text-white/60" : "text-white/30"}`}>{ct.sub}</p>
+                        </div>
+                        <span className={`text-sm font-bold flex-shrink-0 ${form.contentType === ct.value ? "text-[#E53E3E]" : "text-white/30"}`}>{ct.price}</span>
                       </button>
                     ))}
                   </div>
@@ -293,7 +303,7 @@ export default function GetStarted() {
             ) : (
               <button onClick={handleSubmit} disabled={loading || !form.email || !form.businessName}
                 className="flex items-center gap-2 bg-[#E53E3E] hover:bg-[#C53030] text-white font-bold px-6 py-2.5 rounded-xl text-sm disabled:opacity-50 transition-colors">
-                {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Generating...</> : <><Zap className="w-4 h-4" />Get My Ad Copy — {form.platform === 'both' ? '$8.99' : '$4.99'}</>}
+                {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Generating...</> : <><Zap className="w-4 h-4" />Get My Content — {PRICES[form.contentType]}</>}
               </button>
             )}
           </div>
