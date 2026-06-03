@@ -318,18 +318,19 @@ export default function Landing() {
           <div className="bg-[#161B22] border-2 border-[#E53E3E]/60 rounded-2xl p-7 flex flex-col shadow-2xl shadow-[#E53E3E]/10">
             <p className="text-xs font-bold text-[#E53E3E] uppercase tracking-widest mb-1">Simple Pricing</p>
             <p className="text-xs text-white/40 mb-4">Pay per generation — no subscription</p>
-            <div className="flex items-baseline gap-1 mb-5">
-              <span className="text-4xl font-black text-white">$4.99</span>
-              <span className="text-white/40 text-sm">per generation</span>
-            </div>
+           <div className="flex items-baseline gap-1 mb-5">
+           <span className="text-4xl font-black text-white">$4.99</span>
+           <span className="text-white/40 text-sm">and up per generation</span>
+         </div>
             <ul className="space-y-2 text-sm mb-6 flex-1">
-              <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Google Ads — $4.99 per generation</li>
-              <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Meta Ads + Organic Social — $4.99 per generation</li>
-              <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Google + Meta + Social — $8.99 per generation</li>
-              <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />AI-generated headlines, copy, hooks, and keywords</li>
-              <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Full results emailed instantly</li>
-              <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Dashboard to view all past generations</li>
-            </ul>
+  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Google Ads Campaign Setup — $9.99</li>
+  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Meta Ads Campaign Setup — $9.99</li>
+  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Organic Social Content — $4.99</li>
+  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Google + Meta Campaigns — $16.99</li>
+  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Everything (Google + Meta + Social) — $19.99</li>
+  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Full results emailed instantly</li>
+  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Dashboard to view all past generations</li>
+</ul>
             <button onClick={handleGetStarted} className="w-full bg-[#E53E3E] hover:bg-[#C53030] text-white font-bold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
               Get My Ad Copy <ArrowRight className="w-4 h-4" />
             </button>
