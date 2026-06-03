@@ -10,28 +10,33 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
   try {
-    const {
+   const {
       email, full_name, business_name, industry, offer_type,
       target_audience, location_type, unique_selling_point, biggest_challenge,
+      monthly_revenue, avg_ticket_value, has_tracking, main_cta,
+      has_reviews, currently_running_ads, biggest_competitor,
       content_type, goal, budget, website_url, clerk_user_id
     } = req.body;
 
     if (clerk_user_id) {
-      await pool.query(`
-        INSERT INTO user_profiles (clerk_user_id, email, full_name, business_name, industry, offer_type, target_audience, location_type, unique_selling_point, biggest_challenge, goal, budget, content_type, website_url)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
-        ON CONFLICT (clerk_user_id) DO UPDATE SET
-          email = $2, full_name = $3, business_name = $4,
-          industry = $5, offer_type = $6, target_audience = $7,
-          location_type = $8, unique_selling_point = $9,
-          biggest_challenge = $10, goal = $11, budget = $12,
-          content_type = $13, website_url = $14, updated_at = NOW()
-      `, [clerk_user_id, email, full_name, business_name, industry, offer_type,
-          target_audience, location_type, unique_selling_point, biggest_challenge,
-          goal, budget, content_type, website_url]);
-    }
+     const result = await pool.query(
+      `INSERT INTO ad_generations (
+        email, full_name, business_name, industry, offer_type,
+        target_audience, location_type, unique_selling_point, biggest_challenge,
+        platform, goal, budget, results, clerk_user_id, content_type, website_url,
+        monthly_revenue, avg_ticket_value, has_tracking, main_cta,
+        has_reviews, currently_running_ads, biggest_competitor
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23) RETURNING id`,
+      [email, full_name, business_name, industry, offer_type,
+       target_audience, location_type, unique_selling_point, biggest_challenge,
+       content_type, goal, budget, JSON.stringify(results), clerk_user_id || null,
+       content_type, website_url || null,
+       monthly_revenue || null, avg_ticket_value || null, has_tracking || null,
+       main_cta || null, has_reviews || null, currently_running_ads || null,
+       biggest_competitor || null]
+    );
 
-    const businessContext = `
+   const businessContext = `
 Business Name: ${business_name}
 Industry: ${industry}
 Main Offer: ${offer_type || 'Not specified'}
@@ -40,8 +45,15 @@ Service Area: ${location_type || 'local'}
 Unique Selling Point: ${unique_selling_point || 'Not specified'}
 Biggest Challenge: ${biggest_challenge || 'Not specified'}
 Primary Goal: ${goal}
-Monthly Budget: ${budget || 'Not specified'}
-Website URL: ${website_url || 'Not provided'}`;
+Monthly Ad Budget: ${budget || 'Not specified'}
+Website URL: ${website_url || 'Not provided'}
+Monthly Revenue Range: ${monthly_revenue || 'Not specified'}
+Average Ticket Value: ${avg_ticket_value || 'Not specified'}
+Tracking Setup: ${has_tracking || 'Not specified'}
+Primary Call to Action: ${main_cta || 'Not specified'}
+Has Reviews/Testimonials: ${has_reviews || 'Not specified'}
+Currently Running Ads: ${currently_running_ads || 'Not specified'}
+Biggest Competitor: ${biggest_competitor || 'Not specified'}`;
 
     const includeGoogle = content_type === 'google_ads' || content_type === 'google_meta' || content_type === 'everything';
     const includeMeta = content_type === 'meta_ads' || content_type === 'google_meta' || content_type === 'everything';
