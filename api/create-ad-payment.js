@@ -7,6 +7,7 @@ const PRICES = {
   meta_ads: 999,
   organic_social: 499,
   google_meta: 1699,
+  keyword_research: 499,
   everything: 1999,
 };
 
@@ -15,7 +16,8 @@ const LABELS = {
   meta_ads: 'Meta Ads Campaign Setup',
   organic_social: 'Organic Social Content',
   google_meta: 'Google + Meta Ad Campaigns',
-  everything: 'Google + Meta + Organic Social',
+  keyword_research: 'Keyword Research Report',
+  everything: 'Google + Meta + Organic Social + Keywords',
 };
 
 export default async function handler(req, res) {
