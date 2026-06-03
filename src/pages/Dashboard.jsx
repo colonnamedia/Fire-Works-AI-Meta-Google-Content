@@ -18,44 +18,21 @@ function CopyButton({ text }) {
 }
 
 function PlatformIcon({ platform }) {
-  if (platform === 'google') return <Search className="w-4 h-4 text-green-400" />;
-  if (platform === 'meta') return <Facebook className="w-4 h-4 text-blue-400" />;
+  if (platform === 'google' || platform === 'google_ads') return <Search className="w-4 h-4 text-green-400" />;
+  if (platform === 'meta' || platform === 'meta_ads') return <Facebook className="w-4 h-4 text-blue-400" />;
   return <Layers className="w-4 h-4 text-[#E53E3E]" />;
 }
 
-function GenerationCard({ generation }) {
-  const [open, setOpen] = useState(false);
-  const { business_name, platform, created_at } = generation;
-  const results = typeof generation.results === 'string'
-    ? JSON.parse(generation.results)
-    : generation.results;
-  const date = new Date(created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-  return (
-    <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden mb-4">
-      <button
-        onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center gap-4 px-6 py-4 hover:bg-white/5 transition-colors text-left"
-      >
-        <PlatformIcon platform={platform} />
-        <div className="flex-1">
-          <p className="font-semibold text-white text-sm">{business_name}</p>
-          <p className="text-xs text-white/40 mt-0.5">
-            {platform === 'both' ? 'Google + Meta + Social' : platform === 'google' ? 'Google Ads' : 'Meta + Social'} · {date}
-          </p>
-        </div>
-        {open ? <ChevronUp className="w-4 h-4 text-white/40" /> : <ChevronDown className="w-4 h-4 text-white/40" />}
-      </button>
-
-     {open && results && (() => {
+function GenerationResults({ results }) {
   try {
+    const r = typeof results === 'string' ? JSON.parse(results) : results;
     return (
       <div className="px-6 pb-6 border-t border-white/10 pt-4 space-y-6">
-        {results.google && (
+        {r?.google && (
           <div>
             <p className="text-xs font-bold text-green-400 uppercase tracking-widest mb-3">Google Ads</p>
             <p className="text-xs text-white/40 uppercase tracking-wide mb-2">Headlines</p>
-            {results.google.headlines?.map((h, i) => (
+            {r.google.headlines?.map((h, i) => (
               <div key={i} className="flex items-center gap-3 py-1.5 border-b border-white/5 last:border-0">
                 <span className="text-xs text-white/30 w-4">{i + 1}</span>
                 <span className="text-sm text-white/80 flex-1">{h}</span>
@@ -64,7 +41,7 @@ function GenerationCard({ generation }) {
               </div>
             ))}
             <p className="text-xs text-white/40 uppercase tracking-wide mb-2 mt-4">Descriptions</p>
-            {results.google.descriptions?.map((d, i) => (
+            {r.google.descriptions?.map((d, i) => (
               <div key={i} className="flex items-start gap-3 py-1.5 border-b border-white/5 last:border-0">
                 <span className="text-xs text-white/30 w-4 mt-0.5">{i + 1}</span>
                 <span className="text-sm text-white/80 flex-1">{d}</span>
@@ -72,10 +49,10 @@ function GenerationCard({ generation }) {
                 <CopyButton text={d} />
               </div>
             ))}
-            {results.google.sitelinks?.length > 0 && (
+            {r.google.sitelinks?.length > 0 && (
               <>
                 <p className="text-xs text-white/40 uppercase tracking-wide mb-2 mt-4">Sitelinks</p>
-                {results.google.sitelinks.map((s, i) => (
+                {r.google.sitelinks.map((s, i) => (
                   <div key={i} className="bg-white/5 rounded-xl p-3 mb-2">
                     <p className="text-sm font-bold text-white mb-1">{s.title}</p>
                     {s.description1 && <p className="text-xs text-white/50">{s.description1}</p>}
@@ -87,7 +64,7 @@ function GenerationCard({ generation }) {
             )}
             <p className="text-xs text-white/40 uppercase tracking-wide mb-2 mt-4">Keywords</p>
             <div className="flex flex-wrap gap-2">
-              {results.google.keywords?.map((k, i) => (
+              {r.google.keywords?.map((k, i) => (
                 <span key={i} className="bg-white/10 text-white/70 text-xs px-3 py-1 rounded-full">
                   {typeof k === 'string' ? k : k.keyword}
                   {k.match_type && <span className="text-white/40 ml-1">· {k.match_type}</span>}
@@ -96,11 +73,11 @@ function GenerationCard({ generation }) {
             </div>
           </div>
         )}
-        {results.meta && (
+        {r?.meta && (
           <div>
             <p className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-3">Meta Ads</p>
             <p className="text-xs text-white/40 uppercase tracking-wide mb-2">Primary Text Options</p>
-            {results.meta.primary_texts?.map((t, i) => (
+            {r.meta.primary_texts?.map((t, i) => (
               <div key={i} className="bg-white/5 rounded-xl p-3 mb-2">
                 <p className="text-xs text-white/30 mb-1">Option {i + 1}</p>
                 <p className="text-sm text-white/80">{t}</p>
@@ -108,7 +85,7 @@ function GenerationCard({ generation }) {
               </div>
             ))}
             <p className="text-xs text-white/40 uppercase tracking-wide mb-2 mt-4">Headlines</p>
-            {results.meta.headlines?.map((h, i) => (
+            {r.meta.headlines?.map((h, i) => (
               <div key={i} className="flex items-center gap-3 py-1.5 border-b border-white/5 last:border-0">
                 <span className="text-xs text-white/30 w-4">{i + 1}</span>
                 <span className="text-sm text-white/80 flex-1">{h}</span>
@@ -116,7 +93,7 @@ function GenerationCard({ generation }) {
               </div>
             ))}
             <p className="text-xs text-white/40 uppercase tracking-wide mb-2 mt-4">Hooks</p>
-            {results.meta.hooks?.map((h, i) => (
+            {r.meta.hooks?.map((h, i) => (
               <div key={i} className="flex items-center gap-3 py-1.5 border-b border-white/5 last:border-0">
                 <span className="text-xs text-white/30 w-4">{i + 1}</span>
                 <span className="text-sm text-white/80 italic flex-1">"{h}"</span>
@@ -125,10 +102,10 @@ function GenerationCard({ generation }) {
             ))}
           </div>
         )}
-        {results.social && (
+        {r?.social && (
           <div>
             <p className="text-xs font-bold text-pink-400 uppercase tracking-widest mb-3">Organic Social Posts</p>
-            {results.social.captions?.map((c, i) => (
+            {r.social.captions?.map((c, i) => (
               <div key={i} className="bg-white/5 rounded-xl p-3 mb-2">
                 <p className="text-xs text-white/30 mb-1">Post {i + 1}</p>
                 <p className="text-sm text-white/80">{c}</p>
@@ -136,16 +113,16 @@ function GenerationCard({ generation }) {
               </div>
             ))}
             <div className="flex flex-wrap gap-2 mt-3">
-              {results.social.hashtags?.map((h, i) => (
+              {r.social.hashtags?.map((h, i) => (
                 <span key={i} className="bg-white/10 text-white/70 text-xs px-3 py-1 rounded-full">#{h}</span>
               ))}
             </div>
           </div>
         )}
-        {results.keywords && (
+        {r?.keywords && (
           <div>
             <p className="text-xs font-bold text-amber-400 uppercase tracking-widest mb-3">Keyword Research</p>
-            {results.keywords.primary_keywords?.map((k, i) => (
+            {r.keywords.primary_keywords?.map((k, i) => (
               <div key={i} className="flex items-center gap-3 py-1.5 border-b border-white/5 last:border-0">
                 <span className="text-xs text-white/30 w-4">{i + 1}</span>
                 <span className="text-sm text-white/80 flex-1">{k.keyword}</span>
@@ -164,7 +141,43 @@ function GenerationCard({ generation }) {
       </div>
     );
   }
-})()}
+}
+
+function GenerationCard({ generation }) {
+  const [open, setOpen] = useState(false);
+  const { business_name, platform, content_type, created_at, results } = generation;
+  const displayPlatform = content_type || platform;
+  const date = new Date(created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+  const platformLabel = {
+    google_ads: 'Google Ads',
+    meta_ads: 'Meta Ads',
+    organic_social: 'Organic Social',
+    keyword_research: 'Keyword Research',
+    google_meta: 'Google + Meta',
+    everything: 'Everything',
+    both: 'Google + Meta + Social',
+    google: 'Google Ads',
+    meta: 'Meta + Social',
+  }[displayPlatform] || displayPlatform;
+
+  return (
+    <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden mb-4">
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center gap-4 px-6 py-4 hover:bg-white/5 transition-colors text-left"
+      >
+        <PlatformIcon platform={displayPlatform} />
+        <div className="flex-1">
+          <p className="font-semibold text-white text-sm">{business_name}</p>
+          <p className="text-xs text-white/40 mt-0.5">{platformLabel} · {date}</p>
+        </div>
+        {open ? <ChevronUp className="w-4 h-4 text-white/40" /> : <ChevronDown className="w-4 h-4 text-white/40" />}
+      </button>
+      {open && <GenerationResults results={results} />}
+    </div>
+  );
+}
 
 export default function Dashboard() {
   const { user } = useUser();
