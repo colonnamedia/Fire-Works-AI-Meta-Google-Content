@@ -47,91 +47,124 @@ function GenerationCard({ generation }) {
         {open ? <ChevronUp className="w-4 h-4 text-white/40" /> : <ChevronDown className="w-4 h-4 text-white/40" />}
       </button>
 
-      {open && results && (
-        <div className="px-6 pb-6 border-t border-white/10 pt-4 space-y-6">
-
-          {results.google && (
-            <div>
-              <p className="text-xs font-bold text-green-400 uppercase tracking-widest mb-3">Google Ads</p>
-              <p className="text-xs text-white/40 uppercase tracking-wide mb-2">Headlines</p>
-              {results.google.headlines.map((h, i) => (
-                <div key={i} className="flex items-center gap-3 py-1.5 border-b border-white/5 last:border-0">
-                  <span className="text-xs text-white/30 w-4">{i + 1}</span>
-                  <span className="text-sm text-white/80 flex-1">{h}</span>
-                  <span className={`text-xs ${h.length > 30 ? 'text-red-400' : 'text-white/30'}`}>{h.length}/30</span>
-                  <CopyButton text={h} />
-                </div>
-              ))}
-              <p className="text-xs text-white/40 uppercase tracking-wide mb-2 mt-4">Descriptions</p>
-              {results.google.descriptions.map((d, i) => (
-                <div key={i} className="flex items-start gap-3 py-1.5 border-b border-white/5 last:border-0">
-                  <span className="text-xs text-white/30 w-4 mt-0.5">{i + 1}</span>
-                  <span className="text-sm text-white/80 flex-1">{d}</span>
-                  <span className={`text-xs ${d.length > 90 ? 'text-red-400' : 'text-white/30'}`}>{d.length}/90</span>
-                  <CopyButton text={d} />
-                </div>
-              ))}
-              <p className="text-xs text-white/40 uppercase tracking-wide mb-2 mt-4">Keywords</p>
-              <div className="flex flex-wrap gap-2">
-                {results.google.keywords.map((k, i) => (
-                  <span key={i} className="bg-white/10 text-white/70 text-xs px-3 py-1 rounded-full">{k}</span>
-                ))}
+     {open && results && (() => {
+  try {
+    return (
+      <div className="px-6 pb-6 border-t border-white/10 pt-4 space-y-6">
+        {results.google && (
+          <div>
+            <p className="text-xs font-bold text-green-400 uppercase tracking-widest mb-3">Google Ads</p>
+            <p className="text-xs text-white/40 uppercase tracking-wide mb-2">Headlines</p>
+            {results.google.headlines?.map((h, i) => (
+              <div key={i} className="flex items-center gap-3 py-1.5 border-b border-white/5 last:border-0">
+                <span className="text-xs text-white/30 w-4">{i + 1}</span>
+                <span className="text-sm text-white/80 flex-1">{h}</span>
+                <span className={`text-xs ${h.length > 30 ? 'text-red-400' : 'text-white/30'}`}>{h.length}/30</span>
+                <CopyButton text={h} />
               </div>
-            </div>
-          )}
-
-          {results.meta && (
-            <div>
-              <p className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-3">Meta Ads</p>
-              <p className="text-xs text-white/40 uppercase tracking-wide mb-2">Primary Text Options</p>
-              {results.meta.primary_texts.map((t, i) => (
-                <div key={i} className="bg-white/5 rounded-xl p-3 mb-2">
-                  <p className="text-xs text-white/30 mb-1">Option {i + 1}</p>
-                  <p className="text-sm text-white/80">{t}</p>
-                  <div className="mt-2 flex justify-end"><CopyButton text={t} /></div>
-                </div>
-              ))}
-              <p className="text-xs text-white/40 uppercase tracking-wide mb-2 mt-4">Headlines</p>
-              {results.meta.headlines.map((h, i) => (
-                <div key={i} className="flex items-center gap-3 py-1.5 border-b border-white/5 last:border-0">
-                  <span className="text-xs text-white/30 w-4">{i + 1}</span>
-                  <span className="text-sm text-white/80 flex-1">{h}</span>
-                  <CopyButton text={h} />
-                </div>
-              ))}
-              <p className="text-xs text-white/40 uppercase tracking-wide mb-2 mt-4">Hooks</p>
-              {results.meta.hooks.map((h, i) => (
-                <div key={i} className="flex items-center gap-3 py-1.5 border-b border-white/5 last:border-0">
-                  <span className="text-xs text-white/30 w-4">{i + 1}</span>
-                  <span className="text-sm text-white/80 italic flex-1">"{h}"</span>
-                  <CopyButton text={h} />
-                </div>
-              ))}
-            </div>
-          )}
-
-          {results.social && (
-            <div>
-              <p className="text-xs font-bold text-pink-400 uppercase tracking-widest mb-3">Organic Social Posts</p>
-              {results.social.captions.map((c, i) => (
-                <div key={i} className="bg-white/5 rounded-xl p-3 mb-2">
-                  <p className="text-xs text-white/30 mb-1">Post {i + 1}</p>
-                  <p className="text-sm text-white/80">{c}</p>
-                  <div className="mt-2 flex justify-end"><CopyButton text={c} /></div>
-                </div>
-              ))}
-              <div className="flex flex-wrap gap-2 mt-3">
-                {results.social.hashtags.map((h, i) => (
-                  <span key={i} className="bg-white/10 text-white/70 text-xs px-3 py-1 rounded-full">#{h}</span>
-                ))}
+            ))}
+            <p className="text-xs text-white/40 uppercase tracking-wide mb-2 mt-4">Descriptions</p>
+            {results.google.descriptions?.map((d, i) => (
+              <div key={i} className="flex items-start gap-3 py-1.5 border-b border-white/5 last:border-0">
+                <span className="text-xs text-white/30 w-4 mt-0.5">{i + 1}</span>
+                <span className="text-sm text-white/80 flex-1">{d}</span>
+                <span className={`text-xs ${d.length > 90 ? 'text-red-400' : 'text-white/30'}`}>{d.length}/90</span>
+                <CopyButton text={d} />
               </div>
+            ))}
+            {results.google.sitelinks?.length > 0 && (
+              <>
+                <p className="text-xs text-white/40 uppercase tracking-wide mb-2 mt-4">Sitelinks</p>
+                {results.google.sitelinks.map((s, i) => (
+                  <div key={i} className="bg-white/5 rounded-xl p-3 mb-2">
+                    <p className="text-sm font-bold text-white mb-1">{s.title}</p>
+                    {s.description1 && <p className="text-xs text-white/50">{s.description1}</p>}
+                    {s.description2 && <p className="text-xs text-white/50">{s.description2}</p>}
+                    {s.description && <p className="text-xs text-white/50">{s.description}</p>}
+                  </div>
+                ))}
+              </>
+            )}
+            <p className="text-xs text-white/40 uppercase tracking-wide mb-2 mt-4">Keywords</p>
+            <div className="flex flex-wrap gap-2">
+              {results.google.keywords?.map((k, i) => (
+                <span key={i} className="bg-white/10 text-white/70 text-xs px-3 py-1 rounded-full">
+                  {typeof k === 'string' ? k : k.keyword}
+                  {k.match_type && <span className="text-white/40 ml-1">· {k.match_type}</span>}
+                </span>
+              ))}
             </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
+          </div>
+        )}
+        {results.meta && (
+          <div>
+            <p className="text-xs font-bold text-blue-400 uppercase tracking-widest mb-3">Meta Ads</p>
+            <p className="text-xs text-white/40 uppercase tracking-wide mb-2">Primary Text Options</p>
+            {results.meta.primary_texts?.map((t, i) => (
+              <div key={i} className="bg-white/5 rounded-xl p-3 mb-2">
+                <p className="text-xs text-white/30 mb-1">Option {i + 1}</p>
+                <p className="text-sm text-white/80">{t}</p>
+                <div className="mt-2 flex justify-end"><CopyButton text={t} /></div>
+              </div>
+            ))}
+            <p className="text-xs text-white/40 uppercase tracking-wide mb-2 mt-4">Headlines</p>
+            {results.meta.headlines?.map((h, i) => (
+              <div key={i} className="flex items-center gap-3 py-1.5 border-b border-white/5 last:border-0">
+                <span className="text-xs text-white/30 w-4">{i + 1}</span>
+                <span className="text-sm text-white/80 flex-1">{h}</span>
+                <CopyButton text={h} />
+              </div>
+            ))}
+            <p className="text-xs text-white/40 uppercase tracking-wide mb-2 mt-4">Hooks</p>
+            {results.meta.hooks?.map((h, i) => (
+              <div key={i} className="flex items-center gap-3 py-1.5 border-b border-white/5 last:border-0">
+                <span className="text-xs text-white/30 w-4">{i + 1}</span>
+                <span className="text-sm text-white/80 italic flex-1">"{h}"</span>
+                <CopyButton text={h} />
+              </div>
+            ))}
+          </div>
+        )}
+        {results.social && (
+          <div>
+            <p className="text-xs font-bold text-pink-400 uppercase tracking-widest mb-3">Organic Social Posts</p>
+            {results.social.captions?.map((c, i) => (
+              <div key={i} className="bg-white/5 rounded-xl p-3 mb-2">
+                <p className="text-xs text-white/30 mb-1">Post {i + 1}</p>
+                <p className="text-sm text-white/80">{c}</p>
+                <div className="mt-2 flex justify-end"><CopyButton text={c} /></div>
+              </div>
+            ))}
+            <div className="flex flex-wrap gap-2 mt-3">
+              {results.social.hashtags?.map((h, i) => (
+                <span key={i} className="bg-white/10 text-white/70 text-xs px-3 py-1 rounded-full">#{h}</span>
+              ))}
+            </div>
+          </div>
+        )}
+        {results.keywords && (
+          <div>
+            <p className="text-xs font-bold text-amber-400 uppercase tracking-widest mb-3">Keyword Research</p>
+            {results.keywords.primary_keywords?.map((k, i) => (
+              <div key={i} className="flex items-center gap-3 py-1.5 border-b border-white/5 last:border-0">
+                <span className="text-xs text-white/30 w-4">{i + 1}</span>
+                <span className="text-sm text-white/80 flex-1">{k.keyword}</span>
+                <span className="text-xs bg-white/10 text-white/50 px-2 py-0.5 rounded">{k.match_type}</span>
+                <CopyButton text={k.keyword} />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  } catch (err) {
+    return (
+      <div className="px-6 pb-6 border-t border-white/10 pt-4">
+        <p className="text-sm text-white/40">Unable to display this generation. Please check your email for the full results.</p>
+      </div>
+    );
+  }
+})()}
 
 export default function Dashboard() {
   const { user } = useUser();
