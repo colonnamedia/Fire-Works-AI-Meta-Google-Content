@@ -301,51 +301,72 @@ export default function Landing() {
       </section>
 
       {/* Pricing */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
-        <div className="mb-10">
-          <h2 className="text-3xl font-black text-white mb-2">Built for real businesses running real ads</h2>
-          <p className="text-white/40">No hidden fees. No complicated tiers. Pay only for what you generate.</p>
-        </div>
-        <div className="grid lg:grid-cols-3 gap-4 items-stretch">
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col items-center text-center gap-3">
-            <div className="w-12 h-12 bg-[#E53E3E]/20 rounded-2xl flex items-center justify-center">
-              <Shield className="w-6 h-6 text-[#E53E3E]" />
-            </div>
-            <h3 className="font-bold text-white text-sm">Secure & Private</h3>
-            <p className="text-xs text-white/40 leading-relaxed">Your business data is never shared. Each user sees only their own strategies and cannot access others.</p>
-          </div>
+<section className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
+  <div className="text-center mb-12">
+    <h2 className="text-3xl font-black text-white mb-2">Simple, transparent pricing</h2>
+    <p className="text-white/40">Pay only for what you need. No subscriptions.</p>
+  </div>
 
-          <div className="bg-[#161B22] border-2 border-[#E53E3E]/60 rounded-2xl p-7 flex flex-col shadow-2xl shadow-[#E53E3E]/10">
-            <p className="text-xs font-bold text-[#E53E3E] uppercase tracking-widest mb-1">Simple Pricing</p>
-            <p className="text-xs text-white/40 mb-4">Pay per generation — no subscription</p>
-           <div className="flex items-baseline gap-1 mb-5">
-           <span className="text-4xl font-black text-white">$4.99</span>
-           <span className="text-white/40 text-sm">and up per generation</span>
-         </div>
-            <ul className="space-y-2 text-sm mb-6 flex-1">
-  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Google Ads Campaign Setup — $9.99</li>
-  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Meta Ads Campaign Setup — $9.99</li>
-  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Organic Social Content — $4.99</li>
-  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Google + Meta Campaigns — $16.99</li>
-  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Everything (Google + Meta + Social) — $19.99</li>
-  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Full results emailed instantly</li>
-  <li className="flex items-start gap-2 text-white/60 text-xs"><Check className="w-3.5 h-3.5 text-[#E53E3E] shrink-0 mt-0.5" />Dashboard to view all past generations</li>
-</ul>
-            <button onClick={handleGetStarted} className="w-full bg-[#E53E3E] hover:bg-[#C53030] text-white font-bold py-3 rounded-xl text-sm transition-colors flex items-center justify-center gap-2">
-              Get My Ad Copy <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
+  <div className="grid md:grid-cols-3 gap-4 mb-6">
+    <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+      <div className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+        <Search className="w-5 h-5 text-green-400" />
+      </div>
+      <h3 className="font-bold text-white mb-1">Google Ads</h3>
+      <p className="text-white/40 text-xs mb-4">Full campaign setup + copy</p>
+      <div className="text-3xl font-black text-white mb-4">$9.99</div>
+      <button onClick={handleGetStarted} className="w-full border border-white/20 text-white text-sm font-semibold py-2.5 rounded-xl hover:border-white/40 transition-colors">
+        Get Started
+      </button>
+    </div>
 
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col items-center text-center gap-3">
-            <div className="w-12 h-12 bg-[#E53E3E]/20 rounded-2xl flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-[#E53E3E]" />
-            </div>
-            <h3 className="font-bold text-white text-sm">Built on Real Ad Experience</h3>
-            <p className="text-xs text-white/40 leading-relaxed">Trained on real advertising best practices for small and medium business budgets across Google and Meta.</p>
-          </div>
-        </div>
-      </section>
+    <div className="bg-[#161B22] border-2 border-[#E53E3E]/60 rounded-2xl p-6 text-center relative">
+      <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+        <span className="bg-[#E53E3E] text-white text-xs font-bold px-3 py-1 rounded-full">BEST VALUE</span>
+      </div>
+      <div className="w-10 h-10 bg-[#E53E3E]/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+        <Layers className="w-5 h-5 text-[#E53E3E]" />
+      </div>
+      <h3 className="font-bold text-white mb-1">Google + Meta</h3>
+      <p className="text-white/40 text-xs mb-4">Both full ad campaigns</p>
+      <div className="text-3xl font-black text-white mb-1">$16.99</div>
+      <p className="text-white/30 text-xs mb-4">Save $3 vs buying separately</p>
+      <button onClick={handleGetStarted} className="w-full bg-[#E53E3E] hover:bg-[#C53030] text-white text-sm font-bold py-2.5 rounded-xl transition-colors">
+        Get Started
+      </button>
+    </div>
 
+    <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+      <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+        <Facebook className="w-5 h-5 text-blue-400" />
+      </div>
+      <h3 className="font-bold text-white mb-1">Meta Ads</h3>
+      <p className="text-white/40 text-xs mb-4">Full campaign setup + copy</p>
+      <div className="text-3xl font-black text-white mb-4">$9.99</div>
+      <button onClick={handleGetStarted} className="w-full border border-white/20 text-white text-sm font-semibold py-2.5 rounded-xl hover:border-white/40 transition-colors">
+        Get Started
+      </button>
+    </div>
+  </div>
+
+  <div className="grid md:grid-cols-3 gap-4">
+    <div className="bg-white/5 border border-white/10 rounded-xl p-5 text-center">
+      <h3 className="font-bold text-white text-sm mb-1">Organic Social</h3>
+      <p className="text-white/40 text-xs mb-3">Captions, hashtags, reel ideas</p>
+      <div className="text-2xl font-black text-white">$4.99</div>
+    </div>
+    <div className="bg-white/5 border border-white/10 rounded-xl p-5 text-center">
+      <h3 className="font-bold text-white text-sm mb-1">Everything</h3>
+      <p className="text-white/40 text-xs mb-3">Google + Meta + Social + Keywords</p>
+      <div className="text-2xl font-black text-white">$19.99</div>
+    </div>
+    <div className="bg-white/5 border border-white/10 rounded-xl p-5 text-center">
+      <h3 className="font-bold text-white text-sm mb-1">Add-ons</h3>
+      <p className="text-white/40 text-xs mb-3">Keywords or Social Content</p>
+      <div className="text-2xl font-black text-white">+$4.99</div>
+    </div>
+  </div>
+</section>
       {/* Final CTA */}
       <section className="bg-[#E53E3E] py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
