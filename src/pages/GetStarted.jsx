@@ -324,25 +324,95 @@ export default function GetStarted() {
               </div>
             )}
 
-            {/* Step 1 — Platform */}
             {step === 1 && (
-              <div className="space-y-3">
-                <h2 className="font-semibold text-white mb-4">What do you need?</h2>
-                {CONTENT_TYPES.map(ct => (
-                  <button key={ct.value} onClick={() => update("contentType", ct.value)}
-                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl border text-left transition-all relative ${form.contentType === ct.value ? "border-[#E53E3E] bg-[#E53E3E]/10" : ct.featured ? "border-yellow-500/40 bg-white/5 hover:border-yellow-500/60" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
-                    {ct.featured && (
-                      <span className="absolute -top-2 left-4 text-xs bg-yellow-500 text-black font-bold px-2 py-0.5 rounded-full">Best Value</span>
-                    )}
-                    <div className="flex-1">
-                      <p className={`text-sm font-semibold ${form.contentType === ct.value ? "text-white" : "text-white/70"}`}>{ct.label}</p>
-                      <p className={`text-xs ${form.contentType === ct.value ? "text-white/60" : "text-white/30"}`}>{ct.sub}</p>
-                    </div>
-                    <span className={`text-sm font-bold flex-shrink-0 ${form.contentType === ct.value ? "text-[#E53E3E]" : "text-white/40"}`}>{ct.display}</span>
-                  </button>
-                ))}
-              </div>
-            )}
+  <div className="space-y-4">
+    <h2 className="font-semibold text-white mb-2">What do you need?</h2>
+    <p className="text-xs text-white/30 mb-4">Select your platform — add-ons can be added below</p>
+
+    {/* Main 3 */}
+    <div className="grid grid-cols-3 gap-2">
+      {[
+        { value: "google_ads", label: "Google Ads", price: "$9.99", icon: Search, color: "text-green-400", items: ["15 headlines", "4 descriptions", "Sitelinks", "Keywords", "Negative keywords"] },
+        { value: "google_meta", label: "Google + Meta", price: "$16.99", icon: Layers, color: "text-[#E53E3E]", featured: true, items: ["Everything in Google", "Everything in Meta", "Best value — save $3"] },
+        { value: "meta_ads", label: "Meta Ads", price: "$9.99", icon: Facebook, color: "text-blue-400", items: ["Campaign objective", "Audience targeting", "3 primary texts", "Hooks & headlines", "Creative direction"] },
+      ].map(ct => (
+        <button key={ct.value} onClick={() => update("contentType", ct.value)}
+          className={`flex flex-col items-center gap-2 px-3 py-4 rounded-xl border text-center transition-all relative ${form.contentType === ct.value ? "border-[#E53E3E] bg-[#E53E3E]/10" : ct.featured ? "border-yellow-500/40 bg-white/5 hover:border-yellow-500/60" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
+          {ct.featured && <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-xs bg-yellow-500 text-black font-bold px-2 py-0.5 rounded-full whitespace-nowrap">Best Value</span>}
+          <ct.icon className={`w-5 h-5 ${form.contentType === ct.value ? "text-[#E53E3E]" : ct.color}`} />
+          <p className={`text-xs font-bold ${form.contentType === ct.value ? "text-white" : "text-white/70"}`}>{ct.label}</p>
+          <p className={`text-sm font-black ${form.contentType === ct.value ? "text-[#E53E3E]" : "text-white/60"}`}>{ct.price}</p>
+          <ul className="space-y-1 mt-1">
+            {ct.items.map(item => (
+              <li key={item} className="text-xs text-white/30 text-left">· {item}</li>
+            ))}
+          </ul>
+        </button>
+      ))}
+    </div>
+
+    {/* Add-ons */}
+    <div>
+      <p className="text-xs text-white/40 uppercase tracking-widest font-semibold mb-2 mt-4">Add-ons — +$4.99 each</p>
+      <div className="grid grid-cols-2 gap-2">
+        <button onClick={() => update("addOnKeywords", !form.addOnKeywords)}
+          className={`flex flex-col gap-2 px-4 py-3 rounded-xl border text-left transition-all ${form.addOnKeywords ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-2">
+              <Key className={`w-4 h-4 ${form.addOnKeywords ? "text-[#E53E3E]" : "text-white/40"}`} />
+              <p className={`text-xs font-bold ${form.addOnKeywords ? "text-white" : "text-white/60"}`}>Keywords</p>
+            </div>
+            <div className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${form.addOnKeywords ? "bg-[#E53E3E] border-[#E53E3E]" : "border-white/30"}`}>
+              {form.addOnKeywords && <span className="text-white text-xs font-bold">✓</span>}
+            </div>
+          </div>
+          <ul className="space-y-0.5">
+            {["Primary keywords", "Long-tail keywords", "Negative keywords", "Competitor terms", "SEO opportunities"].map(i => (
+              <li key={i} className="text-xs text-white/30">· {i}</li>
+            ))}
+          </ul>
+          <p className="text-xs font-bold text-[#E53E3E]">+$4.99</p>
+        </button>
+
+        <button onClick={() => update("addOnSocial", !form.addOnSocial)}
+          className={`flex flex-col gap-2 px-4 py-3 rounded-xl border text-left transition-all ${form.addOnSocial ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-2">
+              <Image className={`w-4 h-4 ${form.addOnSocial ? "text-[#E53E3E]" : "text-white/40"}`} />
+              <p className={`text-xs font-bold ${form.addOnSocial ? "text-white" : "text-white/60"}`}>Organic Social</p>
+            </div>
+            <div className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${form.addOnSocial ? "bg-[#E53E3E] border-[#E53E3E]" : "border-white/30"}`}>
+              {form.addOnSocial && <span className="text-white text-xs font-bold">✓</span>}
+            </div>
+          </div>
+          <ul className="space-y-0.5">
+            {["5 post captions", "Hashtag sets", "Story ideas", "Reel concepts", "Best time to post"].map(i => (
+              <li key={i} className="text-xs text-white/30">· {i}</li>
+            ))}
+          </ul>
+          <p className="text-xs font-bold text-[#E53E3E]">+$4.99</p>
+        </button>
+      </div>
+    </div>
+
+    {/* Everything */}
+    <button onClick={() => { update("contentType", "everything"); update("addOnKeywords", false); update("addOnSocial", false); }}
+      className={`w-full flex items-center gap-4 px-4 py-4 rounded-xl border text-left transition-all ${form.contentType === "everything" ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
+      <LayoutGrid className={`w-5 h-5 flex-shrink-0 ${form.contentType === "everything" ? "text-[#E53E3E]" : "text-white/40"}`} />
+      <div className="flex-1">
+        <p className={`text-sm font-bold ${form.contentType === "everything" ? "text-white" : "text-white/70"}`}>Everything</p>
+        <p className="text-xs text-white/30">Google Ads + Meta Ads + Organic Social + Keyword Research — all included</p>
+      </div>
+      <span className={`text-sm font-black flex-shrink-0 ${form.contentType === "everything" ? "text-[#E53E3E]" : "text-white/40"}`}>$19.99</span>
+    </button>
+
+    {/* Account storage message */}
+    <div className="bg-white/5 border border-white/10 rounded-xl p-3 flex items-start gap-3">
+      <Zap className="w-4 h-4 text-[#E53E3E] flex-shrink-0 mt-0.5" />
+      <p className="text-xs text-white/50">Create a free account after checkout to save your content, re-download anytime, and skip re-entering your business info on future orders.</p>
+    </div>
+  </div>
+)}
 
             {/* Step 2 — Business Info */}
             {step === 2 && (
@@ -507,36 +577,6 @@ export default function GetStarted() {
             {step === 4 && (
               <div className="space-y-5">
                 <h2 className="font-semibold text-white mb-2">Review & add-ons</h2>
-
-                {(showKeywordsAddon || showSocialAddon) && (
-                  <div className="space-y-3">
-                    <p className="text-xs text-white/40 uppercase tracking-widest font-semibold">Enhance your order</p>
-                    {showKeywordsAddon && (
-                      <button onClick={() => update("addOnKeywords", !form.addOnKeywords)}
-                        className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl border text-left transition-all ${form.addOnKeywords ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
-                        <div className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 ${form.addOnKeywords ? "bg-[#E53E3E] border-[#E53E3E]" : "border-white/30"}`}>
-                          {form.addOnKeywords && <span className="text-white text-xs font-bold">✓</span>}
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-semibold text-white">Add Keyword Research Report</p>
-                          <p className="text-xs text-white/40">Primary, long-tail, negative keywords + competitor terms + SEO opportunities</p>
-                        </div>
-                        <span className="text-sm font-bold text-[#E53E3E] flex-shrink-0">+$4.99</span>
-                      </button>
-                    )}
-                    {showSocialAddon && (
-                      <button onClick={() => update("addOnSocial", !form.addOnSocial)}
-                        className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl border text-left transition-all ${form.addOnSocial ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
-                        <div className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 ${form.addOnSocial ? "bg-[#E53E3E] border-[#E53E3E]" : "border-white/30"}`}>
-                          {form.addOnSocial && <span className="text-white text-xs font-bold">✓</span>}
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-semibold text-white">Add Organic Social Content</p>
-                          <p className="text-xs text-white/40">5 captions, hashtags, story ideas, reel concepts, best time to post</p>
-                        </div>
-                        <span className="text-sm font-bold text-[#E53E3E] flex-shrink-0">+$4.99</span>
-                      </button>
-                    )}
                   </div>
                 )}
 
