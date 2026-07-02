@@ -1,48 +1,67 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
-import { Zap, ChevronRight, ChevronLeft, Loader2, Search, Facebook, Layers, Image, LayoutGrid, Key } from "lucide-react";
+import { Zap, ChevronRight, ChevronLeft, Loader2, Search, Facebook, Layers, Image, LayoutGrid } from "lucide-react";
 
-const GOALS = [
-  { value: "leads", label: "Generate Leads" },
-  { value: "sales", label: "Drive Sales" },
-  { value: "awareness", label: "Build Awareness" },
-  { value: "traffic", label: "Get Website Traffic" },
-  { value: "engagement", label: "Boost Engagement" },
-  { value: "messaging", label: "Get Messages" },
-];
+const STEPS = ["Contact", "Platform", "Business", "Campaign", "Review"];
 
 const CONTENT_TYPES = [
-  { value: "google_ads", label: "Google Ads Campaign", sub: "Full setup + headlines + keywords", icon: Search, price: "$9.99" },
-  { value: "meta_ads", label: "Meta Ads Campaign", sub: "Full setup + copy + audience", icon: Facebook, price: "$9.99" },
-  { value: "organic_social", label: "Organic Social", sub: "Captions, hashtags, reel ideas", icon: Image, price: "$4.99" },
-  { value: "keyword_research", label: "Keyword Research", sub: "Primary, long-tail, negative + SEO", icon: Key, price: "$4.99" },
-  { value: "google_meta", label: "Google + Meta", sub: "Both full ad campaigns", icon: Layers, price: "$16.99" },
-  { value: "everything", label: "Everything", sub: "Google + Meta + Social + Keywords", icon: LayoutGrid, price: "$19.99" },
+  { value: "google_ads", label: "Google Ads", sub: "Search campaign setup + copy", price: 999, display: "$9.99" },
+  { value: "meta_ads", label: "Meta Ads", sub: "Facebook & Instagram campaign", price: 999, display: "$9.99" },
+  { value: "organic_social", label: "Organic Social", sub: "Captions, hashtags, reel ideas", price: 499, display: "$4.99" },
+  { value: "google_meta", label: "Google + Meta", sub: "Both ad campaigns — best value", price: 1699, display: "$16.99", featured: true },
+  { value: "everything", label: "Everything", sub: "Google + Meta + Social + Keywords", price: 1999, display: "$19.99" },
 ];
 
 const LOCATION_TYPES = [
-  { value: "local", label: "Local — serve a specific city/area" },
+  { value: "local", label: "Local — specific city/area" },
   { value: "regional", label: "Regional — multiple cities/states" },
   { value: "national", label: "National — anywhere in the country" },
-  { value: "online", label: "Online only — no physical location" },
+  { value: "online", label: "Online only" },
 ];
 
-const CHALLENGES = [
-  { value: "not_enough_traffic", label: "Not enough people finding me" },
-  { value: "no_conversions", label: "Traffic but no leads or sales" },
-  { value: "no_followup", label: "No follow-up system" },
-  { value: "no_strategy", label: "No clear ad strategy" },
-  { value: "low_budget", label: "Limited budget" },
-  { value: "no_time", label: "No time to manage ads" },
+const CAMPAIGN_TYPES = [
+  { value: "search", label: "Search Ads — show when people search Google" },
+  { value: "local", label: "Local Services Ads — pay per lead" },
+  { value: "performance_max", label: "Performance Max — AI-driven across all Google" },
+  { value: "not_sure", label: "Not sure — recommend one for me" },
 ];
 
-const REVENUE_RANGES = [
-  { value: "under_5k", label: "Under $5,000/mo" },
-  { value: "5k_20k", label: "$5,000 – $20,000/mo" },
-  { value: "20k_50k", label: "$20,000 – $50,000/mo" },
-  { value: "50k_plus", label: "$50,000+/mo" },
-  { value: "pre_revenue", label: "Pre-revenue / Just starting" },
+const CTA_OPTIONS = [
+  { value: "call", label: "Call Us" },
+  { value: "form", label: "Fill Out a Form" },
+  { value: "purchase", label: "Buy Now" },
+  { value: "book", label: "Book Appointment" },
+  { value: "message", label: "Send a Message" },
+  { value: "visit", label: "Visit Our Location" },
+];
+
+const META_OBJECTIVES = [
+  { value: "leads", label: "Generate Leads — collect contact info" },
+  { value: "sales", label: "Drive Sales — purchases or bookings" },
+  { value: "traffic", label: "Website Traffic — send people to my site" },
+  { value: "awareness", label: "Brand Awareness — get seen by more people" },
+  { value: "messages", label: "Get Messages — DMs on Facebook/Instagram" },
+];
+
+const CREATIVE_PREFS = [
+  { value: "image", label: "Single Image" },
+  { value: "video", label: "Video" },
+  { value: "carousel", label: "Carousel (multiple images)" },
+  { value: "not_sure", label: "Not sure — recommend one" },
+];
+
+const SOCIAL_PLATFORMS = [
+  { value: "both", label: "Facebook + Instagram" },
+  { value: "facebook", label: "Facebook only" },
+  { value: "instagram", label: "Instagram only" },
+];
+
+const CONTENT_STYLES = [
+  { value: "educational", label: "Educational — tips and how-tos" },
+  { value: "promotional", label: "Promotional — offers and deals" },
+  { value: "behind_scenes", label: "Behind the scenes" },
+  { value: "mixed", label: "Mixed — variety of content" },
 ];
 
 const TICKET_VALUES = [
@@ -53,37 +72,28 @@ const TICKET_VALUES = [
   { value: "5000_plus", label: "$5,000+" },
 ];
 
-const TRACKING_OPTIONS = [
-  { value: "both", label: "Yes — Google Analytics + Meta Pixel" },
-  { value: "google_only", label: "Yes — Google Analytics only" },
-  { value: "meta_only", label: "Yes — Meta Pixel only" },
-  { value: "none", label: "No tracking set up" },
-  { value: "not_sure", label: "Not sure" },
+const REVENUE_RANGES = [
+  { value: "pre_revenue", label: "Pre-revenue / Just starting" },
+  { value: "under_5k", label: "Under $5,000/mo" },
+  { value: "5k_20k", label: "$5,000 – $20,000/mo" },
+  { value: "20k_50k", label: "$20,000 – $50,000/mo" },
+  { value: "50k_plus", label: "$50,000+/mo" },
 ];
-
-const CTA_OPTIONS = [
-  { value: "call", label: "Call Us" },
-  { value: "form", label: "Fill Out a Form" },
-  { value: "purchase", label: "Buy Now / Purchase" },
-  { value: "book", label: "Book an Appointment" },
-  { value: "message", label: "Send a Message" },
-  { value: "visit", label: "Visit Our Location" },
-];
-
-const STEPS = ["You", "Business", "Details", "Marketing", "Campaign"];
 
 const INITIAL = {
-  fullName: "", email: "",
-  businessName: "", industry: "", offerType: "", websiteUrl: "",
-  targetAudience: "", locationType: "local", uniqueSellingPoint: "", biggestChallenge: "",
-  monthlyRevenue: "", avgTicketValue: "", hasTracking: "", mainCta: "",
-  hasReviews: "", currentlyRunningAds: "", biggestCompetitor: "",
-  contentType: "google_ads", goal: "leads", budget: "",
-};
-
-const PRICES = {
-  google_ads: "$9.99", meta_ads: "$9.99", organic_social: "$4.99",
-  keyword_research: "$4.99", google_meta: "$16.99", everything: "$19.99"
+  fullName: "", email: "", businessName: "", websiteUrl: "",
+  contentType: "",
+  industry: "", offerType: "", targetAudience: "", uniqueSellingPoint: "", locationType: "local",
+  monthlyRevenue: "", avgTicketValue: "", mainCta: "", biggestCompetitor: "",
+  // Google specific
+  campaignType: "", hasLandingPage: "", hasTracking: "", googleBudget: "",
+  // Meta specific
+  metaObjective: "", hasPixel: "", audienceTemperature: "", creativePreference: "", metaBudget: "",
+  // Social specific
+  socialPlatforms: "", postingFrequency: "", contentStyle: "",
+  // Add-ons
+  addOnKeywords: false,
+  addOnSocial: false,
 };
 
 export default function GetStarted() {
@@ -92,6 +102,7 @@ export default function GetStarted() {
   const [form, setForm] = useState(INITIAL);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const abandonSent = useRef(false);
 
   useEffect(() => {
     if (isSignedIn && user) {
@@ -107,29 +118,16 @@ export default function GetStarted() {
             setForm(prev => ({
               ...prev,
               businessName: profile.business_name || "",
+              websiteUrl: profile.website_url || "",
               industry: profile.industry || "",
               offerType: profile.offer_type || "",
-              websiteUrl: profile.website_url || "",
               targetAudience: profile.target_audience || "",
-              locationType: profile.location_type || "local",
               uniqueSellingPoint: profile.unique_selling_point || "",
-             biggestChallenge: profile.biggest_challenge || "",
-monthlyRevenue: profile.monthly_revenue || "",
-avgTicketValue: profile.avg_ticket_value || "",
-hasTracking: profile.has_tracking || "",
-mainCta: profile.main_cta || "",
-hasReviews: profile.has_reviews || "",
-currentlyRunningAds: profile.currently_running_ads || "",
-biggestCompetitor: profile.biggest_competitor || "",
-goal: profile.goal || "leads",
+              locationType: profile.location_type || "local",
               monthlyRevenue: profile.monthly_revenue || "",
               avgTicketValue: profile.avg_ticket_value || "",
-              hasTracking: profile.has_tracking || "",
               mainCta: profile.main_cta || "",
-              hasReviews: profile.has_reviews || "",
-              currentlyRunningAds: profile.currently_running_ads || "",
               biggestCompetitor: profile.biggest_competitor || "",
-              budget: profile.budget || "",
             }));
           }
         })
@@ -139,12 +137,56 @@ goal: profile.goal || "leads",
 
   const update = (k, v) => setForm(p => ({ ...p, [k]: v }));
 
+  const sendAbandon = async () => {
+    if (abandonSent.current || !form.email || !form.businessName) return;
+    abandonSent.current = true;
+    try {
+      await fetch('/api/abandon-capture', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: form.email,
+          full_name: form.fullName,
+          business_name: form.businessName,
+          website_url: form.websiteUrl,
+        }),
+      });
+    } catch {}
+  };
+
+  useEffect(() => {
+    if (step > 0 && form.email && form.businessName) {
+      window.addEventListener('beforeunload', sendAbandon);
+      return () => window.removeEventListener('beforeunload', sendAbandon);
+    }
+  }, [step, form.email, form.businessName]);
+
   const canAdvance = () => {
-    if (step === 0) return form.fullName.trim() && form.email.trim();
-    if (step === 1) return form.businessName.trim() && form.industry.trim();
-    if (step === 2) return form.targetAudience.trim() && form.locationType;
+    if (step === 0) return form.fullName.trim() && form.email.trim() && form.businessName.trim();
+    if (step === 1) return !!form.contentType;
+    if (step === 2) return form.industry.trim() && form.targetAudience.trim();
     return true;
   };
+
+  const isGoogle = form.contentType === 'google_ads' || form.contentType === 'google_meta' || form.contentType === 'everything';
+  const isMeta = form.contentType === 'meta_ads' || form.contentType === 'google_meta' || form.contentType === 'everything';
+  const isSocial = form.contentType === 'organic_social' || form.contentType === 'everything';
+  const showKeywordsAddon = isGoogle && form.contentType !== 'everything';
+  const showSocialAddon = (isGoogle || isMeta) && !isSocial && form.contentType !== 'everything';
+
+  const getBasePrice = () => {
+    const ct = CONTENT_TYPES.find(c => c.value === form.contentType);
+    return ct ? ct.price : 0;
+  };
+
+  const getTotalPrice = () => {
+    let total = getBasePrice();
+    if (form.addOnKeywords) total += 499;
+    if (form.addOnSocial) total += 499;
+    return total;
+  };
+
+  const formatPrice = (cents) => `$${(cents / 100).toFixed(2)}`;
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -157,23 +199,33 @@ goal: profile.goal || "leads",
           email: form.email,
           full_name: form.fullName,
           business_name: form.businessName,
+          website_url: form.websiteUrl,
           industry: form.industry,
           offer_type: form.offerType,
-          website_url: form.websiteUrl,
           target_audience: form.targetAudience,
-          location_type: form.locationType,
           unique_selling_point: form.uniqueSellingPoint,
-          biggest_challenge: form.biggestChallenge,
+          location_type: form.locationType,
           monthly_revenue: form.monthlyRevenue,
           avg_ticket_value: form.avgTicketValue,
-          has_tracking: form.hasTracking,
           main_cta: form.mainCta,
-          has_reviews: form.hasReviews,
-          currently_running_ads: form.currentlyRunningAds,
           biggest_competitor: form.biggestCompetitor,
           content_type: form.contentType,
-          goal: form.goal,
-          budget: form.budget,
+          campaign_type: form.campaignType,
+          has_landing_page: form.hasLandingPage,
+          has_tracking: form.hasTracking,
+          google_budget: form.googleBudget,
+          meta_objective: form.metaObjective,
+          has_pixel: form.hasPixel,
+          audience_temperature: form.audienceTemperature,
+          creative_preference: form.creativePreference,
+          meta_budget: form.metaBudget,
+          social_platforms: form.socialPlatforms,
+          posting_frequency: form.postingFrequency,
+          content_style: form.contentStyle,
+          add_on_keywords: form.addOnKeywords,
+          add_on_social: form.addOnSocial,
+          goal: form.metaObjective || 'leads',
+          budget: form.googleBudget || form.metaBudget,
           clerk_user_id: isSignedIn ? user.id : null,
         }),
       });
@@ -187,6 +239,8 @@ goal: profile.goal || "leads",
           generationId: data.id,
           email: form.email,
           content_type: form.contentType,
+          add_on_keywords: form.addOnKeywords,
+          add_on_social: form.addOnSocial,
         }),
       });
       const paymentData = await paymentRes.json();
@@ -194,18 +248,18 @@ goal: profile.goal || "leads",
 
       window.location.href = paymentData.url;
     } catch (err) {
-      setError(err.message || "Something went wrong. Please try again.");
+      setError(err.message || "Something went wrong.");
       setLoading(false);
     }
   };
 
   const inputClass = "w-full bg-white/5 border border-white/15 rounded-lg px-3 py-2.5 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-[#E53E3E]/50";
 
-  const SelectGrid = ({ options, field, cols = 2 }) => (
+  const OptionGrid = ({ options, field, cols = 1 }) => (
     <div className={`grid grid-cols-${cols} gap-2`}>
       {options.map(o => (
         <button key={o.value} onClick={() => update(field, o.value)}
-          className={`text-left px-3 py-2.5 rounded-xl border text-sm transition-all ${form[field] === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/50 hover:border-white/20"}`}>
+          className={`text-left px-4 py-3 rounded-xl border text-sm transition-all ${form[field] === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
           {o.label}
         </button>
       ))}
@@ -222,9 +276,7 @@ goal: profile.goal || "leads",
           Fire-Works AI
         </Link>
         {isSignedIn && (
-          <Link to="/dashboard" className="text-sm text-white/40 hover:text-white transition-colors">
-            My Dashboard
-          </Link>
+          <Link to="/dashboard" className="text-sm text-white/40 hover:text-white transition-colors">My Dashboard</Link>
         )}
       </nav>
 
@@ -235,6 +287,7 @@ goal: profile.goal || "leads",
             <p className="text-white/40 text-sm">The more detail you give, the better your results.</p>
           </div>
 
+          {/* Stepper */}
           <div className="flex items-center mb-8">
             {STEPS.map((s, i) => (
               <React.Fragment key={s}>
@@ -251,10 +304,10 @@ goal: profile.goal || "leads",
 
           <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-4">
 
-            {/* Step 0 — You */}
+            {/* Step 0 — Contact */}
             {step === 0 && (
               <div className="space-y-4">
-                <h2 className="font-semibold text-white mb-4">Tell us about yourself</h2>
+                <h2 className="font-semibold text-white mb-4">Let's get started</h2>
                 <div>
                   <label className="text-xs text-white/50 mb-1 block">Full Name</label>
                   <input placeholder="Jane Smith" value={form.fullName} onChange={e => update("fullName", e.target.value)} className={inputClass} />
@@ -263,17 +316,39 @@ goal: profile.goal || "leads",
                   <label className="text-xs text-white/50 mb-1 block">Email Address *</label>
                   <input placeholder="jane@company.com" type="email" value={form.email} onChange={e => update("email", e.target.value)} className={inputClass} />
                 </div>
-              </div>
-            )}
-
-            {/* Step 1 — Business */}
-            {step === 1 && (
-              <div className="space-y-4">
-                <h2 className="font-semibold text-white mb-4">About your business</h2>
                 <div>
                   <label className="text-xs text-white/50 mb-1 block">Business Name *</label>
                   <input placeholder="e.g. City Plumbing Co." value={form.businessName} onChange={e => update("businessName", e.target.value)} className={inputClass} />
                 </div>
+                <div>
+                  <label className="text-xs text-white/50 mb-1 block">Website URL</label>
+                  <input placeholder="https://yourwebsite.com" value={form.websiteUrl} onChange={e => update("websiteUrl", e.target.value)} className={inputClass} />
+                </div>
+              </div>
+            )}
+
+            {/* Step 1 — Platform */}
+            {step === 1 && (
+              <div className="space-y-3">
+                <h2 className="font-semibold text-white mb-4">What do you need?</h2>
+                {CONTENT_TYPES.map(ct => (
+                  <button key={ct.value} onClick={() => update("contentType", ct.value)}
+                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl border text-left transition-all relative ${form.contentType === ct.value ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20"} ${ct.featured ? "border-yellow-500/40" : ""}`}>
+                    {ct.featured && <span className="absolute -top-2 left-4 text-xs bg-yellow-500 text-black font-bold px-2 py-0.5 rounded-full">Best Value</span>}
+                    <div className="flex-1">
+                      <p className={`text-sm font-semibold ${form.contentType === ct.value ? "text-white" : "text-white/70"}`}>{ct.label}</p>
+                      <p className={`text-xs ${form.contentType === ct.value ? "text-white/60" : "text-white/30"}`}>{ct.sub}</p>
+                    </div>
+                    <span className={`text-sm font-bold flex-shrink-0 ${form.contentType === ct.value ? "text-[#E53E3E]" : "text-white/40"}`}>{ct.display}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Step 2 — Business Info */}
+            {step === 2 && (
+              <div className="space-y-4">
+                <h2 className="font-semibold text-white mb-4">About your business</h2>
                 <div>
                   <label className="text-xs text-white/50 mb-1 block">Industry *</label>
                   <input placeholder="e.g. Home Services, Fitness, Ecommerce" value={form.industry} onChange={e => update("industry", e.target.value)} className={inputClass} />
@@ -283,127 +358,224 @@ goal: profile.goal || "leads",
                   <input placeholder="e.g. Emergency plumbing repairs, Personal training" value={form.offerType} onChange={e => update("offerType", e.target.value)} className={inputClass} />
                 </div>
                 <div>
-                  <label className="text-xs text-white/50 mb-1 block">Website URL</label>
-                  <input placeholder="e.g. https://yourwebsite.com" value={form.websiteUrl} onChange={e => update("websiteUrl", e.target.value)} className={inputClass} />
-                </div>
-                <div>
-                  <label className="text-xs text-white/50 mb-1 block">Biggest Competitor (optional)</label>
-                  <input placeholder="e.g. Main competitor name or website" value={form.biggestCompetitor} onChange={e => update("biggestCompetitor", e.target.value)} className={inputClass} />
-                </div>
-              </div>
-            )}
-
-            {/* Step 2 — Details */}
-            {step === 2 && (
-              <div className="space-y-4">
-                <h2 className="font-semibold text-white mb-4">Your customers & market</h2>
-                <div>
                   <label className="text-xs text-white/50 mb-1 block">Who is your ideal customer? *</label>
-                  <input placeholder="e.g. Homeowners aged 35-60 in Pittsburgh who need plumbing" value={form.targetAudience} onChange={e => update("targetAudience", e.target.value)} className={inputClass} />
-                </div>
-                <div>
-                  <label className="text-xs text-white/50 mb-2 block">Where do you serve customers? *</label>
-                  <SelectGrid options={LOCATION_TYPES} field="locationType" cols={1} />
+                  <input placeholder="e.g. Homeowners aged 35-60 in Pittsburgh" value={form.targetAudience} onChange={e => update("targetAudience", e.target.value)} className={inputClass} />
                 </div>
                 <div>
                   <label className="text-xs text-white/50 mb-1 block">What makes you different?</label>
-                  <input placeholder="e.g. Same-day service, 20 years experience, lowest price guarantee" value={form.uniqueSellingPoint} onChange={e => update("uniqueSellingPoint", e.target.value)} className={inputClass} />
+                  <input placeholder="e.g. Same-day service, 20 years experience" value={form.uniqueSellingPoint} onChange={e => update("uniqueSellingPoint", e.target.value)} className={inputClass} />
                 </div>
                 <div>
-                  <label className="text-xs text-white/50 mb-2 block">Biggest marketing challenge</label>
-                  <SelectGrid options={CHALLENGES} field="biggestChallenge" cols={2} />
+                  <label className="text-xs text-white/50 mb-1 block">Biggest competitor (optional)</label>
+                  <input placeholder="e.g. competitor name or website" value={form.biggestCompetitor} onChange={e => update("biggestCompetitor", e.target.value)} className={inputClass} />
+                </div>
+                <div>
+                  <label className="text-xs text-white/50 mb-2 block">Where do you serve customers?</label>
+                  <OptionGrid options={LOCATION_TYPES} field="locationType" />
                 </div>
               </div>
             )}
 
-            {/* Step 3 — Marketing */}
+            {/* Step 3 — Platform Questions */}
             {step === 3 && (
-              <div className="space-y-4">
-                <h2 className="font-semibold text-white mb-4">Your marketing details</h2>
-                <div>
-                  <label className="text-xs text-white/50 mb-2 block">Monthly revenue range</label>
-                  <SelectGrid options={REVENUE_RANGES} field="monthlyRevenue" cols={1} />
-                </div>
-                <div>
-                  <label className="text-xs text-white/50 mb-2 block">Average transaction / ticket value</label>
-                  <SelectGrid options={TICKET_VALUES} field="avgTicketValue" cols={2} />
-                </div>
-                <div>
-                  <label className="text-xs text-white/50 mb-2 block">Do you have tracking set up?</label>
-                  <SelectGrid options={TRACKING_OPTIONS} field="hasTracking" cols={1} />
-                </div>
-                <div>
-                  <label className="text-xs text-white/50 mb-2 block">Primary call to action</label>
-                  <SelectGrid options={CTA_OPTIONS} field="mainCta" cols={2} />
-                </div>
-                <div>
-                  <label className="text-xs text-white/50 mb-2 block">Do you have customer reviews or testimonials?</label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {[
-                      { value: "yes_many", label: "Yes — many" },
-                      { value: "yes_few", label: "Yes — a few" },
-                      { value: "no", label: "Not yet" },
-                    ].map(o => (
-                      <button key={o.value} onClick={() => update("hasReviews", o.value)}
-                        className={`text-left px-3 py-2.5 rounded-xl border text-sm transition-all ${form.hasReviews === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/50 hover:border-white/20"}`}>
-                        {o.label}
-                      </button>
-                    ))}
+              <div className="space-y-6">
+                <h2 className="font-semibold text-white mb-2">Campaign details</h2>
+
+                {isGoogle && (
+                  <div className="space-y-4">
+                    <p className="text-xs font-bold text-green-400 uppercase tracking-widest">Google Ads</p>
+                    <div>
+                      <label className="text-xs text-white/50 mb-2 block">Campaign type</label>
+                      <OptionGrid options={CAMPAIGN_TYPES} field="campaignType" />
+                    </div>
+                    <div>
+                      <label className="text-xs text-white/50 mb-2 block">Primary call to action</label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {CTA_OPTIONS.map(o => (
+                          <button key={o.value} onClick={() => update("mainCta", o.value)}
+                            className={`text-left px-3 py-2.5 rounded-xl border text-sm transition-all ${form.mainCta === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
+                            {o.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs text-white/50 mb-2 block">Do you have a landing page or website?</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "in_progress", label: "In progress" }].map(o => (
+                          <button key={o.value} onClick={() => update("hasLandingPage", o.value)}
+                            className={`text-left px-3 py-2.5 rounded-xl border text-sm transition-all ${form.hasLandingPage === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
+                            {o.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs text-white/50 mb-2 block">Do you have Google Analytics or conversion tracking?</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "not_sure", label: "Not sure" }].map(o => (
+                          <button key={o.value} onClick={() => update("hasTracking", o.value)}
+                            className={`text-left px-3 py-2.5 rounded-xl border text-sm transition-all ${form.hasTracking === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
+                            {o.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs text-white/50 mb-1 block">Monthly Google Ads budget</label>
+                      <input placeholder="e.g. $500/month" value={form.googleBudget} onChange={e => update("googleBudget", e.target.value)} className={inputClass} />
+                    </div>
+                    <div>
+                      <label className="text-xs text-white/50 mb-2 block">Average ticket / sale value</label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {TICKET_VALUES.map(o => (
+                          <button key={o.value} onClick={() => update("avgTicketValue", o.value)}
+                            className={`text-left px-3 py-2.5 rounded-xl border text-sm transition-all ${form.avgTicketValue === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
+                            {o.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <label className="text-xs text-white/50 mb-2 block">Are you currently running any ads?</label>
-                  <div className="grid grid-cols-1 gap-2">
-                    {[
-                      { value: "yes_working", label: "Yes — and they're working" },
-                      { value: "yes_not_working", label: "Yes — but not getting results" },
-                      { value: "no_never", label: "No — never run ads before" },
-                      { value: "no_paused", label: "No — paused previous campaigns" },
-                    ].map(o => (
-                      <button key={o.value} onClick={() => update("currentlyRunningAds", o.value)}
-                        className={`text-left px-3 py-2.5 rounded-xl border text-sm transition-all ${form.currentlyRunningAds === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/50 hover:border-white/20"}`}>
-                        {o.label}
-                      </button>
-                    ))}
+                )}
+
+                {isMeta && (
+                  <div className="space-y-4">
+                    <p className="text-xs font-bold text-blue-400 uppercase tracking-widest">Meta Ads</p>
+                    <div>
+                      <label className="text-xs text-white/50 mb-2 block">Campaign objective</label>
+                      <OptionGrid options={META_OBJECTIVES} field="metaObjective" />
+                    </div>
+                    <div>
+                      <label className="text-xs text-white/50 mb-2 block">Do you have a Meta Pixel installed?</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "not_sure", label: "Not sure" }].map(o => (
+                          <button key={o.value} onClick={() => update("hasPixel", o.value)}
+                            className={`text-left px-3 py-2.5 rounded-xl border text-sm transition-all ${form.hasPixel === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
+                            {o.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs text-white/50 mb-2 block">Who are you targeting?</label>
+                      <div className="grid grid-cols-1 gap-2">
+                        {[
+                          { value: "cold", label: "Cold audience — people who don't know me yet" },
+                          { value: "warm", label: "Warm audience — people who've seen my content" },
+                          { value: "retargeting", label: "Retargeting — people who visited my website" },
+                          { value: "mixed", label: "Mixed — both cold and warm" },
+                        ].map(o => (
+                          <button key={o.value} onClick={() => update("audienceTemperature", o.value)}
+                            className={`text-left px-4 py-3 rounded-xl border text-sm transition-all ${form.audienceTemperature === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
+                            {o.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs text-white/50 mb-2 block">Creative preference</label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {CREATIVE_PREFS.map(o => (
+                          <button key={o.value} onClick={() => update("creativePreference", o.value)}
+                            className={`text-left px-3 py-2.5 rounded-xl border text-sm transition-all ${form.creativePreference === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
+                            {o.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs text-white/50 mb-1 block">Monthly Meta Ads budget</label>
+                      <input placeholder="e.g. $300/month" value={form.metaBudget} onChange={e => update("metaBudget", e.target.value)} className={inputClass} />
+                    </div>
                   </div>
-                </div>
+                )}
+
+                {isSocial && !isGoogle && !isMeta && (
+                  <div className="space-y-4">
+                    <p className="text-xs font-bold text-pink-400 uppercase tracking-widest">Organic Social</p>
+                    <div>
+                      <label className="text-xs text-white/50 mb-2 block">Which platforms?</label>
+                      <OptionGrid options={SOCIAL_PLATFORMS} field="socialPlatforms" />
+                    </div>
+                    <div>
+                      <label className="text-xs text-white/50 mb-1 block">How often do you want to post?</label>
+                      <input placeholder="e.g. 3x per week, daily" value={form.postingFrequency} onChange={e => update("postingFrequency", e.target.value)} className={inputClass} />
+                    </div>
+                    <div>
+                      <label className="text-xs text-white/50 mb-2 block">Content style</label>
+                      <OptionGrid options={CONTENT_STYLES} field="contentStyle" />
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Step 4 — Campaign */}
+            {/* Step 4 — Add-ons + Review */}
             {step === 4 && (
               <div className="space-y-5">
-                <h2 className="font-semibold text-white mb-4">What do you need?</h2>
-                <div>
-                  <label className="text-xs text-white/50 mb-2 block">Select content type</label>
-                  <div className="grid grid-cols-1 gap-2">
-                    {CONTENT_TYPES.map(ct => (
-                      <button key={ct.value} onClick={() => update("contentType", ct.value)}
-                        className={`flex items-center gap-4 px-4 py-3 rounded-xl border text-left transition-all ${form.contentType === ct.value ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
-                        <ct.icon className={`w-4 h-4 flex-shrink-0 ${form.contentType === ct.value ? "text-[#E53E3E]" : "text-white/40"}`} />
-                        <div className="flex-1">
-                          <p className={`text-sm font-semibold ${form.contentType === ct.value ? "text-white" : "text-white/60"}`}>{ct.label}</p>
-                          <p className={`text-xs ${form.contentType === ct.value ? "text-white/60" : "text-white/30"}`}>{ct.sub}</p>
+                <h2 className="font-semibold text-white mb-2">Review & add-ons</h2>
+
+                {(showKeywordsAddon || showSocialAddon) && (
+                  <div className="space-y-3">
+                    <p className="text-xs text-white/40 uppercase tracking-widest font-semibold">Add-ons</p>
+                    {showKeywordsAddon && (
+                      <button onClick={() => update("addOnKeywords", !form.addOnKeywords)}
+                        className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl border text-left transition-all ${form.addOnKeywords ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
+                        <div className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 ${form.addOnKeywords ? "bg-[#E53E3E] border-[#E53E3E]" : "border-white/30"}`}>
+                          {form.addOnKeywords && <span className="text-white text-xs">✓</span>}
                         </div>
-                        <span className={`text-sm font-bold flex-shrink-0 ${form.contentType === ct.value ? "text-[#E53E3E]" : "text-white/30"}`}>{ct.price}</span>
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-white">Add Keyword Research Report</p>
+                          <p className="text-xs text-white/40">Primary, long-tail, negative keywords + competitor terms + SEO opportunities</p>
+                        </div>
+                        <span className="text-sm font-bold text-[#E53E3E] flex-shrink-0">+$4.99</span>
                       </button>
-                    ))}
+                    )}
+                    {showSocialAddon && (
+                      <button onClick={() => update("addOnSocial", !form.addOnSocial)}
+                        className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl border text-left transition-all ${form.addOnSocial ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
+                        <div className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 ${form.addOnSocial ? "bg-[#E53E3E] border-[#E53E3E]" : "border-white/30"}`}>
+                          {form.addOnSocial && <span className="text-white text-xs">✓</span>}
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-semibold text-white">Add Organic Social Content</p>
+                          <p className="text-xs text-white/40">5 captions, hashtags, story ideas, reel concepts, best time to post</p>
+                        </div>
+                        <span className="text-sm font-bold text-[#E53E3E] flex-shrink-0">+$4.99</span>
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                <div className="border-t border-white/10 pt-4 space-y-2">
+                  <p className="text-xs text-white/40 uppercase tracking-widest font-semibold mb-3">Order Summary</p>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-white/70">{CONTENT_TYPES.find(c => c.value === form.contentType)?.label}</span>
+                    <span className="text-white">{CONTENT_TYPES.find(c => c.value === form.contentType)?.display}</span>
+                  </div>
+                  {form.addOnKeywords && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-white/70">Keyword Research Add-on</span>
+                      <span className="text-white">$4.99</span>
+                    </div>
+                  )}
+                  {form.addOnSocial && (
+                    <div className="flex justify-between text-sm">
+                      <span className="text-white/70">Social Content Add-on</span>
+                      <span className="text-white">$4.99</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-base font-bold border-t border-white/10 pt-2 mt-2">
+                    <span className="text-white">Total</span>
+                    <span className="text-[#E53E3E]">{formatPrice(getTotalPrice())}</span>
                   </div>
                 </div>
-                <div>
-                  <label className="text-xs text-white/50 mb-2 block">Primary Goal</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {GOALS.map(g => (
-                      <button key={g.value} onClick={() => update("goal", g.value)}
-                        className={`px-3 py-2 rounded-lg border text-xs font-medium text-left transition-all ${form.goal === g.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/50 hover:border-white/20"}`}>
-                        {g.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <label className="text-xs text-white/50 mb-1 block">Monthly Ad Budget (optional)</label>
-                  <input placeholder="e.g. $500/month" value={form.budget} onChange={e => update("budget", e.target.value)} className={inputClass} />
+
+                <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-1 text-sm">
+                  <div className="flex justify-between"><span className="text-white/40">Business</span><span className="text-white">{form.businessName}</span></div>
+                  <div className="flex justify-between"><span className="text-white/40">Email</span><span className="text-white">{form.email}</span></div>
+                  <div className="flex justify-between"><span className="text-white/40">Platform</span><span className="text-white">{CONTENT_TYPES.find(c => c.value === form.contentType)?.label}</span></div>
                 </div>
               </div>
             )}
@@ -418,14 +590,14 @@ goal: profile.goal || "leads",
             </button>
 
             {step < STEPS.length - 1 ? (
-              <button onClick={() => setStep(s => s + 1)} disabled={!canAdvance()}
+              <button onClick={() => { if (step === 0) sendAbandon(); setStep(s => s + 1); }} disabled={!canAdvance()}
                 className="flex items-center gap-1 bg-[#E53E3E] hover:bg-[#C53030] text-white font-semibold px-5 py-2.5 rounded-xl text-sm disabled:opacity-50 transition-colors">
                 Continue <ChevronRight className="w-4 h-4" />
               </button>
             ) : (
               <button onClick={handleSubmit} disabled={loading || !form.email || !form.businessName}
                 className="flex items-center gap-2 bg-[#E53E3E] hover:bg-[#C53030] text-white font-bold px-6 py-2.5 rounded-xl text-sm disabled:opacity-50 transition-colors">
-                {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Generating...</> : <><Zap className="w-4 h-4" />Get My Content — {PRICES[form.contentType]}</>}
+                {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Generating...</> : <><Zap className="w-4 h-4" />Pay {formatPrice(getTotalPrice())}</>}
               </button>
             )}
           </div>
