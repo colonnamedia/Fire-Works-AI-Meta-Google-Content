@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Zap, Check, Target, FileText, BarChart2, ArrowRight, Star, Shield, TrendingUp } from "lucide-react";
+import { Zap, Check, Target, FileText, BarChart2, ArrowRight, Star, Shield, TrendingUp, Search, Facebook, Layers, Key, Image } from "lucide-react";
 import { motion } from "framer-motion";
 
 const handleGetStarted = () => { window.location.href = "/get-started"; };
@@ -10,30 +10,42 @@ const fadeUp = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transi
 const stagger = { show: { transition: { staggerChildren: 0.1 } } };
 
 const features = [
-  { icon: Target, title: "AI Picks the Right Objective", desc: "Stop guessing between Traffic, Leads, and Conversions. The AI analyzes your business and tells you exactly which Meta objective to use and why." },
-  { icon: FileText, title: "Ready-to-Use Ad Copy", desc: "Get scroll-stopping hooks, benefit-driven headlines, full primary text options, and CTAs — all tailored to your offer and tone." },
-  { icon: BarChart2, title: "Full Campaign Strategy", desc: "Audience direction, ad set structure, placement recommendations, creative angles — a complete playbook you can execute immediately." },
+  {
+    icon: Search,
+    title: "Google Ads — Built Right",
+    desc: "Get 15 headlines, 4 descriptions, sitelinks, callouts, keywords with match types, and negative keywords — all tailored to your business.",
+  },
+  {
+    icon: Facebook,
+    title: "Meta Ads — Full Campaign",
+    desc: "Campaign objective, audience targeting, primary text options, hooks, creative direction, retargeting strategy, and risk warnings.",
+  },
+  {
+    icon: BarChart2,
+    title: "Keywords + Social Content",
+    desc: "Add keyword research or organic social captions, hashtags, story ideas, and reel concepts as affordable add-ons.",
+  },
 ];
 
 const steps = [
-  { n: "01", title: "Describe your business and offer", desc: "Enter your business type, industry, goal, budget, and audience in a simple guided form." },
-  { n: "02", title: "AI builds your strategy", desc: "Our AI analyzes your inputs and recommends the best campaign objective, setup, and copy direction." },
-  { n: "03", title: "Get hooks, headlines, and copy", desc: "Receive 3 hooks, 3 headlines, 2 primary text options, CTAs, and creative angle ideas — ready to paste into Ads Manager." },
-  { n: "04", title: "Save and revisit anytime", desc: "Every strategy is saved to your dashboard so you can reference, export, or build on it later." },
+  { n: "01", title: "Tell us about your business", desc: "Enter your contact info, select your platform, and answer a few quick questions about your business and goals." },
+  { n: "02", title: "AI builds your campaign", desc: "Our AI generates a complete, platform-specific campaign setup tailored to your business, audience, and budget." },
+  { n: "03", title: "Get your content instantly", desc: "View results on screen, download, and receive a full PDF report emailed to you immediately after payment." },
+  { n: "04", title: "Save and revisit anytime", desc: "Create a free account to save your business info and access all past generations from your dashboard." },
 ];
 
 const deliverables = [
-  "Recommended campaign objective + optimization goal",
-  "Why that objective fits your business and goal",
-  "Campaign setup and ad set structure",
-  "Audience direction and placement strategy",
-  "3 scroll-stopping hook ideas",
-  "3 headline variations",
-  "2 full primary text options",
-  "CTA suggestions matched to your destination",
-  "Creative angle ideas",
-  "Risk warnings and what to watch for",
-  "Final recommendation and next steps",
+  "Google Ads — 15 headlines, 4 descriptions, sitelinks",
+  "Callout extensions and keyword recommendations",
+  "Keywords with match types and search intent",
+  "Negative keyword list",
+  "Meta Ads — campaign objective recommendation",
+  "Audience targeting — age, gender, interests, behaviors",
+  "3 primary text options, 3 headlines, 3 hooks",
+  "Creative direction and format recommendation",
+  "Retargeting strategy",
+  "Organic social captions, hashtags, reel concepts (add-on)",
+  "Keyword research report (add-on)",
 ];
 
 const testimonials = [
@@ -134,11 +146,7 @@ function FireworksCanvas() {
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full"
-      style={{ opacity: 0.45 }}
-    />
+    <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" style={{ opacity: 0.45 }} />
   );
 }
 
@@ -156,7 +164,7 @@ export default function Landing() {
             Fire-Works AI
           </Link>
           <div className="hidden sm:flex items-center gap-1 text-sm text-white/50 font-medium">
-            Meta & Google AI Ad Creation
+            Google & Meta AI Ad Campaign Builder
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <button onClick={handleLogin} className="text-sm text-white/60 hover:text-white px-3 py-1.5 rounded-md hover:bg-white/5 transition-colors">Log In</button>
@@ -179,17 +187,20 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-24 pb-24 relative z-10">
           <motion.div variants={stagger} initial="hidden" animate="show" className="max-w-3xl space-y-6">
             <motion.h1 variants={fadeUp} className="text-5xl sm:text-6xl lg:text-7xl font-black text-white leading-tight tracking-tight">
-              AI powered ads <span className="text-[#E53E3E]">for</span><br />
-              Meta &amp; Google.
+              AI ad campaigns <span className="text-[#E53E3E]">for</span><br />
+              Google &amp; Meta.
             </motion.h1>
             <motion.p variants={fadeUp} className="text-lg text-white/50 max-w-xl leading-relaxed">
-              Get AI-powered campaign objective recommendations, hooks, headlines, copy ideas, and full ad setup direction — tailored to your business, offer, and goals.
+              Answer a few questions about your business and get a complete, ready-to-launch ad campaign — headlines, keywords, copy, audience targeting, and more. Delivered instantly.
             </motion.p>
             <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-3 pt-2">
               <button onClick={handleGetStarted} className="inline-flex items-center justify-center gap-2 bg-[#E53E3E] hover:bg-[#C53030] text-white font-bold px-6 py-3 rounded-xl transition-colors text-sm">
-                Generate My Ads <ArrowRight className="w-4 h-4" />
+                Build My Ad Campaign <ArrowRight className="w-4 h-4" />
               </button>
             </motion.div>
+            <motion.p variants={fadeUp} className="text-xs text-white/30">
+              Google Ads from $9.99 · Meta Ads from $9.99 · Google + Meta $16.99
+            </motion.p>
           </motion.div>
         </div>
       </section>
@@ -197,8 +208,8 @@ export default function Landing() {
       {/* Features */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
         <div className="mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">Everything you need to run smarter ads</h2>
-          <p className="text-white/40">Built for business owners and marketers who want a clear, actionable strategy in minutes.</p>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-3">Everything you need to launch smarter ads</h2>
+          <p className="text-white/40">Built for business owners who want expert-level campaigns without hiring an agency.</p>
         </div>
         <div className="grid md:grid-cols-3 gap-4">
           {features.map(f => (
@@ -218,12 +229,12 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid lg:grid-cols-2 gap-12 items-start">
             <div>
-              <p className="text-[#E53E3E] text-xs font-bold uppercase tracking-widest mb-4">ONE SUBMISSION. A COMPLETE STRATEGY.</p>
+              <p className="text-[#E53E3E] text-xs font-bold uppercase tracking-widest mb-4">A FEW QUESTIONS. A COMPLETE CAMPAIGN.</p>
               <h2 className="text-3xl sm:text-4xl font-black text-white mb-4 leading-tight">
-                You don't get vague tips.<br />You get a <span className="text-[#E53E3E]">full ad playbook.</span>
+                You don't get vague tips.<br />You get a <span className="text-[#E53E3E]">ready-to-launch campaign.</span>
               </h2>
               <p className="text-white/40 mb-6 leading-relaxed text-sm">
-                Fill in your business details and receive a structured, expert-level ad strategy — the kind an experienced media buyer would put together, delivered in seconds.
+                Fill in your business details and receive a structured, expert-level ad campaign — the kind an experienced media buyer would build, delivered in seconds.
               </p>
               <ul className="space-y-2.5">
                 {deliverables.map(item => (
@@ -238,14 +249,23 @@ export default function Landing() {
               <p className="text-xs text-[#E53E3E] uppercase tracking-widest font-bold mb-4">SAMPLE OUTPUT</p>
               <div className="space-y-3">
                 <div>
-                  <p className="text-xs text-white/40 mb-1">Recommended Objective: <span className="text-white">Lead Generation — Maximize Leads</span></p>
+                  <p className="text-xs text-white/40 mb-1">Campaign Objective: <span className="text-white">Lead Generation — Maximize Leads</span></p>
                 </div>
-                <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-                  <p className="text-sm text-white/80 italic">"Still waiting on that plumber? We show up same day."</p>
+                <div>
+                  <p className="text-xs text-white/40 mb-1.5">Google Headline Example</p>
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-3">
+                    <p className="text-sm text-white/80">"Same-Day Plumbing Pittsburgh" <span className="text-white/30 text-xs">· 30/30</span></p>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs text-white/40 mb-1.5">Meta Hook Example</p>
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-3">
+                    <p className="text-sm text-white/80 italic">"Still waiting on that plumber? We show up same day."</p>
+                  </div>
                 </div>
                 <div>
                   <p className="text-xs text-white/40 mb-1.5">Audience Direction</p>
-                  <p className="text-sm text-white/70">Homeowners 30–65 within 15 miles. Broad targeting + strong creative beats stacked interests at this budget. Skip interest layers.</p>
+                  <p className="text-sm text-white/70">Homeowners 30–65 within 15 miles. Broad targeting + strong creative beats stacked interests at this budget.</p>
                 </div>
                 <div className="bg-[#E53E3E]/10 border border-[#E53E3E]/30 rounded-xl p-4">
                   <p className="text-xs text-[#E53E3E] font-semibold mb-1">Warning</p>
@@ -260,7 +280,7 @@ export default function Landing() {
       {/* How it works */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
         <div className="mb-12">
-          <h2 className="text-3xl sm:text-4xl font-black text-white mb-3">From blank page to full strategy</h2>
+          <h2 className="text-3xl sm:text-4xl font-black text-white mb-3">From blank page to full campaign</h2>
           <p className="text-white/40">No media buying expertise required.</p>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -301,81 +321,88 @@ export default function Landing() {
       </section>
 
       {/* Pricing */}
-<section className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
-  <div className="text-center mb-12">
-    <h2 className="text-3xl font-black text-white mb-2">Simple, transparent pricing</h2>
-    <p className="text-white/40">Pay only for what you need. No subscriptions.</p>
-  </div>
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 py-20">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-black text-white mb-2">Simple, transparent pricing</h2>
+          <p className="text-white/40">Pay only for what you need. No subscriptions. No monthly fees.</p>
+        </div>
 
-  <div className="grid md:grid-cols-3 gap-4 mb-6">
-    <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
-      <div className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center mx-auto mb-3">
-        <Search className="w-5 h-5 text-green-400" />
-      </div>
-      <h3 className="font-bold text-white mb-1">Google Ads</h3>
-      <p className="text-white/40 text-xs mb-4">Full campaign setup + copy</p>
-      <div className="text-3xl font-black text-white mb-4">$9.99</div>
-      <button onClick={handleGetStarted} className="w-full border border-white/20 text-white text-sm font-semibold py-2.5 rounded-xl hover:border-white/40 transition-colors">
-        Get Started
-      </button>
-    </div>
+        <div className="grid md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+            <div className="w-10 h-10 bg-green-500/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <Search className="w-5 h-5 text-green-400" />
+            </div>
+            <h3 className="font-bold text-white mb-1">Google Ads</h3>
+            <p className="text-white/40 text-xs mb-1">Full campaign setup + copy</p>
+            <p className="text-white/30 text-xs mb-4">15 headlines · 4 descriptions · keywords · sitelinks</p>
+            <div className="text-3xl font-black text-white mb-4">$9.99</div>
+            <button onClick={handleGetStarted} className="w-full border border-white/20 text-white text-sm font-semibold py-2.5 rounded-xl hover:border-white/40 transition-colors">
+              Get Started
+            </button>
+          </div>
 
-    <div className="bg-[#161B22] border-2 border-[#E53E3E]/60 rounded-2xl p-6 text-center relative">
-      <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-        <span className="bg-[#E53E3E] text-white text-xs font-bold px-3 py-1 rounded-full">BEST VALUE</span>
-      </div>
-      <div className="w-10 h-10 bg-[#E53E3E]/20 rounded-xl flex items-center justify-center mx-auto mb-3">
-        <Layers className="w-5 h-5 text-[#E53E3E]" />
-      </div>
-      <h3 className="font-bold text-white mb-1">Google + Meta</h3>
-      <p className="text-white/40 text-xs mb-4">Both full ad campaigns</p>
-      <div className="text-3xl font-black text-white mb-1">$16.99</div>
-      <p className="text-white/30 text-xs mb-4">Save $3 vs buying separately</p>
-      <button onClick={handleGetStarted} className="w-full bg-[#E53E3E] hover:bg-[#C53030] text-white text-sm font-bold py-2.5 rounded-xl transition-colors">
-        Get Started
-      </button>
-    </div>
+          <div className="bg-[#161B22] border-2 border-[#E53E3E]/60 rounded-2xl p-6 text-center relative">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+              <span className="bg-[#E53E3E] text-white text-xs font-bold px-3 py-1 rounded-full">BEST VALUE</span>
+            </div>
+            <div className="w-10 h-10 bg-[#E53E3E]/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <Layers className="w-5 h-5 text-[#E53E3E]" />
+            </div>
+            <h3 className="font-bold text-white mb-1">Google + Meta</h3>
+            <p className="text-white/40 text-xs mb-1">Both full ad campaigns</p>
+            <p className="text-white/30 text-xs mb-4">Everything in both platforms in one generation</p>
+            <div className="text-3xl font-black text-white mb-1">$16.99</div>
+            <p className="text-[#E53E3E] text-xs mb-4">Save $3 vs buying separately</p>
+            <button onClick={handleGetStarted} className="w-full bg-[#E53E3E] hover:bg-[#C53030] text-white text-sm font-bold py-2.5 rounded-xl transition-colors">
+              Get Started
+            </button>
+          </div>
 
-    <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
-      <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-3">
-        <Facebook className="w-5 h-5 text-blue-400" />
-      </div>
-      <h3 className="font-bold text-white mb-1">Meta Ads</h3>
-      <p className="text-white/40 text-xs mb-4">Full campaign setup + copy</p>
-      <div className="text-3xl font-black text-white mb-4">$9.99</div>
-      <button onClick={handleGetStarted} className="w-full border border-white/20 text-white text-sm font-semibold py-2.5 rounded-xl hover:border-white/40 transition-colors">
-        Get Started
-      </button>
-    </div>
-  </div>
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+            <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+              <Facebook className="w-5 h-5 text-blue-400" />
+            </div>
+            <h3 className="font-bold text-white mb-1">Meta Ads</h3>
+            <p className="text-white/40 text-xs mb-1">Full campaign setup + copy</p>
+            <p className="text-white/30 text-xs mb-4">Audience · hooks · primary text · creative direction</p>
+            <div className="text-3xl font-black text-white mb-4">$9.99</div>
+            <button onClick={handleGetStarted} className="w-full border border-white/20 text-white text-sm font-semibold py-2.5 rounded-xl hover:border-white/40 transition-colors">
+              Get Started
+            </button>
+          </div>
+        </div>
 
-  <div className="grid md:grid-cols-3 gap-4">
-    <div className="bg-white/5 border border-white/10 rounded-xl p-5 text-center">
-      <h3 className="font-bold text-white text-sm mb-1">Organic Social</h3>
-      <p className="text-white/40 text-xs mb-3">Captions, hashtags, reel ideas</p>
-      <div className="text-2xl font-black text-white">$4.99</div>
-    </div>
-    <div className="bg-white/5 border border-white/10 rounded-xl p-5 text-center">
-      <h3 className="font-bold text-white text-sm mb-1">Everything</h3>
-      <p className="text-white/40 text-xs mb-3">Google + Meta + Social + Keywords</p>
-      <div className="text-2xl font-black text-white">$19.99</div>
-    </div>
-    <div className="bg-white/5 border border-white/10 rounded-xl p-5 text-center">
-      <h3 className="font-bold text-white text-sm mb-1">Add-ons</h3>
-      <p className="text-white/40 text-xs mb-3">Keywords or Social Content</p>
-      <div className="text-2xl font-black text-white">+$4.99</div>
-    </div>
-  </div>
-</section>
+        <div className="grid md:grid-cols-3 gap-4">
+          <div className="bg-white/5 border border-white/10 rounded-xl p-5 text-center">
+            <Image className="w-5 h-5 text-pink-400 mx-auto mb-2" />
+            <h3 className="font-bold text-white text-sm mb-1">Organic Social</h3>
+            <p className="text-white/40 text-xs mb-3">Captions · hashtags · reel ideas · story concepts</p>
+            <div className="text-2xl font-black text-white">$4.99</div>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-5 text-center">
+            <BarChart2 className="w-5 h-5 text-amber-400 mx-auto mb-2" />
+            <h3 className="font-bold text-white text-sm mb-1">Everything</h3>
+            <p className="text-white/40 text-xs mb-3">Google + Meta + Social + Keyword Research</p>
+            <div className="text-2xl font-black text-white">$19.99</div>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-xl p-5 text-center">
+            <Key className="w-5 h-5 text-white/40 mx-auto mb-2" />
+            <h3 className="font-bold text-white text-sm mb-1">Add-ons</h3>
+            <p className="text-white/40 text-xs mb-3">Keyword Research or Social Content — added at checkout</p>
+            <div className="text-2xl font-black text-white">+$4.99</div>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className="bg-[#E53E3E] py-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
             <h2 className="text-2xl sm:text-3xl font-black text-white mb-2">Ready to run smarter ads?</h2>
-            <p className="text-white/70 text-sm max-w-lg">Stop guessing which campaign to run. Get AI-generated copy tailored to your business in minutes.</p>
+            <p className="text-white/70 text-sm max-w-lg">Stop guessing which campaign to run. Get a complete AI-generated ad campaign tailored to your business in minutes.</p>
           </div>
           <button onClick={handleGetStarted} className="bg-white text-[#E53E3E] font-bold px-8 py-3 rounded-xl hover:bg-white/90 transition-colors text-sm whitespace-nowrap shrink-0">
-            Build My Ads
+            Build My Campaign
           </button>
         </div>
       </section>
