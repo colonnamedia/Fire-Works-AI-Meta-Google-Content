@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
-import { Zap, ChevronRight, ChevronLeft, Loader2, Search, Facebook, Layers, Image, LayoutGrid } from "lucide-react";
+import { Zap, ChevronRight, ChevronLeft, Loader2, Search, Facebook, Layers, Image, LayoutGrid, Key } from "lucide-react";
 
 const STEPS = ["Contact", "Platform", "Business", "Campaign", "Review"];
 
@@ -72,31 +72,20 @@ const TICKET_VALUES = [
   { value: "5000_plus", label: "$5,000+" },
 ];
 
-const REVENUE_RANGES = [
-  { value: "pre_revenue", label: "Pre-revenue / Just starting" },
-  { value: "under_5k", label: "Under $5,000/mo" },
-  { value: "5k_20k", label: "$5,000 – $20,000/mo" },
-  { value: "20k_50k", label: "$20,000 – $50,000/mo" },
-  { value: "50k_plus", label: "$50,000+/mo" },
-];
-
 const INITIAL = {
   fullName: "", email: "", businessName: "", websiteUrl: "",
   contentType: "",
   industry: "", offerType: "", targetAudience: "", uniqueSellingPoint: "", locationType: "local",
   monthlyRevenue: "", avgTicketValue: "", mainCta: "", biggestCompetitor: "",
-  // Google specific
   campaignType: "", hasLandingPage: "", hasTracking: "", googleBudget: "",
-  // Meta specific
   metaObjective: "", hasPixel: "", audienceTemperature: "", creativePreference: "", metaBudget: "",
-  // Social specific
   socialPlatforms: "", postingFrequency: "", contentStyle: "",
-  // Add-ons
   addOnKeywords: false,
   addOnSocial: false,
 };
 
 export default function GetStarted() {
+  const navigate = useNavigate();
   const { user, isSignedIn } = useUser();
   const [step, setStep] = useState(0);
   const [form, setForm] = useState(INITIAL);
@@ -187,6 +176,14 @@ export default function GetStarted() {
   };
 
   const formatPrice = (cents) => `$${(cents / 100).toFixed(2)}`;
+
+  const handleBack = () => {
+    if (step === 0) {
+      navigate('/');
+    } else {
+      setStep(s => s - 1);
+    }
+  };
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -283,8 +280,8 @@ export default function GetStarted() {
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-lg">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-black text-white mb-2">Build Your Ad Content</h1>
-            <p className="text-white/40 text-sm">The more detail you give, the better your results.</p>
+            <h1 className="text-3xl font-black text-white mb-2">Build Your Ad Campaign</h1>
+            <p className="text-white/40 text-sm">Answer a few questions and get a complete AI-generated campaign.</p>
           </div>
 
           {/* Stepper */}
@@ -333,8 +330,10 @@ export default function GetStarted() {
                 <h2 className="font-semibold text-white mb-4">What do you need?</h2>
                 {CONTENT_TYPES.map(ct => (
                   <button key={ct.value} onClick={() => update("contentType", ct.value)}
-                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl border text-left transition-all relative ${form.contentType === ct.value ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20"} ${ct.featured ? "border-yellow-500/40" : ""}`}>
-                    {ct.featured && <span className="absolute -top-2 left-4 text-xs bg-yellow-500 text-black font-bold px-2 py-0.5 rounded-full">Best Value</span>}
+                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl border text-left transition-all relative ${form.contentType === ct.value ? "border-[#E53E3E] bg-[#E53E3E]/10" : ct.featured ? "border-yellow-500/40 bg-white/5 hover:border-yellow-500/60" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
+                    {ct.featured && (
+                      <span className="absolute -top-2 left-4 text-xs bg-yellow-500 text-black font-bold px-2 py-0.5 rounded-full">Best Value</span>
+                    )}
                     <div className="flex-1">
                       <p className={`text-sm font-semibold ${form.contentType === ct.value ? "text-white" : "text-white/70"}`}>{ct.label}</p>
                       <p className={`text-xs ${form.contentType === ct.value ? "text-white/60" : "text-white/30"}`}>{ct.sub}</p>
@@ -459,19 +458,12 @@ export default function GetStarted() {
                     </div>
                     <div>
                       <label className="text-xs text-white/50 mb-2 block">Who are you targeting?</label>
-                      <div className="grid grid-cols-1 gap-2">
-                        {[
-                          { value: "cold", label: "Cold audience — people who don't know me yet" },
-                          { value: "warm", label: "Warm audience — people who've seen my content" },
-                          { value: "retargeting", label: "Retargeting — people who visited my website" },
-                          { value: "mixed", label: "Mixed — both cold and warm" },
-                        ].map(o => (
-                          <button key={o.value} onClick={() => update("audienceTemperature", o.value)}
-                            className={`text-left px-4 py-3 rounded-xl border text-sm transition-all ${form.audienceTemperature === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
-                            {o.label}
-                          </button>
-                        ))}
-                      </div>
+                      <OptionGrid options={[
+                        { value: "cold", label: "Cold audience — people who don't know me yet" },
+                        { value: "warm", label: "Warm audience — people who've seen my content" },
+                        { value: "retargeting", label: "Retargeting — people who visited my website" },
+                        { value: "mixed", label: "Mixed — both cold and warm" },
+                      ]} field="audienceTemperature" />
                     </div>
                     <div>
                       <label className="text-xs text-white/50 mb-2 block">Creative preference</label>
@@ -518,12 +510,12 @@ export default function GetStarted() {
 
                 {(showKeywordsAddon || showSocialAddon) && (
                   <div className="space-y-3">
-                    <p className="text-xs text-white/40 uppercase tracking-widest font-semibold">Add-ons</p>
+                    <p className="text-xs text-white/40 uppercase tracking-widest font-semibold">Enhance your order</p>
                     {showKeywordsAddon && (
                       <button onClick={() => update("addOnKeywords", !form.addOnKeywords)}
                         className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl border text-left transition-all ${form.addOnKeywords ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
                         <div className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 ${form.addOnKeywords ? "bg-[#E53E3E] border-[#E53E3E]" : "border-white/30"}`}>
-                          {form.addOnKeywords && <span className="text-white text-xs">✓</span>}
+                          {form.addOnKeywords && <span className="text-white text-xs font-bold">✓</span>}
                         </div>
                         <div className="flex-1">
                           <p className="text-sm font-semibold text-white">Add Keyword Research Report</p>
@@ -536,7 +528,7 @@ export default function GetStarted() {
                       <button onClick={() => update("addOnSocial", !form.addOnSocial)}
                         className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl border text-left transition-all ${form.addOnSocial ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
                         <div className={`w-5 h-5 rounded border flex items-center justify-center flex-shrink-0 ${form.addOnSocial ? "bg-[#E53E3E] border-[#E53E3E]" : "border-white/30"}`}>
-                          {form.addOnSocial && <span className="text-white text-xs">✓</span>}
+                          {form.addOnSocial && <span className="text-white text-xs font-bold">✓</span>}
                         </div>
                         <div className="flex-1">
                           <p className="text-sm font-semibold text-white">Add Organic Social Content</p>
@@ -572,10 +564,11 @@ export default function GetStarted() {
                   </div>
                 </div>
 
-                <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-1 text-sm">
+                <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-2 text-sm">
                   <div className="flex justify-between"><span className="text-white/40">Business</span><span className="text-white">{form.businessName}</span></div>
                   <div className="flex justify-between"><span className="text-white/40">Email</span><span className="text-white">{form.email}</span></div>
                   <div className="flex justify-between"><span className="text-white/40">Platform</span><span className="text-white">{CONTENT_TYPES.find(c => c.value === form.contentType)?.label}</span></div>
+                  {form.websiteUrl && <div className="flex justify-between"><span className="text-white/40">Website</span><span className="text-white/70 text-xs">{form.websiteUrl}</span></div>}
                 </div>
               </div>
             )}
@@ -584,19 +577,28 @@ export default function GetStarted() {
           {error && <p className="text-[#E53E3E] text-sm mb-4 text-center">{error}</p>}
 
           <div className="flex items-center justify-between">
-            <button onClick={() => setStep(s => s - 1)} disabled={step === 0}
-              className="flex items-center gap-1 text-white/40 hover:text-white text-sm disabled:opacity-30 transition-colors">
-              <ChevronLeft className="w-4 h-4" /> Back
+            <button
+              onClick={handleBack}
+              className="flex items-center gap-1 text-white/40 hover:text-white text-sm transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              {step === 0 ? "Home" : "Back"}
             </button>
 
             {step < STEPS.length - 1 ? (
-              <button onClick={() => { if (step === 0) sendAbandon(); setStep(s => s + 1); }} disabled={!canAdvance()}
-                className="flex items-center gap-1 bg-[#E53E3E] hover:bg-[#C53030] text-white font-semibold px-5 py-2.5 rounded-xl text-sm disabled:opacity-50 transition-colors">
+              <button
+                onClick={() => { if (step === 0) sendAbandon(); setStep(s => s + 1); }}
+                disabled={!canAdvance()}
+                className="flex items-center gap-1 bg-[#E53E3E] hover:bg-[#C53030] text-white font-semibold px-5 py-2.5 rounded-xl text-sm disabled:opacity-50 transition-colors"
+              >
                 Continue <ChevronRight className="w-4 h-4" />
               </button>
             ) : (
-              <button onClick={handleSubmit} disabled={loading || !form.email || !form.businessName}
-                className="flex items-center gap-2 bg-[#E53E3E] hover:bg-[#C53030] text-white font-bold px-6 py-2.5 rounded-xl text-sm disabled:opacity-50 transition-colors">
+              <button
+                onClick={handleSubmit}
+                disabled={loading || !form.email || !form.businessName}
+                className="flex items-center gap-2 bg-[#E53E3E] hover:bg-[#C53030] text-white font-bold px-6 py-2.5 rounded-xl text-sm disabled:opacity-50 transition-colors"
+              >
                 {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Generating...</> : <><Zap className="w-4 h-4" />Pay {formatPrice(getTotalPrice())}</>}
               </button>
             )}
