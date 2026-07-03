@@ -100,7 +100,7 @@ export default function GetStarted() {
         fullName: user.fullName || "",
         email: user.primaryEmailAddress?.emailAddress || "",
       }));
-      fetch(`/api/get-user-profile?clerk_user_id=${user.id}`)
+      fetch("/api/get-user-profile?clerk_user_id=" + user.id)
         .then(r => r.json())
         .then(profile => {
           if (profile && !profile.error) {
@@ -130,9 +130,9 @@ export default function GetStarted() {
     if (abandonSent.current || !form.email || !form.businessName) return;
     abandonSent.current = true;
     try {
-      await fetch('/api/abandon-capture', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      await fetch("/api/abandon-capture", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: form.email,
           full_name: form.fullName,
@@ -140,13 +140,13 @@ export default function GetStarted() {
           website_url: form.websiteUrl,
         }),
       });
-    } catch {}
+    } catch (e) {}
   };
 
   useEffect(() => {
     if (step > 0 && form.email && form.businessName) {
-      window.addEventListener('beforeunload', sendAbandon);
-      return () => window.removeEventListener('beforeunload', sendAbandon);
+      window.addEventListener("beforeunload", sendAbandon);
+      return () => window.removeEventListener("beforeunload", sendAbandon);
     }
   }, [step, form.email, form.businessName]);
 
@@ -157,11 +157,9 @@ export default function GetStarted() {
     return true;
   };
 
-  const isGoogle = form.contentType === 'google_ads' || form.contentType === 'google_meta' || form.contentType === 'everything';
-  const isMeta = form.contentType === 'meta_ads' || form.contentType === 'google_meta' || form.contentType === 'everything';
-  const isSocial = form.contentType === 'organic_social' || form.contentType === 'everything';
-  const showKeywordsAddon = isGoogle && form.contentType !== 'everything';
-  const showSocialAddon = (isGoogle || isMeta) && !isSocial && form.contentType !== 'everything';
+  const isGoogle = form.contentType === "google_ads" || form.contentType === "google_meta" || form.contentType === "everything";
+  const isMeta = form.contentType === "meta_ads" || form.contentType === "google_meta" || form.contentType === "everything";
+  const isSocial = form.contentType === "organic_social" || form.contentType === "everything";
 
   const getBasePrice = () => {
     const ct = CONTENT_TYPES.find(c => c.value === form.contentType);
@@ -175,11 +173,11 @@ export default function GetStarted() {
     return total;
   };
 
-  const formatPrice = (cents) => `$${(cents / 100).toFixed(2)}`;
+  const formatPrice = (cents) => "$" + (cents / 100).toFixed(2);
 
   const handleBack = () => {
     if (step === 0) {
-      navigate('/');
+      navigate("/");
     } else {
       setStep(s => s - 1);
     }
@@ -189,9 +187,9 @@ export default function GetStarted() {
     setLoading(true);
     setError("");
     try {
-      const res = await fetch('/api/generate-ads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/generate-ads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: form.email,
           full_name: form.fullName,
@@ -221,17 +219,17 @@ export default function GetStarted() {
           content_style: form.contentStyle,
           add_on_keywords: form.addOnKeywords,
           add_on_social: form.addOnSocial,
-          goal: form.metaObjective || 'leads',
+          goal: form.metaObjective || "leads",
           budget: form.googleBudget || form.metaBudget,
           clerk_user_id: isSignedIn ? user.id : null,
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to generate');
+      if (!res.ok) throw new Error(data.error || "Failed to generate");
 
-      const paymentRes = await fetch('/api/create-ad-payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const paymentRes = await fetch("/api/create-ad-payment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           generationId: data.id,
           email: form.email,
@@ -241,7 +239,7 @@ export default function GetStarted() {
         }),
       });
       const paymentData = await paymentRes.json();
-      if (!paymentRes.ok) throw new Error(paymentData.error || 'Payment failed');
+      if (!paymentRes.ok) throw new Error(paymentData.error || "Payment failed");
 
       window.location.href = paymentData.url;
     } catch (err) {
@@ -250,13 +248,13 @@ export default function GetStarted() {
     }
   };
 
-  const inputClass = "w-full bg-white/5 border border-white/15 rounded-lg px-3 py-2.5 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-[#E53E3E]/50";
+  const inputClass = "w-full bg-white/5 border border-white/15 rounded-lg px-3 py-2.5 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-red-500/50";
 
   const OptionGrid = ({ options, field, cols = 1 }) => (
-    <div className={`grid grid-cols-${cols} gap-2`}>
+    <div className={"grid grid-cols-" + cols + " gap-2"}>
       {options.map(o => (
         <button key={o.value} onClick={() => update(field, o.value)}
-          className={`text-left px-4 py-3 rounded-xl border text-sm transition-all ${form[field] === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
+          className={"text-left px-4 py-3 rounded-xl border text-sm transition-all " + (form[field] === o.value ? "border-red-500 bg-red-500/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20")}>
           {o.label}
         </button>
       ))}
@@ -284,24 +282,22 @@ export default function GetStarted() {
             <p className="text-white/40 text-sm">Answer a few questions and get a complete AI-generated campaign.</p>
           </div>
 
-          {/* Stepper */}
           <div className="flex items-center mb-8">
             {STEPS.map((s, i) => (
               <React.Fragment key={s}>
-                <div className={`flex items-center gap-1.5 text-xs font-semibold ${i === step ? "text-white" : i < step ? "text-white/60" : "text-white/25"}`}>
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border ${i === step ? "bg-[#E53E3E] border-[#E53E3E] text-white" : i < step ? "bg-white/20 border-white/20 text-white" : "border-white/20 text-white/30"}`}>
+                <div className={"flex items-center gap-1.5 text-xs font-semibold " + (i === step ? "text-white" : i < step ? "text-white/60" : "text-white/25")}>
+                  <div className={"w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold border " + (i === step ? "bg-[#E53E3E] border-[#E53E3E] text-white" : i < step ? "bg-white/20 border-white/20 text-white" : "border-white/20 text-white/30")}>
                     {i + 1}
                   </div>
                   <span className="hidden sm:inline">{s}</span>
                 </div>
-                {i < STEPS.length - 1 && <div className={`flex-1 h-px mx-2 ${i < step ? "bg-white/30" : "bg-white/10"}`} />}
+                {i < STEPS.length - 1 && <div className={"flex-1 h-px mx-2 " + (i < step ? "bg-white/30" : "bg-white/10")} />}
               </React.Fragment>
             ))}
           </div>
 
           <div className="bg-white/5 border border-white/10 rounded-2xl p-6 mb-4">
 
-            {/* Step 0 — Contact */}
             {step === 0 && (
               <div className="space-y-4">
                 <h2 className="font-semibold text-white mb-4">Let's get started</h2>
@@ -325,96 +321,91 @@ export default function GetStarted() {
             )}
 
             {step === 1 && (
-  <div className="space-y-4">
-    <h2 className="font-semibold text-white mb-2">What do you need?</h2>
-    <p className="text-xs text-white/30 mb-4">Select your platform — add-ons can be added below</p>
+              <div className="space-y-4">
+                <h2 className="font-semibold text-white mb-2">What do you need?</h2>
+                <p className="text-xs text-white/30 mb-4">Select your platform and optional add-ons</p>
 
-    {/* Main 3 */}
-    <div className="grid grid-cols-3 gap-2">
-      {[
-        { value: "google_ads", label: "Google Ads", price: "$9.99", icon: Search, color: "text-green-400", items: ["15 headlines", "4 descriptions", "Sitelinks", "Keywords", "Negative keywords"] },
-        { value: "google_meta", label: "Google + Meta", price: "$16.99", icon: Layers, color: "text-[#E53E3E]", featured: true, items: ["Everything in Google", "Everything in Meta", "Best value — save $3"] },
-        { value: "meta_ads", label: "Meta Ads", price: "$9.99", icon: Facebook, color: "text-blue-400", items: ["Campaign objective", "Audience targeting", "3 primary texts", "Hooks & headlines", "Creative direction"] },
-      ].map(ct => (
-        <button key={ct.value} onClick={() => update("contentType", ct.value)}
-          className={`flex flex-col items-center gap-2 px-3 py-4 rounded-xl border text-center transition-all relative ${form.contentType === ct.value ? "border-[#E53E3E] bg-[#E53E3E]/10" : ct.featured ? "border-yellow-500/40 bg-white/5 hover:border-yellow-500/60" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
-          {ct.featured && <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-xs bg-yellow-500 text-black font-bold px-2 py-0.5 rounded-full whitespace-nowrap">Best Value</span>}
-          <ct.icon className={`w-5 h-5 ${form.contentType === ct.value ? "text-[#E53E3E]" : ct.color}`} />
-          <p className={`text-xs font-bold ${form.contentType === ct.value ? "text-white" : "text-white/70"}`}>{ct.label}</p>
-          <p className={`text-sm font-black ${form.contentType === ct.value ? "text-[#E53E3E]" : "text-white/60"}`}>{ct.price}</p>
-          <ul className="space-y-1 mt-1">
-            {ct.items.map(item => (
-              <li key={item} className="text-xs text-white/30 text-left">· {item}</li>
-            ))}
-          </ul>
-        </button>
-      ))}
-    </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { value: "google_ads", label: "Google Ads", price: "$9.99", Icon: Search, color: "text-green-400", items: ["15 headlines", "4 descriptions", "Sitelinks", "Keywords", "Neg. keywords"] },
+                    { value: "google_meta", label: "Google + Meta", price: "$16.99", Icon: Layers, color: "text-[#E53E3E]", featured: true, items: ["Everything in Google", "Everything in Meta", "Save $3"] },
+                    { value: "meta_ads", label: "Meta Ads", price: "$9.99", Icon: Facebook, color: "text-blue-400", items: ["Campaign objective", "Audience targeting", "3 primary texts", "Hooks", "Creative direction"] },
+                  ].map(ct => (
+                    <button key={ct.value} onClick={() => update("contentType", ct.value)}
+                      className={"flex flex-col items-center gap-2 px-3 py-4 rounded-xl border text-center transition-all relative " + (form.contentType === ct.value ? "border-[#E53E3E] bg-[#E53E3E]/10" : ct.featured ? "border-yellow-500/40 bg-white/5 hover:border-yellow-500/60" : "border-white/10 bg-white/5 hover:border-white/20")}>
+                      {ct.featured && <span className="absolute -top-2 left-1/2 -translate-x-1/2 text-xs bg-yellow-500 text-black font-bold px-2 py-0.5 rounded-full whitespace-nowrap">Best Value</span>}
+                      <ct.Icon className={"w-5 h-5 " + (form.contentType === ct.value ? "text-[#E53E3E]" : ct.color)} />
+                      <p className={"text-xs font-bold " + (form.contentType === ct.value ? "text-white" : "text-white/70")}>{ct.label}</p>
+                      <p className={"text-sm font-black " + (form.contentType === ct.value ? "text-[#E53E3E]" : "text-white/60")}>{ct.price}</p>
+                      <ul className="space-y-1 mt-1 w-full">
+                        {ct.items.map(item => (
+                          <li key={item} className="text-xs text-white/30 text-left">· {item}</li>
+                        ))}
+                      </ul>
+                    </button>
+                  ))}
+                </div>
 
-    {/* Add-ons */}
-    <div>
-      <p className="text-xs text-white/40 uppercase tracking-widest font-semibold mb-2 mt-4">Add-ons — +$4.99 each</p>
-      <div className="grid grid-cols-2 gap-2">
-        <button onClick={() => update("addOnKeywords", !form.addOnKeywords)}
-          className={`flex flex-col gap-2 px-4 py-3 rounded-xl border text-left transition-all ${form.addOnKeywords ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-2">
-              <Key className={`w-4 h-4 ${form.addOnKeywords ? "text-[#E53E3E]" : "text-white/40"}`} />
-              <p className={`text-xs font-bold ${form.addOnKeywords ? "text-white" : "text-white/60"}`}>Keywords</p>
-            </div>
-            <div className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${form.addOnKeywords ? "bg-[#E53E3E] border-[#E53E3E]" : "border-white/30"}`}>
-              {form.addOnKeywords && <span className="text-white text-xs font-bold">✓</span>}
-            </div>
-          </div>
-          <ul className="space-y-0.5">
-            {["Primary keywords", "Long-tail keywords", "Negative keywords", "Competitor terms", "SEO opportunities"].map(i => (
-              <li key={i} className="text-xs text-white/30">· {i}</li>
-            ))}
-          </ul>
-          <p className="text-xs font-bold text-[#E53E3E]">+$4.99</p>
-        </button>
+                <div>
+                  <p className="text-xs text-white/40 uppercase tracking-widest font-semibold mb-2 mt-4">Add-ons — +$4.99 each</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button onClick={() => update("addOnKeywords", !form.addOnKeywords)}
+                      className={"flex flex-col gap-2 px-4 py-3 rounded-xl border text-left transition-all " + (form.addOnKeywords ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20")}>
+                      <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center gap-2">
+                          <Key className={"w-4 h-4 " + (form.addOnKeywords ? "text-[#E53E3E]" : "text-white/40")} />
+                          <p className={"text-xs font-bold " + (form.addOnKeywords ? "text-white" : "text-white/60")}>Keywords</p>
+                        </div>
+                        <div className={"w-4 h-4 rounded border flex items-center justify-center " + (form.addOnKeywords ? "bg-[#E53E3E] border-[#E53E3E]" : "border-white/30")}>
+                          {form.addOnKeywords && <span className="text-white text-xs font-bold">✓</span>}
+                        </div>
+                      </div>
+                      <ul className="space-y-0.5">
+                        {["Primary keywords", "Long-tail keywords", "Negative keywords", "Competitor terms", "SEO opportunities"].map(i => (
+                          <li key={i} className="text-xs text-white/30">· {i}</li>
+                        ))}
+                      </ul>
+                      <p className="text-xs font-bold text-[#E53E3E]">+$4.99</p>
+                    </button>
 
-        <button onClick={() => update("addOnSocial", !form.addOnSocial)}
-          className={`flex flex-col gap-2 px-4 py-3 rounded-xl border text-left transition-all ${form.addOnSocial ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-2">
-              <Image className={`w-4 h-4 ${form.addOnSocial ? "text-[#E53E3E]" : "text-white/40"}`} />
-              <p className={`text-xs font-bold ${form.addOnSocial ? "text-white" : "text-white/60"}`}>Organic Social</p>
-            </div>
-            <div className={`w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${form.addOnSocial ? "bg-[#E53E3E] border-[#E53E3E]" : "border-white/30"}`}>
-              {form.addOnSocial && <span className="text-white text-xs font-bold">✓</span>}
-            </div>
-          </div>
-          <ul className="space-y-0.5">
-            {["5 post captions", "Hashtag sets", "Story ideas", "Reel concepts", "Best time to post"].map(i => (
-              <li key={i} className="text-xs text-white/30">· {i}</li>
-            ))}
-          </ul>
-          <p className="text-xs font-bold text-[#E53E3E]">+$4.99</p>
-        </button>
-      </div>
-    </div>
+                    <button onClick={() => update("addOnSocial", !form.addOnSocial)}
+                      className={"flex flex-col gap-2 px-4 py-3 rounded-xl border text-left transition-all " + (form.addOnSocial ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20")}>
+                      <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center gap-2">
+                          <Image className={"w-4 h-4 " + (form.addOnSocial ? "text-[#E53E3E]" : "text-white/40")} />
+                          <p className={"text-xs font-bold " + (form.addOnSocial ? "text-white" : "text-white/60")}>Organic Social</p>
+                        </div>
+                        <div className={"w-4 h-4 rounded border flex items-center justify-center " + (form.addOnSocial ? "bg-[#E53E3E] border-[#E53E3E]" : "border-white/30")}>
+                          {form.addOnSocial && <span className="text-white text-xs font-bold">✓</span>}
+                        </div>
+                      </div>
+                      <ul className="space-y-0.5">
+                        {["5 post captions", "Hashtag sets", "Story ideas", "Reel concepts", "Best time to post"].map(i => (
+                          <li key={i} className="text-xs text-white/30">· {i}</li>
+                        ))}
+                      </ul>
+                      <p className="text-xs font-bold text-[#E53E3E]">+$4.99</p>
+                    </button>
+                  </div>
+                </div>
 
-    {/* Everything */}
-    <button onClick={() => { update("contentType", "everything"); update("addOnKeywords", false); update("addOnSocial", false); }}
-      className={`w-full flex items-center gap-4 px-4 py-4 rounded-xl border text-left transition-all ${form.contentType === "everything" ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20"}`}>
-      <LayoutGrid className={`w-5 h-5 flex-shrink-0 ${form.contentType === "everything" ? "text-[#E53E3E]" : "text-white/40"}`} />
-      <div className="flex-1">
-        <p className={`text-sm font-bold ${form.contentType === "everything" ? "text-white" : "text-white/70"}`}>Everything</p>
-        <p className="text-xs text-white/30">Google Ads + Meta Ads + Organic Social + Keyword Research — all included</p>
-      </div>
-      <span className={`text-sm font-black flex-shrink-0 ${form.contentType === "everything" ? "text-[#E53E3E]" : "text-white/40"}`}>$19.99</span>
-    </button>
+                <button onClick={() => { update("contentType", "everything"); update("addOnKeywords", false); update("addOnSocial", false); }}
+                  className={"w-full flex items-center gap-4 px-4 py-4 rounded-xl border text-left transition-all " + (form.contentType === "everything" ? "border-[#E53E3E] bg-[#E53E3E]/10" : "border-white/10 bg-white/5 hover:border-white/20")}>
+                  <LayoutGrid className={"w-5 h-5 flex-shrink-0 " + (form.contentType === "everything" ? "text-[#E53E3E]" : "text-white/40")} />
+                  <div className="flex-1">
+                    <p className={"text-sm font-bold " + (form.contentType === "everything" ? "text-white" : "text-white/70")}>Everything</p>
+                    <p className="text-xs text-white/30">Google + Meta + Organic Social + Keyword Research — all included</p>
+                  </div>
+                  <span className={"text-sm font-black flex-shrink-0 " + (form.contentType === "everything" ? "text-[#E53E3E]" : "text-white/40")}>$19.99</span>
+                </button>
 
-    {/* Account storage message */}
-    <div className="bg-white/5 border border-white/10 rounded-xl p-3 flex items-start gap-3">
-      <Zap className="w-4 h-4 text-[#E53E3E] flex-shrink-0 mt-0.5" />
-      <p className="text-xs text-white/50">Create a free account after checkout to save your content, re-download anytime, and skip re-entering your business info on future orders.</p>
-    </div>
-  </div>
-)}
+                <div className="bg-white/5 border border-white/10 rounded-xl p-3 flex items-start gap-3">
+                  <Zap className="w-4 h-4 text-[#E53E3E] flex-shrink-0 mt-0.5" />
+                  <p className="text-xs text-white/50">Create a free account after checkout to save your content, re-download anytime, and skip re-entering your business info on future orders.</p>
+                </div>
+              </div>
+            )}
 
-            {/* Step 2 — Business Info */}
             {step === 2 && (
               <div className="space-y-4">
                 <h2 className="font-semibold text-white mb-4">About your business</h2>
@@ -445,7 +436,6 @@ export default function GetStarted() {
               </div>
             )}
 
-            {/* Step 3 — Platform Questions */}
             {step === 3 && (
               <div className="space-y-6">
                 <h2 className="font-semibold text-white mb-2">Campaign details</h2>
@@ -462,7 +452,7 @@ export default function GetStarted() {
                       <div className="grid grid-cols-2 gap-2">
                         {CTA_OPTIONS.map(o => (
                           <button key={o.value} onClick={() => update("mainCta", o.value)}
-                            className={`text-left px-3 py-2.5 rounded-xl border text-sm transition-all ${form.mainCta === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
+                            className={"text-left px-3 py-2.5 rounded-xl border text-sm transition-all " + (form.mainCta === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20")}>
                             {o.label}
                           </button>
                         ))}
@@ -473,7 +463,7 @@ export default function GetStarted() {
                       <div className="grid grid-cols-3 gap-2">
                         {[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "in_progress", label: "In progress" }].map(o => (
                           <button key={o.value} onClick={() => update("hasLandingPage", o.value)}
-                            className={`text-left px-3 py-2.5 rounded-xl border text-sm transition-all ${form.hasLandingPage === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
+                            className={"text-left px-3 py-2.5 rounded-xl border text-sm transition-all " + (form.hasLandingPage === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20")}>
                             {o.label}
                           </button>
                         ))}
@@ -484,7 +474,7 @@ export default function GetStarted() {
                       <div className="grid grid-cols-3 gap-2">
                         {[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "not_sure", label: "Not sure" }].map(o => (
                           <button key={o.value} onClick={() => update("hasTracking", o.value)}
-                            className={`text-left px-3 py-2.5 rounded-xl border text-sm transition-all ${form.hasTracking === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
+                            className={"text-left px-3 py-2.5 rounded-xl border text-sm transition-all " + (form.hasTracking === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20")}>
                             {o.label}
                           </button>
                         ))}
@@ -499,7 +489,7 @@ export default function GetStarted() {
                       <div className="grid grid-cols-2 gap-2">
                         {TICKET_VALUES.map(o => (
                           <button key={o.value} onClick={() => update("avgTicketValue", o.value)}
-                            className={`text-left px-3 py-2.5 rounded-xl border text-sm transition-all ${form.avgTicketValue === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
+                            className={"text-left px-3 py-2.5 rounded-xl border text-sm transition-all " + (form.avgTicketValue === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20")}>
                             {o.label}
                           </button>
                         ))}
@@ -520,7 +510,7 @@ export default function GetStarted() {
                       <div className="grid grid-cols-3 gap-2">
                         {[{ value: "yes", label: "Yes" }, { value: "no", label: "No" }, { value: "not_sure", label: "Not sure" }].map(o => (
                           <button key={o.value} onClick={() => update("hasPixel", o.value)}
-                            className={`text-left px-3 py-2.5 rounded-xl border text-sm transition-all ${form.hasPixel === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
+                            className={"text-left px-3 py-2.5 rounded-xl border text-sm transition-all " + (form.hasPixel === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20")}>
                             {o.label}
                           </button>
                         ))}
@@ -529,8 +519,8 @@ export default function GetStarted() {
                     <div>
                       <label className="text-xs text-white/50 mb-2 block">Who are you targeting?</label>
                       <OptionGrid options={[
-                        { value: "cold", label: "Cold audience — people who don't know me yet" },
-                        { value: "warm", label: "Warm audience — people who've seen my content" },
+                        { value: "cold", label: "Cold audience — people who do not know me yet" },
+                        { value: "warm", label: "Warm audience — people who have seen my content" },
                         { value: "retargeting", label: "Retargeting — people who visited my website" },
                         { value: "mixed", label: "Mixed — both cold and warm" },
                       ]} field="audienceTemperature" />
@@ -540,7 +530,7 @@ export default function GetStarted() {
                       <div className="grid grid-cols-2 gap-2">
                         {CREATIVE_PREFS.map(o => (
                           <button key={o.value} onClick={() => update("creativePreference", o.value)}
-                            className={`text-left px-3 py-2.5 rounded-xl border text-sm transition-all ${form.creativePreference === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20"}`}>
+                            className={"text-left px-3 py-2.5 rounded-xl border text-sm transition-all " + (form.creativePreference === o.value ? "border-[#E53E3E] bg-[#E53E3E]/10 text-white" : "border-white/10 bg-white/5 text-white/60 hover:border-white/20")}>
                             {o.label}
                           </button>
                         ))}
@@ -573,18 +563,15 @@ export default function GetStarted() {
               </div>
             )}
 
-            {/* Step 4 — Add-ons + Review */}
             {step === 4 && (
               <div className="space-y-5">
-                <h2 className="font-semibold text-white mb-2">Review & add-ons</h2>
-                  </div>
-                )}
+                <h2 className="font-semibold text-white mb-2">Review your order</h2>
 
                 <div className="border-t border-white/10 pt-4 space-y-2">
                   <p className="text-xs text-white/40 uppercase tracking-widest font-semibold mb-3">Order Summary</p>
                   <div className="flex justify-between text-sm">
-                    <span className="text-white/70">{CONTENT_TYPES.find(c => c.value === form.contentType)?.label}</span>
-                    <span className="text-white">{CONTENT_TYPES.find(c => c.value === form.contentType)?.display}</span>
+                    <span className="text-white/70">{(CONTENT_TYPES.find(c => c.value === form.contentType) || {}).label}</span>
+                    <span className="text-white">{(CONTENT_TYPES.find(c => c.value === form.contentType) || {}).display}</span>
                   </div>
                   {form.addOnKeywords && (
                     <div className="flex justify-between text-sm">
@@ -607,20 +594,18 @@ export default function GetStarted() {
                 <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-2 text-sm">
                   <div className="flex justify-between"><span className="text-white/40">Business</span><span className="text-white">{form.businessName}</span></div>
                   <div className="flex justify-between"><span className="text-white/40">Email</span><span className="text-white">{form.email}</span></div>
-                  <div className="flex justify-between"><span className="text-white/40">Platform</span><span className="text-white">{CONTENT_TYPES.find(c => c.value === form.contentType)?.label}</span></div>
+                  <div className="flex justify-between"><span className="text-white/40">Platform</span><span className="text-white">{(CONTENT_TYPES.find(c => c.value === form.contentType) || {}).label}</span></div>
                   {form.websiteUrl && <div className="flex justify-between"><span className="text-white/40">Website</span><span className="text-white/70 text-xs">{form.websiteUrl}</span></div>}
                 </div>
               </div>
             )}
+
           </div>
 
           {error && <p className="text-[#E53E3E] text-sm mb-4 text-center">{error}</p>}
 
           <div className="flex items-center justify-between">
-            <button
-              onClick={handleBack}
-              className="flex items-center gap-1 text-white/40 hover:text-white text-sm transition-colors"
-            >
+            <button onClick={handleBack} className="flex items-center gap-1 text-white/40 hover:text-white text-sm transition-colors">
               <ChevronLeft className="w-4 h-4" />
               {step === 0 ? "Home" : "Back"}
             </button>
@@ -634,13 +619,13 @@ export default function GetStarted() {
                 Continue <ChevronRight className="w-4 h-4" />
               </button>
             ) : (
-             <button
-  onClick={handleBack}
-  className="flex items-center gap-1 text-white/40 hover:text-white text-sm transition-colors"
->
-  <ChevronLeft className="w-4 h-4" />
-  {step === 0 ? "Home" : "Back"}
-</button>
+              <button
+                onClick={handleSubmit}
+                disabled={loading || !form.email || !form.businessName}
+                className="flex items-center gap-2 bg-[#E53E3E] hover:bg-[#C53030] text-white font-bold px-6 py-2.5 rounded-xl text-sm disabled:opacity-50 transition-colors"
+              >
+                {loading ? "Generating..." : "Pay " + formatPrice(getTotalPrice())}
+              </button>
             )}
           </div>
         </div>
