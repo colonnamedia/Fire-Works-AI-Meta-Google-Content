@@ -634,13 +634,13 @@ export default function GetStarted() {
                 Continue <ChevronRight className="w-4 h-4" />
               </button>
             ) : (
-              <button
-                onClick={handleSubmit}
-                disabled={loading || !form.email || !form.businessName}
-                className="flex items-center gap-2 bg-[#E53E3E] hover:bg-[#C53030] text-white font-bold px-6 py-2.5 rounded-xl text-sm disabled:opacity-50 transition-colors"
-              >
-                {loading ? <><Loader2 className="w-4 h-4 animate-spin" />Generating...</> : <><Zap className="w-4 h-4" />Pay {formatPrice(getTotalPrice())}</>}
-              </button>
+             <button
+  onClick={handleBack}
+  className="flex items-center gap-1 text-white/40 hover:text-white text-sm transition-colors"
+>
+  <ChevronLeft className="w-4 h-4" />
+  {step === 0 ? "Home" : "Back"}
+</button>
             )}
           </div>
         </div>
