@@ -74,18 +74,19 @@ function FireworksCanvas() {
 
     const random = (min, max) => Math.random() * (max - min) + min;
 
-    const createBurst = (x, y) => {
-      const count = Math.floor(random(35, 65));
-      for (let i = 0; i < count; i++) {
-        const angle = (Math.PI * 2 / count) * i;
-        const speed = random(1.5, 5.5);
+    const isMobile = canvas.width < 640;
+const createBurst = (x, y) => {
+  const count = Math.floor(random(isMobile ? 20 : 35, isMobile ? 40 : 65));
+  for (let i = 0; i < count; i++) {
+    const angle = (Math.PI * 2 / count) * i;
+    const speed = random(isMobile ? 0.8 : 1.5, isMobile ? 3 : 5.5);
         particles.push({
           x, y,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
           alpha: 1,
           color: colors[Math.floor(Math.random() * colors.length)],
-          size: random(1.5, 3.5),
+         size: random(isMobile ? 0.8 : 1.5, isMobile ? 2 : 3.5),
           decay: random(0.010, 0.022),
           trail: [],
         });
@@ -131,7 +132,7 @@ function FireworksCanvas() {
       const x = random(canvas.width * 0.05, canvas.width * 0.95);
       const y = random(canvas.height * 0.03, canvas.height * 0.65);
       createBurst(x, y);
-      setTimeout(burst, random(900, 2800));
+      setTimeout(burst, random(isMobile ? 1500 : 900, isMobile ? 4000 : 2800));
     };
 
     burst();
